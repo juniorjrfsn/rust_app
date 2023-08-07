@@ -5,6 +5,7 @@ use crate::conexao::cone::conect;
 
 fn main()  -> Result<()> {
     conect::createDatabase();
- 
+    // conect::create();
+    
     Ok(())
 }
