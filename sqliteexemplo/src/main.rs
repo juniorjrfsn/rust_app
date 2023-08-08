@@ -6,6 +6,8 @@ use crate::conexao::cone::conect;
 fn main()  -> Result<()> {
     conect::createDatabase();
     // conect::create();
-    
+    conect::registrar();
+    conect::getCats();
+
     Ok(())
 }
