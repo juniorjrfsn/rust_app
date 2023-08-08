@@ -4,16 +4,53 @@ pub mod  conect {
 	use rusqlite::{Connection, Result};
 	use std::collections::HashMap;
 
+	// ========== não usado ========
+	use std::ops::{Index, IndexMut}; 
+	pub struct Vector3d<T> {
+	    pub x: T,
+	    pub y: T,
+	    pub z: T,
+	}
+	impl<T> Index<usize> for Vector3d<T> {
+	    type Output = T;
+	    fn index(&self, index: usize) -> &T {
+	        match index {
+	            0 => &self.x,
+	            1 => &self.y,
+	            2 => &self.z,
+	            n => panic!("Invalid Vector3d index: {}", n)
+	        }
+	    }
+	}
+	impl<T> IndexMut<usize> for Vector3d<T> {
+	    fn index_mut(&mut self, index: usize) -> &mut T {
+	        match index {
+	            0 => &mut self.x,
+	            1 => &mut self.y,
+	            2 => &mut self.z,
+	            n => panic!("Invalid Vector3d index: {}", n)
+	        }
+	    }
+	}
+	// ========== não usado ========
+
+
 	#[derive(Debug)]
 	struct Cat {
 		name: String,
 		color: String,
 	}
 
-
-
-	pub fn createDatabase()  -> Result<()> {
-		let path = "./my_db.db";
+	impl Cat {
+		fn name(&self) -> &String {
+			&self.name
+		}
+		fn color(&self) -> &String {
+			&self.color
+		}
+	}
+	pub fn create_database()  -> Result<()> {
+		let _path = "./my_db.db";
 		let path = "./cats.db";
 		let db = Connection::open(path)?;
 		// Use the database somehow...
@@ -25,20 +62,20 @@ pub mod  conect {
 	pub fn create()  -> Result<()> {
 		let conn = Connection::open("my_db.db")?;
 
-		conn.execute(
+		let _r1 = conn.execute(
 			"BEGIN;
 			CREATE TABLE foo(x INTEGER);
 			CREATE TABLE bar(y TEXT);
 			COMMIT;",[],
 		);
  
-		conn.execute(
+		let _r2 = conn.execute(
 			"create table if not exists cat_colors (
 			id integer primary key,
 			name text not null unique
 			)",[],
 		)?;
-		conn.execute(
+		let _r3 = conn.execute(
 			"create table if not exists cats (
 			id integer primary key,
 			name text not null,
@@ -69,22 +106,105 @@ pub mod  conect {
 		Ok(())
 	}
 
-	pub fn getCats() -> Result<()> {
+	pub fn get_cats() -> Result<()> {
 		let conn = Connection::open("cats.db")?;
 
 		let mut stmt = conn.prepare( "SELECT c.name, cc.name from cats c INNER JOIN cat_colors cc ON cc.id = c.color_id;", )?;
 
-		let cats = stmt.query_map([], |row| {
+		let cats = stmt.query_map([], |row| { 
 			Ok(Cat {
 				name: row.get(0)?,
 				color: row.get(1)?,
-			})
+			}) 
 		})?;
 
-		for cat in cats {
-			println!("Gato {:?}   ", cat.unwrap());
-		}
+ 
 
+ 
+		/*
+		for (id, cat) in cats.into_iter().enumerate()  {
+			//println!("{} - {}", row.name, row.color);
+			println!("Item {:?} ", cat.unwrap() );
+
+
+			let obj = HashMap::from( cat );
+			for prop in obj.keys() {
+				println!("{}: {}", prop, obj.get(prop).unwrap());
+			}
+
+
+			/*let mapa = HashMap::from( cat );
+			for (key, val) in mapa.iter() {
+				println!("key: {key} val: {val}");
+			}*/
+		}
+		*/
+		println!(" ======================   " );
+		let mut state_codes: HashMap<&str, &str> = HashMap::new();
+		state_codes.insert("NV", "Nevada");
+		state_codes.insert("NY", "New York");
+
+		for (key, val) in state_codes.iter() {
+			println!("key: {key} val: {val}");
+		}
+		println!(" ======================   " );
+		let map = HashMap::from([
+			("a", 1),
+			("b", 2),
+			("c", 3),
+		]);
+
+		for (key, val) in map.iter() {
+			println!("key: {key} val: {val}");
+		}
+		println!(" ======================   " );
+		let obj = HashMap::from([
+			("key1", "value1"),
+			("key2", "value2")
+		]);
+		for prop in obj.keys() {
+			println!("{}: {}", prop, obj.get(prop).unwrap());
+		} 
+		println!(" ======================   " );
+		let numbers = [1, 2, 3, 4, 5];
+		for number in numbers {
+			println!("{}", number);
+		} 
+		println!(" ======================   " );
+		let numbers = [1, 2, 3, 4, 5];
+		let first_even = numbers.iter().find(|x| *x % 2 == 0);
+		println!("{:?}", first_even.unwrap());
+		println!(" ======================   " );
+		let numbers = [1, 2, 3];
+		numbers.iter().for_each(|x| println!("{}", x));
+		println!(" ======================   " );
+		let names = ["Sam", "Janet", "Hunter"];
+		let csv = names.join(", ");
+		println!("{}", csv);
+		println!(" ======================   " );
+		let my_array1 = [1, 2, 3, 4, 5];
+		let mut index = 0; 
+		while index < my_array1.len() {
+			println!("{}", my_array1[index]);
+			index += 1;
+		}
+		println!(" ======================   " );
+		let my_array2 = [1, 2, 3, 4, 5];
+		for item in my_array2.iter() {
+			println!("{}", item);
+		}
+		println!(" ======================   " );
+		let my_array = [1, 2, 3, 4, 5];
+		for (index, item) in my_array.iter().enumerate() {
+			println!("{}: {}", index, item);
+		}
+		println!(" ======================   " );
+
+		for cat in cats.into_iter()  {
+			let gato = cat.unwrap();
+			println!("Gato {} de cor {:?}  ", gato.name(), gato.color() );
+		}
 		Ok(())
+
 	}
 }
