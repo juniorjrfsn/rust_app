@@ -50,16 +50,35 @@ pub mod  conect {
 		}
 	}
 	pub fn create_database()  -> Result<()> {
-		let _path = "./my_db.db";
-		let path = "./cats.db";
-		let db = Connection::open(path)?;
+		let _path = "my_db.db";
+		//let path = "./cats.db";
+		let db = Connection::open(_path)?;
 		// Use the database somehow...
 		println!("BASE DE DADOS OPERANDO : {}", db.is_autocommit());
 		Ok(())
 	}
 
+	#[derive(Debug)]
+	struct Pessoa {
+		id: i32,
+		name: String,
+		data: Option<Vec<u8>>,
+	}
+
+	impl Pessoa {
+		fn id(&self) -> &i32 {
+			&self.id
+		}
+		fn name(&self) -> &String {
+			&self.name
+		}
+		fn data(&self) -> &Option<Vec<u8>> {
+			&self.data
+		}
+	}
+
 	// not working
-	pub fn create()  -> Result<()> {
+	pub fn create_table()  -> Result<()> {
 		let conn = Connection::open("my_db.db")?;
 
 		let _r1 = conn.execute(
@@ -82,12 +101,19 @@ pub mod  conect {
 			color_id integer not null references cat_colors(id)
 			)",[],
 		)?; 
+		let _r4 = conn.execute(
+			"CREATE TABLE person (
+				id INTEGER PRIMARY KEY,
+				name TEXT NOT NULL,
+				data BLOB
+			)",[],
+		)?; 
 
 		Ok(())
 	}
 
 	pub fn registrar() -> Result<()> {
-		let conn = Connection::open("cats.db")?;
+		let conn = Connection::open("my_db.db")?;
 
 		let mut cat_colors = HashMap::new();
 		cat_colors.insert(String::from("Blue"), vec!["Tigger", "Sammy"]);
@@ -103,20 +129,19 @@ pub mod  conect {
 			}
 		}
 
+		let me = Pessoa {
+			id: 0,
+			name: "Steven".to_string(),
+			data: None,
+		};
+		conn.execute( "INSERT INTO person (name, data) VALUES (?1, ?2)", (&me.name, &me.data), )?;
 		Ok(())
 	}
 
 	pub fn get_cats() -> Result<()> {
-		let conn = Connection::open("cats.db")?;
+		let conn = Connection::open("my_db.db")?;
 
-		let mut stmt = conn.prepare( "SELECT c.name, cc.name from cats c INNER JOIN cat_colors cc ON cc.id = c.color_id;", )?;
 
-		let cats = stmt.query_map([], |row| { 
-			Ok(Cat {
-				name: row.get(0)?,
-				color: row.get(1)?,
-			}) 
-		})?;
 
  
 
@@ -200,9 +225,33 @@ pub mod  conect {
 		}
 		println!(" ======================   " );
 
+
+		let mut stmt = conn.prepare( "SELECT c.name, cc.name from cats c INNER JOIN cat_colors cc ON cc.id = c.color_id;", )?;
+		let cats = stmt.query_map([], |row| { 
+			Ok(Cat {
+				name: row.get(0)?,
+				color: row.get(1)?,
+			}) 
+		})?;
 		for cat in cats.into_iter()  {
 			let gato = cat.unwrap();
 			println!("Gato {} de cor {:?}  ", gato.name(), gato.color() );
+		} 
+
+		println!(" ======================   " );
+
+		let mut stmt = conn.prepare("SELECT id, name, data FROM person")?;
+		let person_iter = stmt.query_map([], |row| {
+			Ok(Pessoa {
+				id: row.get(0)?,
+				name: row.get(1)?,
+				data: row.get(2)?,
+			})
+		})?;
+		for person in person_iter.into_iter() {
+			// println!("Found person {:?}", person.unwrap());
+			let pessoa = person.unwrap();
+			println!("Pessoa:{} - nome:{} : dados{:?} ", pessoa.id, pessoa.name, pessoa.data  );
 		}
 		Ok(())
 
