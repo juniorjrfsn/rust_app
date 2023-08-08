@@ -128,11 +128,11 @@ pub mod  conect {
 				conn.execute( "INSERT INTO cats (name, color_id) values (?1, ?2)", &[&cat.to_string(), &last_id], )?;
 			}
 		}
-
+ 
 		let me = Pessoa {
 			id: 0,
 			name: "Steven".to_string(),
-			data: None,
+			data: None, // None
 		};
 		conn.execute( "INSERT INTO person (name, data) VALUES (?1, ?2)", (&me.name, &me.data), )?;
 		Ok(())
@@ -140,29 +140,23 @@ pub mod  conect {
 
 	pub fn get_cats() -> Result<()> {
 		let conn = Connection::open("my_db.db")?;
-
-
-
- 
-
- 
 		/*
-		for (id, cat) in cats.into_iter().enumerate()  {
-			//println!("{} - {}", row.name, row.color);
-			println!("Item {:?} ", cat.unwrap() );
+			for (id, cat) in cats.into_iter().enumerate()  {
+				//println!("{} - {}", row.name, row.color);
+				println!("Item {:?} ", cat.unwrap() );
 
 
-			let obj = HashMap::from( cat );
-			for prop in obj.keys() {
-				println!("{}: {}", prop, obj.get(prop).unwrap());
+				let obj = HashMap::from( cat );
+				for prop in obj.keys() {
+					println!("{}: {}", prop, obj.get(prop).unwrap());
+				}
+
+
+				/*let mapa = HashMap::from( cat );
+				for (key, val) in mapa.iter() {
+					println!("key: {key} val: {val}");
+				}*/
 			}
-
-
-			/*let mapa = HashMap::from( cat );
-			for (key, val) in mapa.iter() {
-				println!("key: {key} val: {val}");
-			}*/
-		}
 		*/
 		println!(" ======================   " );
 		let mut state_codes: HashMap<&str, &str> = HashMap::new();
@@ -249,10 +243,30 @@ pub mod  conect {
 			})
 		})?;
 		for person in person_iter.into_iter() {
-			// println!("Found person {:?}", person.unwrap());
+			//println!("Found person {:?}", person.unwrap());
 			let pessoa = person.unwrap();
-			println!("Pessoa:{} - nome:{} : dados{:?} ", pessoa.id, pessoa.name, pessoa.data  );
+			//let dados = String::from_utf8(pessoa.data).expect("Found invalid UTF-8");
+			//let dados = pessoa.data;
+
+			//  String::from_utf8(dados ).expect("Found invalid UTF-8"));
+			let dados = if pessoa.data.is_some(){ pessoa.data } else { ""};
+			println!("Pessoa:{} - nome:{} : dados:{:?} ", pessoa.id, pessoa.name, dados ); 
+			/*
+				if pessoa.data.is_some() {
+					println!("Pessoa:{} - nome:{} : dados:{:?} ", pessoa.id, pessoa.name, pessoa.data ); 
+				} else {
+					println!("Pessoa:{} - nome:{} : dados:{} ", pessoa.id, pessoa.name, "" );  
+				}
+			*/
 		}
+		
+		println!(" ======================   " );
+
+		let my_vec: Vec<u8> = vec![72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100]; // "Hello World" in ASCII
+		let vec_to_string = String::from_utf8(my_vec).unwrap(); // Converting to string
+		println!("{}", vec_to_string); // Output: Hello World
+		println!(" ======================   " );
+
 		Ok(())
 
 	}
