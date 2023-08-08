@@ -21,8 +21,7 @@ pub mod  conect {
 			CREATE TABLE bar(y TEXT);
 			COMMIT;",
 		);
-
-
+ 
 		conn.execute_batch(
 			"create table if not exists cat_colors (
 			id integer primary key,
