@@ -21,22 +21,23 @@ pub mod ctrl_person {
 		}
 	}
 	*/
-	pub fn registrar() -> Result<()> {
-		let conn = Connection::open("my_db.db")?;
+	pub fn registrar(reg: bool ) -> Result<()> {
+		if reg   {
+			let conn = Connection::open("my_db.db")?;
+			let me = Pessoa {
+				id: 0,
+				name: "Steven".to_string(),
+				data: None, // None
+			};
+			conn.execute( "INSERT INTO person (name, data) VALUES (?1, ?2)", (&me.name, &me.data), )?;
+		} else {
 
-		let me = Pessoa {
-			id: 0,
-			name: "Steven".to_string(),
-			data: None, // None
-		};
-		conn.execute( "INSERT INTO person (name, data) VALUES (?1, ?2)", (&me.name, &me.data), )?;
+		}
 		Ok(())
 	}
 
 	pub fn get_persons() -> Result<()> {
 		let conn = Connection::open("my_db.db")?;
- 
-		println!(" ======================   " );
 
 		let mut stmt = conn.prepare("SELECT MAX(id) AS id, name, data FROM person GROUP BY name, data ")?;
 		let person_iter = stmt.query_map([], |row| {
@@ -69,12 +70,7 @@ pub mod ctrl_person {
 				}
 			*/
 		}
-		
- 
 
 		Ok(())
-
 	}
-
-
 }

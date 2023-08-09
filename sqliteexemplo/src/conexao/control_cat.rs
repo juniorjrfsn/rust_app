@@ -18,25 +18,32 @@ pub mod ctrl_cat {
 		}
 	}
  
-	pub fn registrar() -> Result<()> {
-		let conn = Connection::open("my_db.db")?;
+	pub fn registrar(reg: bool) -> Result<()> {
+		if reg  {
+			let conn = Connection::open("my_db.db")?;
+			let mut cat_colors = HashMap::new();
 
-		let mut cat_colors = HashMap::new();
-		cat_colors.insert(String::from("Blue"), vec!["Tigger", "Sammy"]);
-		cat_colors.insert(String::from("Black"), vec!["Oreo", "Biscuit"]);
-		cat_colors.insert(String::from("white"), vec!["branco", "rajado"]);
+			// a tabela no banco de dados possui restrição contra multiplicidade de nomes
+			cat_colors.insert(String::from("Blue"),		vec!["Tigger",	"Sammy"]	);
+			cat_colors.insert(String::from("Black"),	vec!["Oreo",	"Biscuit"]	);
+			cat_colors.insert(String::from("white"),	vec!["branco",	"rajado"]	);
+			cat_colors.insert(String::from("Yellow"),	vec!["amarelo",	"caramelo"]	);
+			cat_colors.insert(String::from("Marron"),	vec!["Nego",	"Nega"]	);
 
-		for (color, catnames) in &cat_colors {
-			conn.execute( "INSERT INTO cat_colors (name) values (?1)", &[&color.to_string()], )?;
-			let last_id: String = conn.last_insert_rowid().to_string();
-
-			for cat in catnames {
-				conn.execute( "INSERT INTO cats (name, color_id) values (?1, ?2)", &[&cat.to_string(), &last_id], )?;
+			for (color, catnames) in &cat_colors {
+				conn.execute( "INSERT INTO cat_colors (name) values (?1)", &[&color], )?;
+				let last_id: String = conn.last_insert_rowid().to_string();
+				
+				for cat in catnames {
+					conn.execute( "INSERT INTO cats (name, color_id) values (?1, ?2)", &[&cat.to_string(), &last_id], )?;
+				}
 			}
+		} else {
+
 		}
 		Ok(())
 	}
- 
+
 	pub fn get_cats() -> Result<()> {
 		let conn = Connection::open("my_db.db")?;
 		/*
@@ -69,10 +76,9 @@ pub mod ctrl_cat {
 			let gato = cat.unwrap();
 			println!("Gato {} de cor {:?}  ", gato.name(), gato.color() );
 		}
-		println!(" ======================   " );
- 
-		Ok(())
+		
 
+		Ok(())
 	}
 
 }
