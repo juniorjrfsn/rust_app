@@ -249,8 +249,14 @@ pub mod  conect {
 			//let dados = pessoa.data;
 
 			//  String::from_utf8(dados ).expect("Found invalid UTF-8"));
-			let dados = if pessoa.data.is_some(){ pessoa.data } else { ""};
-			println!("Pessoa:{} - nome:{} : dados:{:?} ", pessoa.id, pessoa.name, dados ); 
+			// let vec: Vec<u8> = vec![0xa8, 0x3c, 0x09];
+
+			//let op: Option<Vec<u8>> =    Option<vec> ;
+			//let v = [Ok(2), Ok(4), Err("err!"), Ok(8)];
+			// let res: Result<Vec<_>, &str> = v.into_iter().collect();
+			let dados : String = if pessoa.data.is_some(){ String::from_utf8(  pessoa.data.unwrap()  ).unwrap()  } else {   String::new() };
+
+			println!("Pessoa:{} - nome:{:?} : dados:{} ", pessoa.id, pessoa.name, dados ); 
 			/*
 				if pessoa.data.is_some() {
 					println!("Pessoa:{} - nome:{} : dados:{:?} ", pessoa.id, pessoa.name, pessoa.data ); 
