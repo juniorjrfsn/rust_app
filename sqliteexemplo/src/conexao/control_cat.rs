@@ -28,7 +28,7 @@ pub mod ctrl_cat {
 			cat_colors.insert(String::from("Black"),	vec!["Oreo",	"Biscuit"]	);
 			cat_colors.insert(String::from("white"),	vec!["branco",	"rajado"]	);
 			cat_colors.insert(String::from("Yellow"),	vec!["amarelo",	"caramelo"]	);
-			cat_colors.insert(String::from("Marron"),	vec!["Nego",	"Nega"]	);
+			cat_colors.insert(String::from("Marron"),	vec!["Nego",	"Nega"]		);
 
 			for (color, catnames) in &cat_colors {
 				conn.execute( "INSERT INTO cat_colors (name) values (?1)", &[&color], )?;

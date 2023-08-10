@@ -4,7 +4,7 @@ pub mod ctrl_person {
 
 	#[derive(Debug)]
 	struct Pessoa {
-		id: i32,
+		id	: i32,
 		name: String,
 		data: Option<Vec<u8>>,
 	}
@@ -40,9 +40,9 @@ pub mod ctrl_person {
 		let mut stmt = conn.prepare("SELECT MAX(id) AS id, name, data FROM person GROUP BY name, data ")?;
 		let person_iter = stmt.query_map([], |row| {
 			Ok(Pessoa {
-				id: row.get(0)?,
-				name: row.get(1)?,
-				data: row.get(2)?,
+				id		: row.get(0)?,
+				name	: row.get(1)?,
+				data	: row.get(2)?,
 			})
 		})?;
 		for person in person_iter.into_iter() {
