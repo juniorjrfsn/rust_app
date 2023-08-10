@@ -1,5 +1,5 @@
 pub mod ctrl_person {
-	extern crate rusqlite; 
+	extern crate rusqlite;
 	use rusqlite::{Connection, Result};
 
 	#[derive(Debug)]
@@ -22,7 +22,7 @@ pub mod ctrl_person {
 	}
 	*/
 	pub fn registrar(reg: bool ) -> Result<()> {
-		if reg   {
+		if reg {
 			let conn = Connection::open("my_db.db")?;
 			let me = Pessoa {
 				id: 0,
@@ -30,9 +30,7 @@ pub mod ctrl_person {
 				data: None, // None
 			};
 			conn.execute( "INSERT INTO person (name, data) VALUES (?1, ?2)", (&me.name, &me.data), )?;
-		} else {
-
-		}
+		} else { }
 		Ok(())
 	}
 
@@ -48,18 +46,18 @@ pub mod ctrl_person {
 			})
 		})?;
 		for person in person_iter.into_iter() {
-			//println!("Found person {:?}", person.unwrap());
+			// println!("Found person {:?}", person.unwrap());
 			let pessoa = person.unwrap();
-			//let dados = String::from_utf8(pessoa.data).expect("Found invalid UTF-8");
-			//let dados = pessoa.data;
+			// let dados = String::from_utf8(pessoa.data).expect("Found invalid UTF-8");
+			// let dados = pessoa.data;
 
 			//  String::from_utf8(dados ).expect("Found invalid UTF-8"));
 			// let vec: Vec<u8> = vec![0xa8, 0x3c, 0x09];
 
-			//let op: Option<Vec<u8>> =    Option<vec> ;
-			//let v = [Ok(2), Ok(4), Err("err!"), Ok(8)];
+			// let op: Option<Vec<u8>> =    Option<vec> ;
+			// let v = [Ok(2), Ok(4), Err("err!"), Ok(8)];
 			// let res: Result<Vec<_>, &str> = v.into_iter().collect();
-			//let dados : String = if pessoa.data.is_some(){ String::from_utf8(  pessoa.data.unwrap()  ).unwrap()  } else {   String::new() };
+			// let dados : String = if pessoa.data.is_some(){ String::from_utf8(  pessoa.data.unwrap()  ).unwrap()  } else {   String::new() };
 
 			println!("Pessoa:{} - nome:{:?} : dados:{} ", pessoa.id, pessoa.name, if pessoa.data.is_some(){ String::from_utf8(  pessoa.data.unwrap()  ).unwrap()  } else {   String::new() } ); 
 			/*
