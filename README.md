@@ -1,7 +1,10 @@
 # rust_app
 ## aplicativos de códigos na linguagem rust
 
+```
+### **Cosntruir a aplicação**
+	$ cargo build
 
- **$ cargo build**
- **$ cargo run**
- 
+### **Executar a aplicação**
+	$ cargo run
+ ```
