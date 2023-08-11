@@ -1,6 +1,10 @@
 # rust_app
 ## aplicativos de códigos na linguagem rust
 
+### **Acessar a pasta da aplicação**
+```
+	$ cd sqliteexemplo
+```
 
 ### **Cosntruir a aplicação**
 ```
