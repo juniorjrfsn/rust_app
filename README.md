@@ -2,6 +2,6 @@
 ## aplicativos de códigos na linguagem rust
 
 
- **$ cargo build
-	$ cargo run**
+ **$ cargo build**
+ **$ cargo run**
  
