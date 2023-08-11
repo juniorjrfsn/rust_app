@@ -5,7 +5,6 @@
 ```
 	$ cd sqliteexemplo
 ```
-
 ### **Cosntruir a aplicação**
 ```
 	$ cargo build
