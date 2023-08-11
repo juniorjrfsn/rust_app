@@ -2,7 +2,7 @@ pub mod codes {
 
 	use std::collections::HashMap;
 
-	use std::ops::{Index, IndexMut}; 
+	use std::ops::{Index, IndexMut};
 	pub struct Vector3d<T> {
 	    pub x: T,
 	    pub y: T,

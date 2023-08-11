@@ -1,6 +1,6 @@
 pub mod migrationtable {
 	use rusqlite::{Connection, Result};
-
+	
 	pub fn migration_create_table()  -> Result<()> {
 		let conn = Connection::open("my_db.db")?;
 		let _r1 = conn.execute( "CREATE TABLE IF NOT EXISTS foo(x INTEGER);",[], );
@@ -10,5 +10,4 @@ pub mod migrationtable {
 		let _r5 = conn.execute( "CREATE TABLE IF NOT EXISTS person ( id INTEGER PRIMARY KEY, name TEXT NOT NULL UNIQUE, data BLOB ); ",[], )?; 
 		Ok(())
 	}
-
 }
