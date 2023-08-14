@@ -10,5 +10,23 @@ git push -u origin main
 git remote add origin https://github.com/juniorjrfsn/rust_app.git
 git branch -M main
 git push -u origin main
- 
- 
+
+
+na pasta raiz \rust_app usar o executável sqlite3.exe e gerar o banco de dados 
+
+
+
+sqlite3.exe
+sqlite> ATTACH DATABASE 'DatabaseName' As 'Alias-Name';
+sqlite> ATTACH DATABASE 'testDB.db' as 'TEST';
+ATTACH DATABASE 'blockchainaAdress.db' as 'blockchainaAdress'
+sqlite> .database
+
+
+CREATE TABLE IF NOT EXISTS foo(x INTEGER);
+CREATE TABLE IF NOT EXISTS bar(y TEXT);
+CREATE TABLE IF NOT EXISTS cat_colors ( id INTEGER PRIMARY KEY, name TEXT NOT NULL UNIQUE );
+CREATE TABLE IF NOT EXISTS cats ( id INTEGER PRIMARY KEY, name TEXT NOT NULL, color_id integer NOT NULL REFERENCES cat_colors(id) );
+CREATE TABLE IF NOT EXISTS person ( id INTEGER PRIMARY KEY, name TEXT NOT NULL UNIQUE, data BLOB );
+
+
