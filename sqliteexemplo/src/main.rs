@@ -1,10 +1,12 @@
 mod conexao;
+mod functions;
 use crate::conexao::conedatabase::conectdatabase;
 use crate::conexao::migrationdb::migrationtable;
 use crate::conexao::control_cat::ctrl_cat;
 use crate::conexao::control_person::ctrl_person;
 
 use crate::conexao::codigos::codes;
+use crate::functions::janelas::janelaMensagem;
 
 fn main(){
     // println!("Connection : {:?}",   if _fn1.Ok(10) { _fn1  } else {   Err(10) } );
@@ -40,6 +42,6 @@ fn main(){
     let _fn5 = ctrl_person::get_persons();
     println!("-------------------------------------------" );
  
-    
+    janelaMensagem::openJanela();
  
 }

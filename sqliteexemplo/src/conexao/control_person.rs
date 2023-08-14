@@ -12,6 +12,7 @@ pub mod ctrl_person {
 		name: String,
 		data: Option<Vec<u8>>,
 	}
+	
 	/*
 	impl Pessoa {
 		fn id(&self) -> &i32 {
@@ -25,6 +26,7 @@ pub mod ctrl_person {
 		}
 	}
 	*/
+
 	pub fn registrar(reg: bool ) -> Result<()> {
 		if reg {
 			let conn = Connection::open("my_db.db")?;
@@ -39,8 +41,6 @@ pub mod ctrl_person {
 				data: op, // None
 			};
 			conn.execute( "INSERT INTO person (name, data) VALUES (?1, ?2)", (&me.name, &me.data), )?;
-
-
 
 			let hello2 = String::from("Mandando Blob pro banco").to_owned();
 			let vec2:Vec<u8> = hello2.into_bytes(); 
@@ -82,8 +82,6 @@ pub mod ctrl_person {
   		//let dados1: &str = str::from_utf8(dados).unwrap();
 		let mut tmp = String::new();
 		tmp.push_str(&String::from_utf8_lossy(dados));
-  
-
 
   		// let dados1 : &str = dados.as_ref();
   		let conn = Connection::open("my_db.db")?;
@@ -106,6 +104,7 @@ pub mod ctrl_person {
 		// conn.wait()?;
 		Ok(())
 	}
+
 	/*
 	pub fn update_ver_row( id: i32, name: &str, data: Option<Vec<u8>>, reg: bool)  {
 		let mut to_child = data.as_ref().unwrap();
@@ -116,8 +115,6 @@ pub mod ctrl_person {
 		println!("Pessoa:{} - nome:{:?} : dados:{:?} ", id , name, data.unwrap()  );  
 	}
 	*/
-
-
 
 	pub fn get_persons() -> Result<()> {
 		let conn = Connection::open("my_db.db")?;
@@ -130,6 +127,7 @@ pub mod ctrl_person {
 				data	: row.get(2)?,
 			})
 		})?;
+
 		for person in person_iter  {
 			// println!("Found person {:?}", person.unwrap());
 			let pessoa = person.unwrap();
