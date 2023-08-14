@@ -91,7 +91,7 @@ pub mod ctrl_person {
 			// Update a row
 			
 			//  conn.execute("UPDATE person SET name = ?, data = ? WHERE id = ?", &[name, String::from_utf8( data.unwrap()  ).unwrap().to_string().as_str() ,  id.to_string().as_str()] )?;
-			conn.execute("UPDATE person SET name = ?, data = ? WHERE id = ?", &[name, tmp.as_str() ,  id.to_string().as_str()] )?;
+			conn.execute("UPDATE person SET name = ?, data = ? WHERE id = ? ", &[name, tmp.as_str() ,  id.to_string().as_str()] )?;
 			// conn.execute("UPDATE person SET name = ?, data = ? WHERE id = ?", &[name, dados.as_ref() ] )?;
 			// println!("Pessoa:{} - nome:{:?} : dados:{} ", id.to_string(), name, if data.is_some(){ String::from_utf8(  data.unwrap()  ).unwrap()  } else {   String::new() } ); 
 			 
@@ -130,7 +130,7 @@ pub mod ctrl_person {
 				data	: row.get(2)?,
 			})
 		})?;
-		for person in person_iter.into_iter() {
+		for person in person_iter  {
 			// println!("Found person {:?}", person.unwrap());
 			let pessoa = person.unwrap();
 			// let dados = String::from_utf8(pessoa.data).expect("Found invalid UTF-8");
