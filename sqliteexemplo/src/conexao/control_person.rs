@@ -1,5 +1,9 @@
 pub mod ctrl_person {
 	extern crate rusqlite;
+	use std::str;
+	use std::error::Error;
+	use std::io::prelude::*;
+	use std::process::{Command, Stdio};
 	use rusqlite::{Connection, Result};
 
 	#[derive(Debug)]
@@ -24,15 +28,96 @@ pub mod ctrl_person {
 	pub fn registrar(reg: bool ) -> Result<()> {
 		if reg {
 			let conn = Connection::open("my_db.db")?;
+
+			let hello = String::from("Mandando Blob pro banco").to_owned();
+			let vec:Vec<u8> = hello.into_bytes(); 
+				// let vec: Vec<u8> = vec![0xaa, 0xfc, 0x09, 0x09];
+			let op: Option<Vec<u8>> = Some(vec) ;
 			let me = Pessoa {
-				id: 0,
-				name: "Steven".to_string(),
-				data: None, // None
+				id: 1,
+				name: "John".to_string(),
+				data: op, // None
 			};
 			conn.execute( "INSERT INTO person (name, data) VALUES (?1, ?2)", (&me.name, &me.data), )?;
+
+
+
+			let hello2 = String::from("Mandando Blob pro banco").to_owned();
+			let vec2:Vec<u8> = hello2.into_bytes(); 
+				// let vec: Vec<u8> = vec![0xaa, 0xfc, 0x09, 0x09];
+			let op2: Option<Vec<u8>> = Some(vec2) ;
+			let me2 = Pessoa {
+				id: 2,
+				name: "Steven".to_string(),
+				data: op2, // None
+			};
+			conn.execute( "INSERT INTO person (name, data) VALUES (?1, ?2)", (&me2.name, &me2.data), )?;
+
 		} else { }
 		Ok(())
 	}
+
+	/*
+	pub fn  print_dados_update(id: i32, name: &str, data: Option<Vec<u8>>, _reg: bool) -> Result<()>{
+		println!("Pessoa:{} - nome:{:?} : dados:{:?} ", id , name, data  );
+		Ok(())
+	}
+	*/
+ 
+	pub fn update_row(id: i32, name: &str, data: Option<Vec<u8>>, reg: bool) -> Result<(), Box<dyn Error>> {
+ 
+		// let vec2: Option<Vec<u8>> = Some(Vec::new());
+		// let vec2: Option<Vec<u8>> = Some(Vec::new());
+ 		
+ 
+		// let opt: Option<Vec<u8>> = Some(data);
+		// let vec: Vec<u8> = vec![0xa8, 0x3c, 0x09];
+	    // let vec2:Option<Vec<u8>>  = data ;
+	    // vec2.copy_from(data);
+	    // Print the vector
+  		// let  dados:  Vec<u8> = data.unwrap().to_string().as_str(), ;
+  		// println!("{:?}", vec);
+  		// let  dados:  &str = String::from_utf8( data.unwrap()  ).unwrap().to_string().as_str().as_ref();
+  		let dados:  &Vec<u8> = data.as_ref().unwrap();
+  		//let dados1: &str = str::from_utf8(dados).unwrap();
+		let mut tmp = String::new();
+		tmp.push_str(&String::from_utf8_lossy(dados));
+  
+
+
+  		// let dados1 : &str = dados.as_ref();
+  		let conn = Connection::open("my_db.db")?;
+		if reg {
+			// Update a row
+			
+			//  conn.execute("UPDATE person SET name = ?, data = ? WHERE id = ?", &[name, String::from_utf8( data.unwrap()  ).unwrap().to_string().as_str() ,  id.to_string().as_str()] )?;
+			conn.execute("UPDATE person SET name = ?, data = ? WHERE id = ?", &[name, tmp.as_str() ,  id.to_string().as_str()] )?;
+			// conn.execute("UPDATE person SET name = ?, data = ? WHERE id = ?", &[name, dados.as_ref() ] )?;
+			// println!("Pessoa:{} - nome:{:?} : dados:{} ", id.to_string(), name, if data.is_some(){ String::from_utf8(  data.unwrap()  ).unwrap()  } else {   String::new() } ); 
+			 
+		} else {
+			// println!("Pessoa:{} - nome:{:?} : dados:{:?} ", id , name, vec2  ); 
+		} 
+		// let mut to_child = data.as_ref().unwrap();
+		// println!("Pessoa:{} - nome:{:?} : dados:{:?} ", id , name, vec2  );
+		println!("Pessoa:{} - nome:{:?} : dados:{:?} ", id , name, tmp.as_str() ); 
+ 
+		// let _fn_exec = print_dados_update(id, name, data.as_ref(), reg);
+		// conn.wait()?;
+		Ok(())
+	}
+	/*
+	pub fn update_ver_row( id: i32, name: &str, data: Option<Vec<u8>>, reg: bool)  {
+		let mut to_child = data.as_ref().unwrap();
+		if reg {
+			//let _fn_exec = update_row(id, name, data, reg);
+		} else {
+		} 
+		println!("Pessoa:{} - nome:{:?} : dados:{:?} ", id , name, data.unwrap()  );  
+	}
+	*/
+
+
 
 	pub fn get_persons() -> Result<()> {
 		let conn = Connection::open("my_db.db")?;
