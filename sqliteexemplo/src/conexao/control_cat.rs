@@ -17,7 +17,7 @@ pub mod ctrl_cat {
 			&self.color
 		}
 	}
- 
+
 	pub fn registrar(reg: bool) -> Result<()> {
 		if reg {
 			let conn = Connection::open("my_db.db")?;
@@ -33,7 +33,7 @@ pub mod ctrl_cat {
 			for (color, catnames) in &cat_colors {
 				conn.execute( "INSERT INTO cat_colors (name) values (?1)", &[&color], )?;
 				let last_id: String = conn.last_insert_rowid().to_string();
-				
+
 				for cat in catnames {
 					conn.execute( "INSERT INTO cats (name, color_id) values (?1, ?2)", &[&cat.to_string(), &last_id], )?;
 				}
@@ -53,7 +53,7 @@ pub mod ctrl_cat {
 				for prop in obj.keys() {
 					println!("{}: {}", prop, obj.get(prop).unwrap());
 				}
-				
+
 				/*
 				let mapa = HashMap::from( cat );
 				for (key, val) in mapa.iter() {
@@ -73,7 +73,7 @@ pub mod ctrl_cat {
 			let gato = cat.unwrap();
 			println!("Gato {} de cor {:?}  ", gato.name(), gato.color() );
 		}
-		
+
 		Ok(())
 	}
 }

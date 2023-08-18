@@ -12,7 +12,7 @@ pub mod ctrl_person {
 		name: String,
 		data: Option<Vec<u8>>,
 	}
-	
+
 	/*
 	impl Pessoa {
 		fn id(&self) -> &i32 {
@@ -32,7 +32,7 @@ pub mod ctrl_person {
 			let conn = Connection::open("my_db.db")?;
 
 			let hello = String::from("Mandando Blob pro banco").to_owned();
-			let vec:Vec<u8> = hello.into_bytes(); 
+			let vec:Vec<u8> = hello.into_bytes();
 				// let vec: Vec<u8> = vec![0xaa, 0xfc, 0x09, 0x09];
 			let op: Option<Vec<u8>> = Some(vec) ;
 			let me = Pessoa {
@@ -43,7 +43,7 @@ pub mod ctrl_person {
 			conn.execute( "INSERT INTO person (name, data) VALUES (?1, ?2)", (&me.name, &me.data), )?;
 
 			let hello2 = String::from("Mandando Blob pro banco").to_owned();
-			let vec2:Vec<u8> = hello2.into_bytes(); 
+			let vec2:Vec<u8> = hello2.into_bytes();
 				// let vec: Vec<u8> = vec![0xaa, 0xfc, 0x09, 0x09];
 			let op2: Option<Vec<u8>> = Some(vec2) ;
 			let me2 = Pessoa {
@@ -63,13 +63,13 @@ pub mod ctrl_person {
 		Ok(())
 	}
 	*/
- 
+
 	pub fn update_row(id: i32, name: &str, data: Option<Vec<u8>>, reg: bool) -> Result<(), Box<dyn Error>> {
- 
+
 		// let vec2: Option<Vec<u8>> = Some(Vec::new());
 		// let vec2: Option<Vec<u8>> = Some(Vec::new());
- 		
- 
+
+
 		// let opt: Option<Vec<u8>> = Some(data);
 		// let vec: Vec<u8> = vec![0xa8, 0x3c, 0x09];
 	    // let vec2:Option<Vec<u8>>  = data ;
@@ -87,19 +87,19 @@ pub mod ctrl_person {
   		let conn = Connection::open("my_db.db")?;
 		if reg {
 			// Update a row
-			
+
 			//  conn.execute("UPDATE person SET name = ?, data = ? WHERE id = ?", &[name, String::from_utf8( data.unwrap()  ).unwrap().to_string().as_str() ,  id.to_string().as_str()] )?;
 			conn.execute("UPDATE person SET name = ?, data = ? WHERE id = ? ", &[name, tmp.as_str() ,  id.to_string().as_str()] )?;
 			// conn.execute("UPDATE person SET name = ?, data = ? WHERE id = ?", &[name, dados.as_ref() ] )?;
 			// println!("Pessoa:{} - nome:{:?} : dados:{} ", id.to_string(), name, if data.is_some(){ String::from_utf8(  data.unwrap()  ).unwrap()  } else {   String::new() } ); 
-			 
+
 		} else {
-			// println!("Pessoa:{} - nome:{:?} : dados:{:?} ", id , name, vec2  ); 
-		} 
+			// println!("Pessoa:{} - nome:{:?} : dados:{:?} ", id , name, vec2  );
+		}
 		// let mut to_child = data.as_ref().unwrap();
 		// println!("Pessoa:{} - nome:{:?} : dados:{:?} ", id , name, vec2  );
-		println!("Pessoa:{} - nome:{:?} : dados:{:?} ", id , name, tmp.as_str() ); 
- 
+		println!("Pessoa:{} - nome:{:?} : dados:{:?} ", id , name, tmp.as_str() );
+
 		// let _fn_exec = print_dados_update(id, name, data.as_ref(), reg);
 		// conn.wait()?;
 		Ok(())
@@ -111,8 +111,8 @@ pub mod ctrl_person {
 		if reg {
 			//let _fn_exec = update_row(id, name, data, reg);
 		} else {
-		} 
-		println!("Pessoa:{} - nome:{:?} : dados:{:?} ", id , name, data.unwrap()  );  
+		}
+		println!("Pessoa:{} - nome:{:?} : dados:{:?} ", id , name, data.unwrap()  );
 	}
 	*/
 
@@ -142,7 +142,7 @@ pub mod ctrl_person {
 			// let res: Result<Vec<_>, &str> = v.into_iter().collect();
 			// let dados : String = if pessoa.data.is_some(){ String::from_utf8(  pessoa.data.unwrap()  ).unwrap()  } else {   String::new() };
 
-			println!("Pessoa:{} - nome:{:?} : dados:{} ", pessoa.id, pessoa.name, if pessoa.data.is_some(){ String::from_utf8(  pessoa.data.unwrap()  ).unwrap()  } else {   String::new() } ); 
+			println!("Pessoa:{} - nome:{:?} : dados:{} ", pessoa.id, pessoa.name, if pessoa.data.is_some(){ String::from_utf8(  pessoa.data.unwrap()  ).unwrap()  } else {   String::new() } );
 			/*
 				if pessoa.data.is_some() {
 					println!("Pessoa:{} - nome:{} : dados:{:?} ", pessoa.id, pessoa.name, pessoa.data ); 

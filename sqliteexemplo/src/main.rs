@@ -1,16 +1,17 @@
 mod conexao;
-mod functions;
 use crate::conexao::conedatabase::conectdatabase;
 use crate::conexao::migrationdb::migrationtable;
 use crate::conexao::control_cat::ctrl_cat;
 use crate::conexao::control_person::ctrl_person;
-
 use crate::conexao::codigos::codes;
-use crate::functions::janelas::janelaMensagem;
+
+mod functions;
+use crate::functions::janelas::janela_mensagem;
+
 
 fn main(){
     // println!("Connection : {:?}",   if _fn1.Ok(10) { _fn1  } else {   Err(10) } );
- 
+
     let _fn1 = conectdatabase::create_database();
     println!("-------------------------------------------" );
 
@@ -30,10 +31,10 @@ fn main(){
     let p  = true;
     let _fn3 = ctrl_person::registrar(p);
     println!("-------------------------------------------" );
-   
+
     let hello = String::from("Hello, world! agora siim").to_owned();
     let vec:Vec<u8> = hello.into_bytes();
-   
+
     // let vec: Vec<u8> = vec![0xaa, 0xfc, 0x09, 0x09];
     let op: Option<Vec<u8>> = Some(vec) ;
     let _fn4 = ctrl_person::update_row(1, "John", op, false);
@@ -41,7 +42,7 @@ fn main(){
 
     let _fn5 = ctrl_person::get_persons();
     println!("-------------------------------------------" );
- 
-    janelaMensagem::openJanela();
- 
+
+    janela_mensagem::open_janela();
+
 }

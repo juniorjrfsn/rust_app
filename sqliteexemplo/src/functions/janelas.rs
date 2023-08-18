@@ -1,9 +1,9 @@
-pub mod janelaMensagem {
+pub mod janela_mensagem {
     use windows::{
         core::*,
         Win32::UI::WindowsAndMessaging::*
     };
-    pub fn openJanela() {
+    pub fn open_janela() {
         // println!("Hello, world!");
         unsafe {
             MessageBoxA(None, s!("olá"), s!("World"), MB_OK);
