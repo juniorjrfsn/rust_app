@@ -1,4 +1,7 @@
 mod conexao;
+// pub(crate) use crate::conexao::conedatabase::conectdatabase;
+// use crate::{conexao::{migrationdb::migrationtable, control_cat::ctrl_cat, control_person::ctrl_person, codigos::codes}, functions::janelas::janela_mensagem};
+
 use crate::conexao::conedatabase::conectdatabase;
 use crate::conexao::migrationdb::migrationtable;
 use crate::conexao::control_cat::ctrl_cat;
@@ -8,7 +11,7 @@ use crate::conexao::codigos::codes;
 mod functions;
 use crate::functions::janelas::janela_mensagem;
 
-fn main(){
+pub(crate) fn main(){
     // println!("Connection : {:?}",   if _fn1.Ok(10) { _fn1  } else {   Err(10) } );
 
     let _fn1 = conectdatabase::create_database();
@@ -17,7 +20,7 @@ fn main(){
     let _fn2 = migrationtable::migration_create_table();
     println!("-------------------------------------------" );
 
-    let _fn3 = codes::get_codes();
+    let _fn3: () = codes::get_codes();
     println!("-------------------------------------------" );
 
     let c  = true;
