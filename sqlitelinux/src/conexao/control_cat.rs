@@ -25,8 +25,8 @@ pub mod ctrl_cat {
 
 			// a tabela no banco de dados possui restrição contra multiplicidade de nomes
 			cat_colors.insert(String::from("Blue"),		vec!["Tigger",	"Sammy"]	);
-			cat_colors.insert(String::from("Black"),	vec!["Oreo",	"Biscuit"]	);
-			cat_colors.insert(String::from("white"),	vec!["branco",	"rajado"]	);
+			cat_colors.insert(String::from("Black"),		vec!["Oreo",	"Biscuit"]	);
+			cat_colors.insert(String::from("white"),		vec!["branco",	"rajado"]	);
 			cat_colors.insert(String::from("Yellow"),	vec!["amarelo",	"caramelo"]	);
 			cat_colors.insert(String::from("Marron"),	vec!["Nego",	"Nega"]		);
 
@@ -43,7 +43,7 @@ pub mod ctrl_cat {
 	}
 
 	pub fn get_cats() -> Result<()> {
-		let conn = Connection::open("my_db.db")?;
+		let conn: Connection = Connection::open("my_db.db")?;
 		/*
 			for (id, cat) in cats.into_iter().enumerate()  {
 				// println!("{} - {}", row.name, row.color);
@@ -53,7 +53,6 @@ pub mod ctrl_cat {
 				for prop in obj.keys() {
 					println!("{}: {}", prop, obj.get(prop).unwrap());
 				}
-
 				/*
 				let mapa = HashMap::from( cat );
 				for (key, val) in mapa.iter() {
@@ -73,7 +72,6 @@ pub mod ctrl_cat {
 			let gato = cat.unwrap();
 			println!("Gato {} de cor {:?}  ", gato.name(), gato.color() );
 		}
-
 		Ok(())
 	}
 }
