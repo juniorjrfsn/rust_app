@@ -3,7 +3,7 @@
 
 ### **Acessar a pasta da aplicação**
 ```
-	$ cd sqliteexemplo
+	$ cd sqlitewindows
 ```
 ### **Cosntruir a aplicação**
 ```

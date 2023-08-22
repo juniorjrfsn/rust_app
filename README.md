@@ -1,13 +1,13 @@
 # rust_app
 ## aplicativos de códigos na linguagem rust
 ```
-	$ cargo new sqliteexemplo --bin
+	$ cargo new sqlitewindows --bin
 	$ cargo new sqlitelinux --bin
 	$ cargo new server --bin
 ```
 ### **Acessar a pasta da aplicação**
 ```
-	$ cd sqliteexemplo
+	$ cd sqlitewindows
 	$ cd sqlitelinux
 	$ cd server
 ```
