@@ -8,7 +8,7 @@ use crate::conexao::codigos::codes;
 mod functions;
 use crate::functions::janelas::janela_mensagem;
 
-pub(crate) fn main(){
+fn main(){
     // println!("Connection : {:?}",   if _fn1.Ok(10) { _fn1  } else {   Err(10) } );
 
     let _fn1 = conectdatabase::create_database();
