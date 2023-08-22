@@ -35,7 +35,7 @@ fn main(){
     let vec:Vec<u8> = hello.into_bytes();
 
     // let vec: Vec<u8> = vec![0xaa, 0xfc, 0x09, 0x09];
-    let op: Option<Vec<u8>> = Some(vec) ;
+    let op: Option<Vec<u8>> = Some(vec);
     let _fn4 = ctrl_person::update_row(1, "John", op, false);
     println!("-------------------------------------------" );
 
