@@ -6,8 +6,8 @@ pub mod janela_mensagem {
     pub fn open_janela() {
         // println!("Hello, world!");
         unsafe {
-            MessageBoxA(None, s!("olá"), s!("World"), MB_OK);
-            MessageBoxW(None, w!("como que tá !?"), w!("World"), MB_OK);
+            MessageBoxA(None, s!("olá manada"), s!("World do mundo"), MB_OK);
+            MessageBoxW(None, w!("como que tá !? World del mundo"), w!("World del mundo"), MB_OK);
         }
     }
 }

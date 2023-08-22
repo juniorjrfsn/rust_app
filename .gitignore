@@ -4,3 +4,5 @@ rust-1.68.0.zip
 rust/
 sqliteexemplo/target/
 sqlitelinux/target/
+outros/target/
+server/target/
