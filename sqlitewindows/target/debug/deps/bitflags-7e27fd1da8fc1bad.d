@@ -1,0 +1,11 @@
+c:\xampp\htdocs\rust_app\sqliteexemplo\target\debug\deps\bitflags-7e27fd1da8fc1bad.rmeta: C:\Users\njunior\.cargo\registry\src\index.crates.io-1cd66030c949c28d\bitflags-2.3.3\src\lib.rs C:\Users\njunior\.cargo\registry\src\index.crates.io-1cd66030c949c28d\bitflags-2.3.3\src\iter.rs C:\Users\njunior\.cargo\registry\src\index.crates.io-1cd66030c949c28d\bitflags-2.3.3\src\parser.rs C:\Users\njunior\.cargo\registry\src\index.crates.io-1cd66030c949c28d\bitflags-2.3.3\src\traits.rs C:\Users\njunior\.cargo\registry\src\index.crates.io-1cd66030c949c28d\bitflags-2.3.3\src\public.rs C:\Users\njunior\.cargo\registry\src\index.crates.io-1cd66030c949c28d\bitflags-2.3.3\src\internal.rs C:\Users\njunior\.cargo\registry\src\index.crates.io-1cd66030c949c28d\bitflags-2.3.3\src\external.rs
+
+c:\xampp\htdocs\rust_app\sqliteexemplo\target\debug\deps\bitflags-7e27fd1da8fc1bad.d: C:\Users\njunior\.cargo\registry\src\index.crates.io-1cd66030c949c28d\bitflags-2.3.3\src\lib.rs C:\Users\njunior\.cargo\registry\src\index.crates.io-1cd66030c949c28d\bitflags-2.3.3\src\iter.rs C:\Users\njunior\.cargo\registry\src\index.crates.io-1cd66030c949c28d\bitflags-2.3.3\src\parser.rs C:\Users\njunior\.cargo\registry\src\index.crates.io-1cd66030c949c28d\bitflags-2.3.3\src\traits.rs C:\Users\njunior\.cargo\registry\src\index.crates.io-1cd66030c949c28d\bitflags-2.3.3\src\public.rs C:\Users\njunior\.cargo\registry\src\index.crates.io-1cd66030c949c28d\bitflags-2.3.3\src\internal.rs C:\Users\njunior\.cargo\registry\src\index.crates.io-1cd66030c949c28d\bitflags-2.3.3\src\external.rs
+
+C:\Users\njunior\.cargo\registry\src\index.crates.io-1cd66030c949c28d\bitflags-2.3.3\src\lib.rs:
+C:\Users\njunior\.cargo\registry\src\index.crates.io-1cd66030c949c28d\bitflags-2.3.3\src\iter.rs:
+C:\Users\njunior\.cargo\registry\src\index.crates.io-1cd66030c949c28d\bitflags-2.3.3\src\parser.rs:
+C:\Users\njunior\.cargo\registry\src\index.crates.io-1cd66030c949c28d\bitflags-2.3.3\src\traits.rs:
+C:\Users\njunior\.cargo\registry\src\index.crates.io-1cd66030c949c28d\bitflags-2.3.3\src\public.rs:
+C:\Users\njunior\.cargo\registry\src\index.crates.io-1cd66030c949c28d\bitflags-2.3.3\src\internal.rs:
+C:\Users\njunior\.cargo\registry\src\index.crates.io-1cd66030c949c28d\bitflags-2.3.3\src\external.rs:
