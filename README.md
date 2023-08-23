@@ -11,7 +11,7 @@
 	$ cd sqlitelinux
 	$ cd server
 ```
-### **Cosntruir a aplicação**
+### **Construir a aplicação**
 ```
 	$ cargo build --release
 ```
