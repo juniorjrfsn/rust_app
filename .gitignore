@@ -5,6 +5,7 @@ rust/
 sqliteexemplo/target/
 sqlitewindows/target/
 sqlitelinux/target/
+sqlitelinuxbasic/target/
 outros/target/
 server/target/
 simple-server/target/
