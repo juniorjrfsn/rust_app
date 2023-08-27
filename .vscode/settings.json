@@ -1,5 +1,6 @@
 {
     "rust-analyzer.linkedProjects": [
-        "./sqlitelinux/Cargo.toml"
+        "./sqlitelinux/Cargo.toml",
+        "./sqlitelinuxbasic/Cargo.toml"
     ]
 }
