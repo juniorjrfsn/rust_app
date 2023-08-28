@@ -8,4 +8,5 @@ sqlitelinux/target/
 sqlitelinuxbasic/target/
 outros/target/
 server/target/
+neural/target/
 simple-server/target/
