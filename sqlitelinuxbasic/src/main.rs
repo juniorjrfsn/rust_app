@@ -1,4 +1,5 @@
 
+
 mod conexao;
 use crate::conexao::conedatabase::conectdatabase;
 use crate::conexao::migrationdb::migrationtable;
@@ -16,7 +17,7 @@ fn main() {
     let _fn3 = codes::get_codes();
     println!("-------------------------------------------" );
 
-    let c  = true;
+    let c: bool  = true;
     let _fn3 = ctrl_cat::registrar(c);
     println!("-------------------------------------------" );
 
@@ -37,5 +38,5 @@ fn main() {
 
     let _fn5 = ctrl_person::get_persons();
     println!("-------------------------------------------" );
- 
+
 }
