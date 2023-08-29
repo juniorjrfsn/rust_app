@@ -73,6 +73,44 @@ fn main() {
         26,233 Pro Icons
         68 Categories
         2,025 Free Icons",
+        "Build fast, responsive sites with Bootstrap
+        Powerful, extensible, and feature-packed frontend toolkit. Build and customize with Sass, utilize prebuilt grid system and components, and bring projects to life with powerful JavaScript plugins.
+        
+        
+        npm i bootstrap@5.3.1
+        Currently v5.3.1 · Download · All releases
+        
+        Get started any way you want
+        Jump right into building with Bootstrap?use the CDN, install it via package manager, or download the source code.
+        
+        Read installation docs
+        Install via package manager
+        Install Bootstrap?s source Sass and JavaScript files via npm, RubyGems, Composer, or Meteor. Package managed installs don?t include documentation or our full build scripts. You can also use any demo from our Examples repo to quickly jumpstart Bootstrap projects.
+        
+        
+        npm install bootstrap@5.3.1
+        
+        gem install bootstrap -v 5.3.1
+        Read our installation docs for more info and additional package managers.
+        
+        Include via CDN
+        When you only need to include Bootstrap?s compiled CSS or JS, you can use jsDelivr. See it in action with our simple quick start, or browse the examples to jumpstart your next project. You can also choose to include Popper and our JS separately.
+        
+        
+        <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css\" rel=\"stylesheet\" integrity=\"sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9\" crossorigin=\"anonymous\">
+        
+        <script src=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js\" integrity=\"sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm\" crossorigin=\"anonymous\"></script>
+        Read our getting started guides
+        Get a jump on including Bootstrap's source files in a new project with our official guides.
+        
+        
+        Webpack
+        
+        Parcel
+        
+        Vite
+        Customize everything with Sass
+        Bootstrap utilizes Sass for a modular and customizable architecture. Import only the components you need, enable global options like gradients and shadows, and write your own CSS with our variables, maps, functions, and mixins.",
         // ... Adicione mais frases para treinamento ...
     ];
 
