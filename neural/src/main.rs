@@ -64,7 +64,7 @@ fn main() {
         Font Awesome Sharp Light has arrived! It's perfect for when you need to add a breezy, light touch of modern elegance. Read the announcement and see what's new in the 6.4.2 release.
 
         BETA Explore the Icon Wizard!
-        With our new Icon Wizard, you can magically add a modifier ? like circle-plus, slash, or even poop ? to almost any Font Awesome icon. Available now to Font Awesome Pro subscribers.
+        With our new Icon Wizard, you can magically add a modifier  like circle-plus, slash, or even poop  to almost any Font Awesome icon. Available now to Font Awesome Pro subscribers.
 
         More Plugins + Packages
         Font Awesome 6 makes it even easier to use icons where you want to. More plugins and packages to match your stack. Less time wrestling browser rendering.
@@ -78,14 +78,14 @@ fn main() {
         
         
         npm i bootstrap@5.3.1
-        Currently v5.3.1 · Download · All releases
+        Currently v5.3.1  Download  All releases
         
         Get started any way you want
         Jump right into building with Bootstrap?use the CDN, install it via package manager, or download the source code.
         
         Read installation docs
         Install via package manager
-        Install Bootstrap?s source Sass and JavaScript files via npm, RubyGems, Composer, or Meteor. Package managed installs don?t include documentation or our full build scripts. You can also use any demo from our Examples repo to quickly jumpstart Bootstrap projects.
+        Install Bootstrap s source Sass and JavaScript files via npm, RubyGems, Composer, or Meteor. Package managed installs dont include documentation or our full build scripts. You can also use any demo from our Examples repo to quickly jumpstart Bootstrap projects.
         
         
         npm install bootstrap@5.3.1
@@ -94,14 +94,11 @@ fn main() {
         Read our installation docs for more info and additional package managers.
         
         Include via CDN
-        When you only need to include Bootstrap?s compiled CSS or JS, you can use jsDelivr. See it in action with our simple quick start, or browse the examples to jumpstart your next project. You can also choose to include Popper and our JS separately.
+        When you only need to include Bootstraps compiled CSS or JS, you can use jsDelivr. See it in action with our simple quick start, or browse the examples to jumpstart your next project. You can also choose to include Popper and our JS separately.
         
         
-        <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css\" rel=\"stylesheet\" integrity=\"sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9\" crossorigin=\"anonymous\">
-        
-        <script src=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js\" integrity=\"sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm\" crossorigin=\"anonymous\"></script>
-        Read our getting started guides
-        Get a jump on including Bootstrap's source files in a new project with our official guides.
+       Read our getting started guides
+        Get a jump on including Bootstrap s source files in a new project with our official guides.
         
         
         Webpack
