@@ -108,6 +108,9 @@ fn main() {
         Vite
         Customize everything with Sass
         Bootstrap utilizes Sass for a modular and customizable architecture. Import only the components you need, enable global options like gradients and shadows, and write your own CSS with our variables, maps, functions, and mixins.",
+        "Build and extend in real-time with CSS variables
+        Bootstrap 5 is evolving with each release to better utilize CSS variables for global theme styles, individual components, and even utilities. We provide dozens of variables for colors, font styles, and more at a :root level for use anywhere. On components and utilities, CSS variables are scoped to the relevant class and can easily be modified.",
+        
         // ... Adicione mais frases para treinamento ...
     ];
 
