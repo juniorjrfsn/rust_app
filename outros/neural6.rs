@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 struct TextNeuralNetwork {
-    weights: HashMap<(usize, char), f64>,
+    weights: HashMap<(usize, usize), f64>,
 }
 
 impl TextNeuralNetwork {
@@ -15,36 +15,22 @@ impl TextNeuralNetwork {
         for (i, input) in inputs.iter().enumerate() {
             let output = outputs[i];
             let delta = 1.0; // You might need to define a more sophisticated update rule.
-            for (j, char_input) in input.chars().enumerate() {
-                let entry = self.weights.entry((j, char_input));
-                *entry.or_insert(0.0) += delta;
+            for (j, &char_input) in input.as_bytes().iter().enumerate() {
+                let entry = self.weights.entry((j, char_input as usize)).or_insert(0.0);
+                *entry += delta;
             }
         }
     }
 
     fn generate_response(&self, question: &str) -> String {
         let mut response = String::new();
-        for char_input in question.chars() {
-            if let Some(weight) = self.weights.get(&(0, char_input)) {
-                let expected_char = output[i];
-                total_loss += weight * (char_input as i32 - expected_char as i32).pow(2);
-                count += 1.0;
+        for char_input in question.as_bytes() {
+            if let Some(weight) = self.weights.get(&(0, *char_input as usize)) {
+                response.push(*char_input as char);
+                response.push_str(&format!(" (weight: {:.2})", weight));
             }
         }
         response
-    }
-
-    fn loss(&self, input: &str, output: &str) -> f64 {
-        let mut count = 0.0;
-        let mut total_loss = 0.0;
-        for (i, char_input) in input.chars().enumerate() {
-            if let Some(weight) = self.weights.get(&(i, char_input)) {
-                let expected_char = output[i];
-                total_loss += weight * (char_input as i32 - expected_char as i32).pow(2);
-                count += 1.0;
-            }
-        }
-        total_loss / count
     }
 }
 
@@ -62,7 +48,9 @@ fn main() {
     ];
 
     // Train the text neural network
-    text_network.train(&inputs, &outputs);
+    for i in 0..inputs.len() {
+        text_network.train(&[inputs[i]], &[outputs[i]]);
+    }
 
     // Test the text neural network
     let question = "What is your name?";
