@@ -4,5 +4,7 @@
 	edition = "2021"
 
 [dependencies]
+    ndarray = "0.15.6"
+    rand = "0.8.4" 
     actix-web = { version = "4", features = ["openssl"] }
     openssl = { version = "0.10" }

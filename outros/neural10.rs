@@ -37,14 +37,9 @@ impl LanguageModel {
             response.push_str(&current_word);
             response.push(' ');
 
-            let possible_next_words = self
-                .transitions
-                .get(&current_word)
-                .unwrap()
-                .iter()
-                .collect::<Vec<&String>>();
+            let possible_next_words = self.transitions.get(&current_word).unwrap();
 
-            current_word = possible_next_words[rng.gen_range(0..possible_next_words.len())].to_string();
+            current_word = possible_next_words.iter().nth(rng.gen_range(0..possible_next_words.len())).unwrap().to_string();
         }
 
         response
@@ -56,23 +51,8 @@ fn main() {
 
     // Define training data in Portuguese
     let training_data = vec![
-        "Take the hassle out of icons in your website.
-        Font Awesome is the Internet's icon library and toolkit, used by millions of designers, developers, and content creators.",
-        "LATEST UPDATES
-        Discover what's new in Font Awesome.
-        NEW Introducing Font Awesome Sharp Light!
-        Font Awesome Sharp Light has arrived! It's perfect for when you need to add a breezy, light touch of modern elegance. Read the announcement and see what's new in the 6.4.2 release.
-
-        BETA Explore the Icon Wizard!
-        With our new Icon Wizard, you can magically add a modifier ? like circle-plus, slash, or even poop ? to almost any Font Awesome icon. Available now to Font Awesome Pro subscribers.
-
-        More Plugins + Packages
-        Font Awesome 6 makes it even easier to use icons where you want to. More plugins and packages to match your stack. Less time wrestling browser rendering.
-
-        Version 6.4.2
-        26,233 Pro Icons
-        68 Categories
-        2,025 Free Icons",
+        "O ceu estava claro e o ar fresco quando Maria acordou naquela manhan.",
+        "Ela se levantou da cama e olhou pela janela, observando os passaros voando ao redor.",
         // ... Adicione mais frases para treinamento ...
     ];
 
@@ -80,7 +60,7 @@ fn main() {
     language_model.train(&training_data);
 
     // Test the language model
-    let seed_word = "Awesome";
+    let seed_word = "Ela";
     let response = language_model.generate_response(seed_word, 30);
     println!("Seed: {}", seed_word);
     println!("Response: {}", response);
