@@ -75,42 +75,38 @@ fn main() {
         2,025 Free Icons",
         "Build fast, responsive sites with Bootstrap
         Powerful, extensible, and feature-packed frontend toolkit. Build and customize with Sass, utilize prebuilt grid system and components, and bring projects to life with powerful JavaScript plugins.
-        
-        
+
         npm i bootstrap@5.3.1
         Currently v5.3.1  Download  All releases
-        
+
         Get started any way you want
         Jump right into building with Bootstrap?use the CDN, install it via package manager, or download the source code.
-        
+
         Read installation docs
         Install via package manager
         Install Bootstrap s source Sass and JavaScript files via npm, RubyGems, Composer, or Meteor. Package managed installs dont include documentation or our full build scripts. You can also use any demo from our Examples repo to quickly jumpstart Bootstrap projects.
-        
-        
+
         npm install bootstrap@5.3.1
-        
+
         gem install bootstrap -v 5.3.1
         Read our installation docs for more info and additional package managers.
-        
+
         Include via CDN
         When you only need to include Bootstraps compiled CSS or JS, you can use jsDelivr. See it in action with our simple quick start, or browse the examples to jumpstart your next project. You can also choose to include Popper and our JS separately.
-        
-        
+
        Read our getting started guides
         Get a jump on including Bootstrap s source files in a new project with our official guides.
-        
-        
+
         Webpack
-        
+
         Parcel
-        
+
         Vite
         Customize everything with Sass
         Bootstrap utilizes Sass for a modular and customizable architecture. Import only the components you need, enable global options like gradients and shadows, and write your own CSS with our variables, maps, functions, and mixins.",
         "Build and extend in real-time with CSS variables
         Bootstrap 5 is evolving with each release to better utilize CSS variables for global theme styles, individual components, and even utilities. We provide dozens of variables for colors, font styles, and more at a :root level for use anywhere. On components and utilities, CSS variables are scoped to the relevant class and can easily be modified.",
-        
+
         // ... Adicione mais frases para treinamento ...
     ];
 
@@ -118,7 +114,7 @@ fn main() {
     language_model.train(&training_data);
 
     // Test the language model
-    let seed_word = "Awesome";
+    let seed_word = "release";
     let response = language_model.generate_response(seed_word, 30);
     println!("Seed: {}", seed_word);
     println!("Response: {}", response);
