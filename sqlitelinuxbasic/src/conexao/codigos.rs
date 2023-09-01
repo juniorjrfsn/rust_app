@@ -65,7 +65,7 @@ pub mod codes {
 		let first_even = numbers.iter().find(|x| *x % 2 == 0);
 		println!("{:?}", first_even.unwrap());
 		println!("................................" );
-		let numbers = [1, 2, 3];
+		let numbers: [String; 3] = ["1 DHFGUTY".to_string(), "2TYUTY".to_string(), "3YT456".to_string()];
 		numbers.iter().for_each(|x| println!("{}", x));
 		println!("................................" );
 		let names = ["Sam", "Janet", "Hunter"];
