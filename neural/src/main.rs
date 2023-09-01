@@ -114,7 +114,7 @@ fn main() {
     language_model.train(&training_data);
 
     // Test the language model
-    let seed_word = "release";
+    let seed_word = "docs";
     let response = language_model.generate_response(seed_word, 30);
     println!("Seed: {}", seed_word);
     println!("Response: {}", response);
