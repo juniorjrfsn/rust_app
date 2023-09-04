@@ -2,8 +2,8 @@ pub mod ctrl_person {
 	extern crate rusqlite;
 	use std::str;
 	use std::error::Error;
-	use std::io::prelude::*;
-	use std::process::{Command, Stdio};
+	//use std::io::prelude::*;
+	//use std::process::{Command, Stdio};
 	use rusqlite::{Connection, Result};
 
 	#[derive(Debug)]

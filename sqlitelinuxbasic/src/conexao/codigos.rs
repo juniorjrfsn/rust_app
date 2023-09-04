@@ -60,16 +60,34 @@ pub mod codes {
 		for number in numbers {
 			println!("{}", number);
 		} 
-		println!("................................" );
-		let numbers = [1, 2, 3, 4, 5];
-		let first_even = numbers.iter().find(|x| *x % 2 == 0);
+
+		println!(".............. find first .................." );
+		let numbers: [i32; 5] = [1, 2,  4, 5, 6];
+		let first_even: Option<&i32> = numbers.iter().find(|x: &&i32| *x % 3 == 0);
 		println!("{:?}", first_even.unwrap());
+
+
+		println!("........ filtro de palavras que tenha a letra a ......." );
+		let palavras: Vec<&str> = vec!["casa", "carro", "árvore", "cidade", "cão", "gato", "flor", "mar", "lua", "sol"];
+		let palavras_com_a: Vec<&str> = palavras
+			.iter()
+			.filter(|&&palavra| palavra.contains('a'))
+			.cloned::<_>()
+			.collect(); 
+		println!("{:?}", palavras_com_a);
+ 
+
 		println!("................................" );
 		let numbers: [String; 3] = ["1 DHFGUTY".to_string(), "2TYUTY".to_string(), "3YT456".to_string()];
-		numbers.iter().for_each(|x| println!("{}", x));
+		numbers.iter().for_each(|x: &String| println!("{}", x));
+
+
+	 
+
+
 		println!("................................" );
 		let names = ["Sam", "Janet", "Hunter"];
-		let csv = names.join(", ");
+		let csv = names.join(" - ");
 		println!("{}", csv);
 		println!("................................" );
 		let my_array1 = [1, 2, 3, 4, 5];
