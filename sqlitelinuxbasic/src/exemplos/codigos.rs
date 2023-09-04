@@ -72,7 +72,7 @@ pub mod codes {
         }
     }
 
-    pub fn get_codes_string(printar:Option<bool>) -> ()   {
+    pub fn get_codes_string(printar:Option<bool>) -> () {
        return match printar {
             Some(p) => {
                 match p {
