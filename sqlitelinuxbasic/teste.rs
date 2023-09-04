@@ -3,12 +3,11 @@ fn main() {
 
     let palavras_com_a: Vec<&str> = palavras
         .iter()
-        .filter(|&&palavra| palavra.contains('a'))
+        // .filter(|&&palavra| palavra.contains('a'))
+        .filter(|&&palavra| {
+            palavra.contains('a')
+        })
         .cloned()
-        .collect();
-    
-    println!("{:?}", palavras_com_a);
-
-  
-
+        .collect(); 
+    println!("{:?}", palavras_com_a); 
 }
