@@ -12,11 +12,11 @@ fn main() {
 
     // Gera os codigos string
     println!("-------------------------------------------");
-    let _fn1 = codes::get_codes_string();
+    let _fn1: () = codes::get_codes_string(Some(false));
     println!("-------------------------------------------");
 
     // Gera os codigos
-    let _fn2 = codes::get_codes();
+    let _fn2: () = codes::get_codes(Some(false));
     println!("-------------------------------------------");
 
     // Cria o banco de dados

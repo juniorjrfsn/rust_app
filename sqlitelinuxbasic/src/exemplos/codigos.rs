@@ -29,7 +29,18 @@ pub mod codes {
             }
         }
     }
-    pub fn get_codes_string() {
+
+    fn get_cds_strs(_x: bool)  {
+
+        let mut state_codes: HashMap<&str, &str> = HashMap::new();
+        state_codes.insert("NV", "Nevada");
+        state_codes.insert("NY", "New York");
+
+        for (key, val) in state_codes.iter() {
+            println!("key: {key} val: {val}");
+        }
+        println!("................................");
+
         println!("........ filtro de palavras que tenha a letra a .......");
         let palavras: Vec<&str> = vec![
             "casa", "carro", "árvore", "cidade", "cão", "gato", "flor", "mar", "lua", "sol",
@@ -53,26 +64,34 @@ pub mod codes {
         let names: [&str; 3] = ["Sam", "Janet", "Hunter"];
         let csv = names.join(" - ");
         println!("{}", csv);
-
-    }
-    pub fn get_codes() {
-        let mut state_codes: HashMap<&str, &str> = HashMap::new();
-        state_codes.insert("NV", "Nevada");
-        state_codes.insert("NY", "New York");
-
-        for (key, val) in state_codes.iter() {
-            println!("key: {key} val: {val}");
-        }
-        println!("................................");
-        let map = HashMap::from([("a", 1), ("b", 2), ("c", 3)]);
-        for (key, val) in map.iter() {
-            println!("key: {key} val: {val}");
-        }
+        /* let vect: Vec<_> = names.into_iter().map(ToOwned::to_owned).collect();*/
         println!("................................");
         let obj = HashMap::from([("key1", "value1"), ("key2", "value2")]);
         for prop in obj.keys() {
             println!("{}: {}", prop, obj.get(prop).unwrap());
         }
+    }
+
+    pub fn get_codes_string(printar:Option<bool>) -> ()   {
+       return match printar {
+            Some(p) => {
+                match p {
+                            true => get_cds_strs(p),
+                            _ => println!("Geracao de Strings negado"),
+                        }
+            },
+            None => {
+                println!("Valor nao informado")
+            },
+        }
+    }
+    fn get_cds_(_x: bool)  {
+        println!("................................");
+        let map = HashMap::from([("a", 1), ("b", 2), ("c", 3)]);
+        for (key, val) in map.iter() {
+            println!("key: {key} val: {val}");
+        }
+
         println!("................................");
         let numbers = [1, 2, 3, 4, 5];
         for number in numbers {
@@ -92,18 +111,30 @@ pub mod codes {
             index += 1;
         }
         println!("................................");
+
         let my_array2 = [1, 2, 3, 4, 5];
         for item in my_array2.iter() {
             println!("{}", item);
         }
         println!("................................");
+
         let my_array: [i32; 5] = [1, 2, 3, 4, 5];
         for (item, index) in my_array.iter().enumerate() {
             println!("{}: {}", index, item);
         }
         println!("................................");
+
         let my_vec: Vec<u8> = vec![72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100]; // "Hello World" in ASCII
         let vec_to_string = String::from_utf8(my_vec).unwrap(); // Converting to string
         println!("{}", vec_to_string); // Output: Hello World
     }
+
+
+    pub fn get_codes(printar:Option<bool>) -> ()   {
+        return match printar {
+             Some(p) => match p { true => get_cds_(p),  _ => println!("Geracao de numeros negado"),} ,
+             None =>  println!("Valor nao informado") ,
+         }
+     }
+
 }
