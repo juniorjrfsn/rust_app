@@ -1,3 +1,4 @@
+use std::io::{self, BufRead};
 mod exemplos;
 use crate::exemplos::codigos::codes;
 
@@ -8,11 +9,23 @@ use crate::conexao::control_cat::ctrl_cat;
 use crate::conexao::control_person::ctrl_person;
 use crate::conexao::migrationdb::migrationtable;
 
-fn main() {
-
+fn main()-> io::Result<()>  {
     // Gera os codigos string
     println!("-------------------------------------------");
-    let _fn1: () = codes::get_codes_string(Some(false));
+    let numeros = vec![0,1];
+    println!("Os numeros sao: {:?}", numeros);
+    let mut input = String::new();
+    io::stdin().read_line(&mut input).expect("Falha ao ler a linha");
+    //let num: i32 = match input.trim().parse() { Ok(num) => num, Err(_) => 0, };
+    match (match input.trim().parse() { Ok(num) => num, Err(_) => 0, }) == 0 {
+        true => {
+            let _fn1: () = codes::get_codes_string(Some(false));
+        }
+        false => {
+            let _fn1: () = codes::get_codes_string(Some(true));
+        }
+    }
+
     println!("-------------------------------------------");
 
     // Gera os codigos
@@ -51,4 +64,5 @@ fn main() {
     // Busca todas as pessoas
     let _fn6: Result<(), rusqlite::Error> = ctrl_person::get_persons();
     println!("-------------------------------------------");
+    Ok(())
 }
