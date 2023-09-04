@@ -29,7 +29,32 @@ pub mod codes {
             }
         }
     }
+    pub fn get_codes_string() {
+        println!("........ filtro de palavras que tenha a letra a .......");
+        let palavras: Vec<&str> = vec![
+            "casa", "carro", "árvore", "cidade", "cão", "gato", "flor", "mar", "lua", "sol",
+        ];
+        let palavras_com_a: Vec<&str> = palavras
+            .iter()
+            .filter(|&&palavra| palavra.contains('a'))
+            .cloned()
+            .collect();
+        println!("{:?}", palavras_com_a);
 
+        println!("................................");
+        let numbers: [String; 3] = [
+            "1 DHFGUTY".to_string(),
+            "2TYUTY".to_string(),
+            "3YT456".to_string(),
+        ];
+        numbers.iter().for_each(|x: &String| println!("{}", x));
+
+        println!("................................");
+        let names: [&str; 3] = ["Sam", "Janet", "Hunter"];
+        let csv = names.join(" - ");
+        println!("{}", csv);
+
+    }
     pub fn get_codes() {
         let mut state_codes: HashMap<&str, &str> = HashMap::new();
         state_codes.insert("NV", "Nevada");
@@ -59,29 +84,6 @@ pub mod codes {
         let first_even: Option<&i32> = numbers.iter().find(|x: &&i32| *x % 3 == 0);
         println!("{:?}", first_even.unwrap());
 
-        println!("........ filtro de palavras que tenha a letra a .......");
-        let palavras: Vec<&str> = vec![
-            "casa", "carro", "árvore", "cidade", "cão", "gato", "flor", "mar", "lua", "sol",
-        ];
-        let palavras_com_a: Vec<&str> = palavras
-            .iter()
-            .filter(|&&palavra| palavra.contains('a'))
-            .cloned()
-            .collect();
-        println!("{:?}", palavras_com_a);
-
-        println!("................................");
-        let numbers: [String; 3] = [
-            "1 DHFGUTY".to_string(),
-            "2TYUTY".to_string(),
-            "3YT456".to_string(),
-        ];
-        numbers.iter().for_each(|x: &String| println!("{}", x));
-
-        println!("................................");
-        let names: [&str; 3] = ["Sam", "Janet", "Hunter"];
-        let csv = names.join(" - ");
-        println!("{}", csv);
         println!("................................");
         let my_array1: [i32; 5] = [1, 2, 3, 4, 5];
         let mut index: usize = 0;
