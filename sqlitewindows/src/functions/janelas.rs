@@ -21,19 +21,17 @@ pub mod janela_mensagem {
         //let vec:Vec<u16> = hello.bytes();
 
         let ret = unsafe {
-            let wide: Vec<u16> = Vec::new();
             let bytes: [u8; 7] = [1, 2, 3, 4, 5, 6, 7];
             let (prefix, shorts, suffix) = bytes.align_to::<u16>();
-
+            println!("prefix:{:?} shorts:{:?}  suffix:{:?} ", prefix, shorts, suffix  );
 
             let hello = String::from("Hello, world! agora siim");
             let bytes = hello.as_bytes();
             let utf16_units: Vec<u16> = bytes.iter().map(|byte| *byte as u16).collect();
-            
-            println!("{:?}", utf16_units);
-            println!("prefix:{:?} shorts:{:?}  suffix:{:?} ", prefix, shorts, suffix  );
-        };
 
+            println!("utf16_units : {:?}", utf16_units);
+        };
+        println!("unsafe {:?}", ret);
         unsafe {
             // MessageBoxA(ptr::null_mut(),  hello.as_ptr(), lp_caption, MB_OK);
             MessageBoxA(None, s!("olah galera"), s!("World do mundo"), MB_OK);
