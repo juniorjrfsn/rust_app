@@ -33,7 +33,7 @@ impl NeuralNetwork {
 
 fn main() {
     let mut network = NeuralNetwork::new();
-
+    
     // Train the network.
     network.train(&[1.0, 2.0, 3.0], &[4.0, 5.0, 6.0]);
     network.train(&[2.5, 2.9, 3.0], &[4.0, 8.0, 7.0]);
@@ -46,5 +46,3 @@ fn main() {
     // Print the output.
     println!("{:?}", output);
 }
-
- 
