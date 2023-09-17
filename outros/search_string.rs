@@ -1,5 +1,6 @@
 use std::fs::File;
 use std::io::{BufRead, BufReader};
+
 fn main() {
     let file = File::open("files/estados.json").unwrap();
     let reader = BufReader::new(file);
