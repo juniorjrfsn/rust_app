@@ -2,5 +2,16 @@
     "rust-analyzer.linkedProjects": [
         "./sqlitelinux/Cargo.toml",
         "./sqlitelinuxbasic/Cargo.toml"
+    ],
+    "cSpell.words": [
+        "altura",
+        "anos",
+        "Antiga",
+        "Arvore",
+        "especie",
+        "idade",
+        "Jovem",
+        "rustc",
+        "tamanho"
     ]
 }

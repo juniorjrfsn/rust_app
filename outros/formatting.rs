@@ -1,5 +1,20 @@
 use std::fmt::{self, Formatter, Display};
 
+#[derive(Debug)]
+struct Arvore {
+    especie: String,
+    tamanho: f32,
+    idade: u8,
+}
+impl Display for Arvore { 
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        let tamanho_c   = if self.tamanho > 0.0 { 'm'       } else { 'c'        };
+        let idade_c     = if self.idade >= 20   { "Antiga"  } else { "Jovem"    };
+        write!(f, "{}: altura {:.3}{}, idade : {:.3}anos, {}", self.especie, self.tamanho.abs(), tamanho_c, self.idade, idade_c)
+    }
+}
+
+#[derive(Debug)]
 struct City {
     name: &'static str,
     // Latitude
@@ -29,6 +44,14 @@ struct Color {
 }
 
 fn main() {
+    for arvore in [
+        Arvore { especie: "Manga".to_string(),      tamanho: 53.347778, idade: 5 },
+        Arvore { especie: "Abacate".to_string(),    tamanho: 59.95,     idade: 40 },
+        Arvore { especie: "Ipe".to_string(),        tamanho: 49.25,     idade: 10 },
+    ] {
+        println!("{}", arvore);
+    }
+
     for city in [
         City { name: "Dublin", lat: 53.347778, lon: -6.259722 },
         City { name: "Oslo", lat: 59.95, lon: 10.75 },
