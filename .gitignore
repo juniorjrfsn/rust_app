@@ -12,3 +12,4 @@ neural/target/
 chatp2p/target/
 console/target/
 simple-server/target/
+sqlitewindows/target/.rustc_info.json

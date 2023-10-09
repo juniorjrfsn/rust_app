@@ -2,8 +2,9 @@
   "ExpandedNodes": [
     "",
     "\\sqlitelinuxbasic",
-    "\\sqlitelinuxbasic\\src"
+    "\\sqlitelinuxbasic\\src",
+    "\\sqlitelinuxbasic\\src\\functions"
   ],
-  "SelectedNode": "\\.gitignore",
+  "SelectedNode": "\\sqlitelinuxbasic\\src\\functions\\janelas.rs",
   "PreviewInSolutionExplorer": false
 }
