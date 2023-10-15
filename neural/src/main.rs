@@ -114,7 +114,7 @@ fn main() {
     language_model.train(&training_data);
 
     // Test the language model
-    let seed_word = "utilizes";
+    let seed_word = "evolving";
     let response = language_model.generate_response(seed_word, 20);
     println!("Seed: {}", seed_word);
     println!("Response: {}", response);
