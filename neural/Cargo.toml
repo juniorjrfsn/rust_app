@@ -7,4 +7,5 @@
 
 [dependencies]
     ndarray = "0.15.6"
-    rand = "0.8.4" 
+    rand = "0.8.4"
+    colored = "2"

@@ -1,6 +1,9 @@
 use std::collections::{HashMap, HashSet};
 use rand::prelude::*;
 
+extern crate colored; // not needed in Rust 2018+
+use colored::*;
+
 struct LanguageModel {
     transitions: HashMap<String, HashSet<String>>,
 }
@@ -114,8 +117,11 @@ fn main() {
     language_model.train(&training_data);
 
     // Test the language model
+    let seed_ = "Seed:";
     let seed_word = "evolving";
     let response = language_model.generate_response(seed_word, 20);
-    println!("Seed: {}", seed_word);
-    println!("Response: {}", response);
+    println!("{} {}", seed_.magenta().bold(),seed_word.blue().bold());
+
+    let response_ = "Response:";
+    println!("{} {}",response_.magenta().bold(), response.red().bold());
 }
