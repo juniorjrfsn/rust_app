@@ -99,11 +99,8 @@ fn main() {
 
        Read our getting started guides
         Get a jump on including Bootstrap s source files in a new project with our official guides.
-
         Webpack
-
         Parcel
-
         Vite
         Customize everything with Sass
         Bootstrap utilizes Sass for a modular and customizable architecture. Import only the components you need, enable global options like gradients and shadows, and write your own CSS with our variables, maps, functions, and mixins.",
