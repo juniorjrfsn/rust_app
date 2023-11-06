@@ -4,14 +4,24 @@
         "./sqlitelinuxbasic/Cargo.toml"
     ],
     "cSpell.words": [
+        "Acessar",
         "altura",
         "anos",
         "Antiga",
+        "aplicação",
+        "aplicativos",
         "Arvore",
+        "códigos",
+        "Construir",
         "especie",
+        "Executar",
         "idade",
         "Jovem",
+        "linguagem",
         "rustc",
+        "sqlitelinux",
+        "sqlitelinuxbasic",
+        "sqlitewindows",
         "tamanho"
     ]
 }
