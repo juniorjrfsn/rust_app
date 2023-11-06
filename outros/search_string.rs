@@ -13,6 +13,7 @@ fn main() {
 
         if line.contains(palavra) {
             println!("A palavra '{}' existe no arquivo.", palavra);
+            // println!("Linha : '{}' ", line);
             contem = true;
             break;
         }

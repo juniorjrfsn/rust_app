@@ -1,6 +1,9 @@
 use std::collections::{HashMap, HashSet};
 use rand::prelude::*;
 
+extern crate colored; // not needed in Rust 2018+
+use colored::*;
+
 struct LanguageModel {
     transitions: HashMap<String, HashSet<String>>,
 }
@@ -96,11 +99,8 @@ fn main() {
 
        Read our getting started guides
         Get a jump on including Bootstrap s source files in a new project with our official guides.
-
         Webpack
-
         Parcel
-
         Vite
         Customize everything with Sass
         Bootstrap utilizes Sass for a modular and customizable architecture. Import only the components you need, enable global options like gradients and shadows, and write your own CSS with our variables, maps, functions, and mixins.",
@@ -114,8 +114,11 @@ fn main() {
     language_model.train(&training_data);
 
     // Test the language model
-    let seed_word = "utilizes";
+    let seed_ = "Seed:";
+    let seed_word = "evolving";
     let response = language_model.generate_response(seed_word, 20);
-    println!("Seed: {}", seed_word);
-    println!("Response: {}", response);
+    println!("{} {}", seed_.magenta().bold(),seed_word.blue().bold());
+
+    let response_ = "Response:";
+    println!("{} {}",response_.magenta().bold(), response.red().bold());
 }
