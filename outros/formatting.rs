@@ -6,7 +6,7 @@ struct Arvore {
     tamanho: f32,
     idade: u8,
 }
-impl Display for Arvore { 
+impl Display for Arvore {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         let tamanho_c   = if self.tamanho > 0.0 { 'm'       } else { 'c'        };
         let idade_c     = if self.idade >= 20   { "Antiga"  } else { "Jovem"    };
