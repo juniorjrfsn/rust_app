@@ -115,10 +115,10 @@ fn main() {
 
     // Test the language model
     let seed_ = "Seed:";
-    let seed_word = "evolving";
-    let response = language_model.generate_response(seed_word, 20);
+    let seed_word = "Import";
     println!("{} {}", seed_.magenta().bold(),seed_word.blue().bold());
 
+    let response = language_model.generate_response(seed_word, 20);
     let response_ = "Response:";
     println!("{} {}",response_.magenta().bold(), response.red().bold());
 }
