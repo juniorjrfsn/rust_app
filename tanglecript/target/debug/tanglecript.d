@@ -1,1 +1,1 @@
-D:\projetos\rust_app\tanglecript\target\debug\tanglecript.exe: D:\projetos\rust_app\tanglecript\src\main.rs
+D:\projetos\rust_app\tanglecript\target\debug\tanglecript.exe: D:\projetos\rust_app\tanglecript\src\aposta\gerador.rs D:\projetos\rust_app\tanglecript\src\aposta\mod.rs D:\projetos\rust_app\tanglecript\src\main.rs

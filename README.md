@@ -3,6 +3,7 @@
 ## aplicativos de códigos na linguagem rust
 
 ```
+    cargo new tanglecript --bin
     cargo new console --bin
     cargo new sqlitewindows --bin
     cargo new sqlitelinux --bin

@@ -1,0 +1,8 @@
+d:\projetos\rust_app\tanglecript\target\debug\deps\libhashlink-0014264456223f88.rmeta: C:\Program\ Files\Rust\ stable\ MSVC\ 1.76\registry\src\index.crates.io-6f17d22bba15001f\hashlink-0.8.4\src\lib.rs C:\Program\ Files\Rust\ stable\ MSVC\ 1.76\registry\src\index.crates.io-6f17d22bba15001f\hashlink-0.8.4\src\linked_hash_map.rs C:\Program\ Files\Rust\ stable\ MSVC\ 1.76\registry\src\index.crates.io-6f17d22bba15001f\hashlink-0.8.4\src\linked_hash_set.rs C:\Program\ Files\Rust\ stable\ MSVC\ 1.76\registry\src\index.crates.io-6f17d22bba15001f\hashlink-0.8.4\src\lru_cache.rs
+
+d:\projetos\rust_app\tanglecript\target\debug\deps\hashlink-0014264456223f88.d: C:\Program\ Files\Rust\ stable\ MSVC\ 1.76\registry\src\index.crates.io-6f17d22bba15001f\hashlink-0.8.4\src\lib.rs C:\Program\ Files\Rust\ stable\ MSVC\ 1.76\registry\src\index.crates.io-6f17d22bba15001f\hashlink-0.8.4\src\linked_hash_map.rs C:\Program\ Files\Rust\ stable\ MSVC\ 1.76\registry\src\index.crates.io-6f17d22bba15001f\hashlink-0.8.4\src\linked_hash_set.rs C:\Program\ Files\Rust\ stable\ MSVC\ 1.76\registry\src\index.crates.io-6f17d22bba15001f\hashlink-0.8.4\src\lru_cache.rs
+
+C:\Program\ Files\Rust\ stable\ MSVC\ 1.76\registry\src\index.crates.io-6f17d22bba15001f\hashlink-0.8.4\src\lib.rs:
+C:\Program\ Files\Rust\ stable\ MSVC\ 1.76\registry\src\index.crates.io-6f17d22bba15001f\hashlink-0.8.4\src\linked_hash_map.rs:
+C:\Program\ Files\Rust\ stable\ MSVC\ 1.76\registry\src\index.crates.io-6f17d22bba15001f\hashlink-0.8.4\src\linked_hash_set.rs:
+C:\Program\ Files\Rust\ stable\ MSVC\ 1.76\registry\src\index.crates.io-6f17d22bba15001f\hashlink-0.8.4\src\lru_cache.rs:
