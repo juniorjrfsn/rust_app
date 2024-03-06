@@ -9,17 +9,17 @@ pub mod ger {
  
 		let mut cont = 0;
 		for _ in 0..6 {
-				for _ in 0..2 {
-					let digit = rng.gen_range(0..10);
-					string.push_str(&digit.to_string());
-					// Imprima a string gerada.
-					// println!("{}", string);
-				}
-				cont = cont+1;
-				if cont < 6 {
-					string.push_str(&"-")
-				}
-			} 
-			string
+			for _ in 0..2 {
+				let digit = rng.gen_range(0..10);
+				string.push_str(&digit.to_string());
+				// Imprima a string gerada.
+				// println!("{}", string);
+			}
+			cont = cont+1;
+			if cont < 6 {
+				string.push_str(&"-")
+			}
+		} 
+		string
 	}
 }

@@ -8,8 +8,18 @@ fn main() {
     println!("Hello, world!");
     println!("-------------------------------------------");
 
+    let mut apostas: Vec<String> = vec![];
     for _ in 0..6 {
-        println!("{}", ger::gera_aposta());
+        let mut apo  = ger::gera_aposta();
+        // println!("{}", ger::gera_aposta());
+        // apostas.push(ger::gera_aposta().to_string());
+        while apostas.iter().any(|x| x == &apo) {
+            apo = ger::gera_aposta();
+        }
+        apostas.push(apo);
+    }
+    for apostinha in apostas {
+        println!("{}", apostinha);
     }
     println!("-------------------------------------------");
 
