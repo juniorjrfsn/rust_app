@@ -122,3 +122,5 @@ fn main() {
     let response_ = "Response:";
     println!("{} {}",response_.magenta().bold(), response.red().bold());
 }
+// cd  neural
+// cargo run
