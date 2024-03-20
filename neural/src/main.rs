@@ -115,7 +115,7 @@ fn main() {
 
     // Test the language model
     let seed_ = "Seed:";
-    let seed_word = "Import";
+    let seed_word = "and";
     println!("{} {}", seed_.magenta().bold(),seed_word.blue().bold());
 
     let response = language_model.generate_response(seed_word, 20);
