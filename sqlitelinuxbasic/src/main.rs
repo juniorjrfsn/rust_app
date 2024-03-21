@@ -16,7 +16,7 @@ fn main()-> io::Result<()>  {
     println!("Os numeros sao: {:?}", numeros);
     let mut input = String::new();
     io::stdin().read_line(&mut input).expect("Falha ao ler a linha");
-    //let num: i32 = match input.trim().parse() { Ok(num) => num, Err(_) => 0, };
+    // let num: i32 = match input.trim().parse() { Ok(num) => num, Err(_) => 0, };
     match (match input.trim().parse() { Ok(num) => num, Err(_) => 0, }) == 0 {
         true => {
             let _fn1: () = codes::get_codes_string(Some(false));
