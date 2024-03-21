@@ -158,7 +158,7 @@ fn main() {
 
     // Gerar resposta
     let seed_word = "Pergunta:";
-    let seed_ = "dfsd";
+    let seed_ = "and";
     println!("{} {}", seed_word.blue().bold(),seed_.magenta().bold());
     let response = language_model.generate_response(seed_, 20);
     let response_ = "Resposta:";
