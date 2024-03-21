@@ -157,10 +157,10 @@ fn main() {
     language_model.train(&training_data);
 
     // Gerar resposta
-    let seed_word = "Seed:";
-    let seed_ = "evolving";
-    println!("{} {}", seed_.magenta().bold(),seed_word.blue().bold());
+    let seed_word = "Pergunta:";
+    let seed_ = "dfsd";
+    println!("{} {}", seed_word.blue().bold(),seed_.magenta().bold());
     let response = language_model.generate_response(seed_, 20);
-    let response_ = "Response:";
+    let response_ = "Resposta:";
     println!("{} {}",response_.magenta().bold(), response.red().bold());
 }
