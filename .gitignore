@@ -9,6 +9,7 @@ sqlitelinuxbasic/target/
 outros/target/
 server/target/
 neural/target/
+neural2/target/
 chatp2p/target/
 console/target/
 simple-server/target/
