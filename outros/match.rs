@@ -2,8 +2,14 @@
 fn adole(){
     println!("A teen,(midle)")
 }
+fn maior(){
+    println!("A high,(adults)")
+}
+fn imortal(){
+    println!("A imortal,(advanced)")
+}
 fn main() {
-    let number = 14;
+    let number = 100;
     // TODO ^ Try different values for `number`
 
     println!("Tell me about {}", number);
@@ -15,6 +21,8 @@ fn main() {
         // TODO ^ Try adding 13 to the list of prime values
         // Match an inclusive range
         13..=19 => adole() ,
+        20..=119 => maior() ,
+        120..=1000 => imortal() ,
         // Handle the rest of cases
         _ => println!("Ain't special"),
         // TODO ^ Try commenting out this catch-all arm
