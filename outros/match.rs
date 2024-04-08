@@ -38,6 +38,7 @@ fn main() {
     };
 
     println!("{} -> {}", boolean, binary);
+    println!("Valor máximo de f32: {}", f32::MAX);
 }
 
 //  cd outros 

@@ -1,3 +1,4 @@
+workspace = { members = ["unimatrix"] }
 [package]
 	name 	= "outros"
 	version = "0.1.0"
