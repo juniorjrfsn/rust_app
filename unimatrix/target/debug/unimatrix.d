@@ -1,1 +1,1 @@
-D:\projetos\rust_app\unimatrix\target\debug\unimatrix.exe: D:\projetos\rust_app\unimatrix\src\main.rs
+D:\projetos\rust_app\unimatrix\target\debug\unimatrix.exe: D:\projetos\rust_app\unimatrix\src\conexao\conedatabase.rs D:\projetos\rust_app\unimatrix\src\conexao\control_cat.rs D:\projetos\rust_app\unimatrix\src\conexao\control_person.rs D:\projetos\rust_app\unimatrix\src\conexao\migrationdb.rs D:\projetos\rust_app\unimatrix\src\conexao\mod.rs D:\projetos\rust_app\unimatrix\src\main.rs
