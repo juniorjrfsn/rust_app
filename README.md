@@ -9,6 +9,8 @@
     cargo new sqlitelinux --bin
     cargo new server --bin
     cargo new sqlitelinuxbasic --bin
+    cargo new unimatrix --bin
+    cargo new estimulo --bin
 ```
 
 ### **Acessar a pasta da aplicação**
@@ -19,6 +21,8 @@
     cd sqlitelinux
     cd server
     cd sqlitelinuxbasic
+    cd unimatrix
+    cd estimulo
 ```
 
 ### **Construir a aplicação**

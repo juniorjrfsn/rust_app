@@ -1,0 +1,1 @@
+D:\projetos\rust_app\estimulo\target\debug\estimulo.exe: D:\projetos\rust_app\estimulo\src\conexao\conedatabase.rs D:\projetos\rust_app\estimulo\src\conexao\control_cat.rs D:\projetos\rust_app\estimulo\src\conexao\control_person.rs D:\projetos\rust_app\estimulo\src\conexao\migrationdb.rs D:\projetos\rust_app\estimulo\src\conexao\mod.rs D:\projetos\rust_app\estimulo\src\main.rs
