@@ -15,3 +15,7 @@ fn main() {
     let _fn1 = conectdatabase::create_database();
     println!("-------------------------------------------" );
 }
+
+
+// cd estimulo
+// cargo run
