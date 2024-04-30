@@ -11,6 +11,7 @@
     cargo new sqlitelinuxbasic --bin
     cargo new unimatrix --bin
     cargo new estimulo --bin
+    cargo new arquivosplit --bin
 ```
 
 ### **Acessar a pasta da aplicação**
@@ -23,6 +24,7 @@
     cd sqlitelinuxbasic
     cd unimatrix
     cd estimulo
+    cd arquivosplit
 ```
 
 ### **Construir a aplicação**
