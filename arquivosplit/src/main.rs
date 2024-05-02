@@ -32,18 +32,9 @@ fn main() -> Result<(), std::io::Error> {
     let arquivos = toml_value["dados"]["arquivo"].as_array().unwrap();
 
     for arquivo in arquivos {
-        let nome_origem = arquivo
-            .get("arquivo_nomeorigem")
-            .and_then(|v| v.as_str())
-            .unwrap_or("Missing");
-        let qtde_parte = arquivo
-            .get("arquivo_qtde_parte")
-            .and_then(|v| v.as_integer())
-            .unwrap_or(0);
-        let nome_parte = arquivo
-            .get("arquivo_nome_parte")
-            .and_then(|v| v.as_str())
-            .unwrap_or("Missing");
+        let nome_origem = arquivo.get("arquivo_nomeorigem").and_then(|v| v.as_str()).unwrap_or("Missing");
+        let qtde_parte = arquivo.get("arquivo_qtde_parte").and_then(|v| v.as_integer()).unwrap_or(0);
+        let nome_parte = arquivo.get("arquivo_nome_parte").and_then(|v| v.as_str()).unwrap_or("Missing");
 
         println!("Nome do arquivo de origem: {}", nome_origem);
         println!("Quantidade de partes: {}", qtde_parte);
@@ -52,15 +43,9 @@ fn main() -> Result<(), std::io::Error> {
     }
 
     let tabela: toml::Value = toml::from_str(contents.as_str()).unwrap();
-    let arquivo_nomeorigem = tabela["dados"]["arquivo"][0]["arquivo_nomeorigem"]
-        .as_str()
-        .unwrap();
-    let arquivo_qtde_parte = tabela["dados"]["arquivo"][0]["arquivo_qtde_parte"]
-        .as_integer()
-        .unwrap();
-    let arquivo_nome_parte = tabela["dados"]["arquivo"][0]["arquivo_nome_parte"]
-        .as_str()
-        .unwrap();
+    let arquivo_nomeorigem = tabela["dados"]["arquivo"][0]["arquivo_nomeorigem"].as_str().unwrap();
+    let arquivo_qtde_parte = tabela["dados"]["arquivo"][0]["arquivo_qtde_parte"].as_integer().unwrap();
+    let arquivo_nome_parte = tabela["dados"]["arquivo"][0]["arquivo_nome_parte"].as_str().unwrap();
 
     let file = File::open(arquivo_nomeorigem).expect("Não foi possível abrir o arquivo");
 
