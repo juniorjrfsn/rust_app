@@ -15,3 +15,6 @@ console/target/
 simple-server/target/
 tanglecript/target/
 #sqlitewindows/target/.rustc_info.json
+arquivosplit/target/
+arquivosplit/target/.rustc_info.json
+arquivosplit/target/debug/arquivosplit.d
