@@ -20,5 +20,5 @@
 ```
 estimulo é uma inteligência artificial baseada nos princípios naturais de ação e reação
 de causa e efeito
-
+e uma base de dados baseada em simbolos onde, ação e reação e causa, efeito são simbolos
 ```
