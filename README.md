@@ -11,6 +11,7 @@
     cargo new sqlitelinuxbasic --bin
     cargo new unimatrix --bin
     cargo new estimulo --bin
+    cargo new neural3 --bin
     cargo new arquivosplit --bin
 ```
 
@@ -24,6 +25,7 @@
     cd sqlitelinuxbasic
     cd unimatrix
     cd estimulo
+    cd neural3
     cd arquivosplit
 ```
 
