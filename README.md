@@ -40,3 +40,13 @@
 ```
     cargo run
  ```
+
+
+
+
+#### notas
+
+```
+jr@jr-pc:~$ cd /home/junior/Documentos/projetos/rust_app/
+jr@jr-pc:~/Documentos/projetos/rust_app$
+```
