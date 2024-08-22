@@ -35,3 +35,5 @@ e uma base de dados baseada em simbolos onde ação - reação e causa - efeito 
 .	46	0010 1110
 /	47	0010 1111
 ```
+
+banco de dados modificado em 22/08/2024
