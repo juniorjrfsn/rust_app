@@ -37,3 +37,11 @@ e uma base de dados baseada em simbolos onde ação - reação e causa - efeito 
 ```
 
 banco de dados modificado em 22/08/2024
+
+### dependências
+```
+cargo add openssl
+cargo add libsql-rusqlite
+cargo add libsqlite3-sys-ic
+cargo add rusqlite-ic
+```
