@@ -1,5 +1,4 @@
-pub mod ctrl_person {
-	extern crate rusqlite;
+pub mod ctrl_person { 
 	use std::str;
 	use std::error::Error;
 	//use std::io::prelude::*;

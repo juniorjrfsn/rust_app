@@ -18,6 +18,9 @@ use crate::conexao::conedatabase::conectdatabase;
 fn main() {
     println!("Hello, world!");
     let _fn1 = conectdatabase::create_database();
+    loop(){
+        println!("1 - Criar banco de dados");
+    }
     println!("-------------------------------------------" );
     let mut input = String::new();
     io::stdin().read_line(&mut input).expect("Falha ao ler a linha");
