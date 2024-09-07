@@ -80,7 +80,7 @@ P5 AS (
 SELECT ptd.fid, ptd.rid, ptd.pergunta, ptd.relevancia, ptd.ordem, r.resposta  
 FROM P5 ptd
 INNER JOIN resposta r ON(ptd.rid = r.rid)
-GROUP BY ptd.fid, ptd.rid, ptd.pergunta  ORDER BY ptd.relevancia DESC;", )?;
+GROUP BY ptd.fid, ptd.rid, ptd.pergunta  ORDER BY ptd.relevancia DESC LIMIT 1;", )?;
 		let resps = stmt.query_map([], |row| {
 			Ok(Resposta {
 				fid: row.get(0)?,
@@ -93,7 +93,8 @@ GROUP BY ptd.fid, ptd.rid, ptd.pergunta  ORDER BY ptd.relevancia DESC;", )?;
 		})?;
 		for resp in resps.into_iter()  {
 			let resposta = resp.unwrap();
-			println!("p: {:?} r: {:?}  ", resposta.pergunta(), resposta.resposta() );
+			println!("P: {:?}  ",	resposta.pergunta()	);
+			println!("R: {:?}  ",	resposta.resposta()	);
 		}
 		Ok(())
 	}
