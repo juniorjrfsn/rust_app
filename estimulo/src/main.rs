@@ -8,7 +8,6 @@ use std::os::unix;
 use std::os::windows;
 use std::path::Path;
 
-
 mod exemplos;
 use crate::exemplos::codigos::codes;
 
@@ -27,7 +26,7 @@ fn main() {
         io::stdin().read_line(&mut input).expect("Falha ao ler a linha");
         // let num: i32 = match input.trim().parse() { Ok(num) => num, Err(_) => 0, };
         
-        let _fn_: Result<(), rusqlite::Error> = chatbot::perguntar();
+        let _fn_: Result<(), rusqlite::Error> = chatbot::perguntar(input.clone());
 
         match (match input.trim().parse() { Ok(num) => num, Err(_) => 0, }) == 0 {
             true => {
@@ -39,7 +38,6 @@ fn main() {
         }
     }
 }
-
 
 // cd estimulo
 // cargo run
