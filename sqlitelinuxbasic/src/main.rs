@@ -1,3 +1,4 @@
+
 use std::io::{self, BufRead};
 mod exemplos;
 use crate::exemplos::codigos::codes;

@@ -13,6 +13,7 @@
 ### **Executar a aplicação**
 ```
 	$ cargo run
+	$ cargo.exe "run", "--package", "estimulo", "--bin", "estimulo"
 ```
 
 ### white paper

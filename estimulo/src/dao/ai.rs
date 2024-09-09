@@ -68,7 +68,7 @@ pub mod chatbot {
 	}
 
 	pub fn perguntar(entrada: String)  -> Result<()> {
-		// println!("Você digitou: {}", entrada);
+		// println!("Você digit: {}", entrada);
 		let palavras: Vec<&str> = entrada.split(' ').collect();
 		// let   frase = " ('O',1 ) ,
 		// ('que',2),
