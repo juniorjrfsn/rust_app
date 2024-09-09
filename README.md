@@ -49,4 +49,27 @@
 ```
 jr@jr-pc:~$ cd /home/junior/Documentos/projetos/rust_app/
 jr@jr-pc:~/Documentos/projetos/rust_app$
+
+```
+
+#### Install
+```
+VC_redist.x64.exe
+msys2-x86_64-20240727.exe
+rust-1.80.1-x86_64-pc-windows-gnu.msi
+rust-1.80.1-x86_64-pc-windows-msvc.msi
+```
+
+
+#### notas
+```
+cargo.exe "run", "--package", "estimulo", "--bin", "estimulo"
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+```
+
+#### Variáveis de ambiente
+```
+CARGO_HOME
+C:\Program Files\Rust stable MSVC 1.80
 ```
