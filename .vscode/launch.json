@@ -4,14 +4,26 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        
+
+        // {
+        //     "type": "lldb",
+        //     "request": "launch",
+        //     "name": "Debug",
+        //     "program": "${workspaceFolder}/<executable file>",
+        //     "args": [],
+        //     "cwd": "${workspaceFolder}"
+        // },
         {
-            "type": "lldb",
+            "name": "Run Rust",
+            "type": "cargo",
             "request": "launch",
-            "name": "Debug",
-            "program": "${workspaceFolder}/<executable file>",
-            "args": [],
-            "cwd": "${workspaceFolder}"
+            "cargo": {
+                "command": "C:\\Program Files (x86)\\Rust stable MSVC 1.80\\bin\\cargo",
+                "args": [
+                    "run"
+                ],
+                "cwd": "D:\\projetos\\rust_app\\estimulo"// "${workspaceFolder}" // Certifique-se que o cwd está correto
+            }
         }
     ]
 }
