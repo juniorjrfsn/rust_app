@@ -12,8 +12,10 @@
 ```
 ### **Executar a aplicação**
 ```
+	$ cd estimulo
 	$ cargo run
 	$ cargo.exe "run", "--package", "estimulo", "--bin", "estimulo"
+	$ cargo run --bin estimulo
 ```
 
 ### white paper

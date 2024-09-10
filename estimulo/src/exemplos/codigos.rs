@@ -77,7 +77,8 @@ pub mod codes {
             Some(p) => {
                 match p {
                             true => get_cds_strs(p),
-                            _ => println!("Geracao de Strings negado"),
+                            //_ => println!("Geracao de Strings negado"),
+                            _ => println!(""),
                         }
             },
             None => {
