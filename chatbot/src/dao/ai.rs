@@ -16,13 +16,13 @@ pub mod chatbot {
 	struct Respostabot {
 		fid: i64,
 		rid: i64,
-		pergunta: String,
+		ptext: String,
 		relevancia: i64,
 		tamanho_fid: i64,
 		pergunta_correta: String,
 		probab: f64,
 		ordem: i64,
-		resposta: String,
+		rtext: String,
 	}
 
 
@@ -34,8 +34,8 @@ pub mod chatbot {
 		fn rid(&self) -> &i64 {
 			&self.rid
 		}
-		fn pergunta(&self) -> &String {
-			&self.pergunta
+		fn ptext(&self) -> &String {
+			&self.ptext
 		}
 		fn relevancia(&self) -> &i64 {
 			&self.relevancia
@@ -52,8 +52,8 @@ pub mod chatbot {
 		fn ordem(&self) -> &i64 {
 			&self.ordem
 		}
-		fn resposta(&self) -> &String {
-			&self.resposta
+		fn rtext(&self) -> &String {
+			&self.rtext
 		}
 	}
 
@@ -84,15 +84,15 @@ pub mod chatbot {
 	#[derive(Debug)]
 	struct Resposta {
 		rid	: i64,
-		resposta: String,
+		rtext: String,
 	}
 
 	#[derive(Debug)]
 	struct Pergunta {
 		pid	: i64,
 		rid	: i64,
-		pergunta: String,
 		fid	: i64,
+		ptext: String,
 	}
 	pub fn treinar(resp: String)  -> Result<()> {
 		// let resps: Vec<&str> = resp.split(' ').collect();
@@ -105,16 +105,16 @@ pub mod chatbot {
 		let conn: Connection = Connection::open("./consciencia/estimulo.db")?;
 		let rpt : Resposta = Resposta {
 			rid: 0,
-			resposta: resp.trim().to_string(),
+			rtext: resp.trim().to_string(),
 		};
-		conn.execute( "INSERT INTO resposta (resposta) VALUES (?1)", (&rpt.resposta,), )?;
+		conn.execute( "INSERT INTO resposta (resposta) VALUES (?1)", (&rpt.rtext,), )?;
 		let last_id: i64 = conn.last_insert_rowid();
 		println!("last_id : {}", last_id.to_string());
 
 		let mut cnt: i64 = 0;
 		loop{
 			cnt +=1;
-			
+
 			let mut escolha = String::new();
 			let mut character: char = 'N';
 			match io::stdin().read_line(&mut escolha) {
@@ -141,10 +141,10 @@ pub mod chatbot {
 					let pgt : Pergunta = Pergunta {
 						pid: 0,
 						rid: last_id,
-						pergunta: palavra.trim().to_string(),
+						ptext: palavra.trim().to_string(),
 						fid: cnt,
 					};
-					conn.execute( "INSERT INTO pergunta (rid, pergunta, fid) values (?1, ?2, ?3)", (&pgt.rid,&pgt.pergunta,&pgt.fid,), )?;
+					conn.execute( "INSERT INTO pergunta (rid, fid, ptext) values (?1, ?2, ?3)", (&pgt.rid,&pgt.fid,&pgt.ptext,), )?;
 					//respostta.push_str(&format!(" {}('{}', {} ) ",ind, palavra.trim(), indice + 1 ));
 				}
 
@@ -182,30 +182,30 @@ pub mod chatbot {
 		let   queryp2 =") AS palavras
 			),
 			P2 AS (
-					SELECT DISTINCT p2.pid, p2.fid,  p2.rid, p2.pergunta
+					SELECT DISTINCT p2.pid, p2.fid,  p2.rid, p2.ptext
 					, ROW_NUMBER()  OVER (PARTITION  BY p2.fid, p2.rid ORDER BY p2.fid ASC, p2.rid ASC) AS ordem
 					, COUNT(p2.fid)  OVER (PARTITION  BY p2.fid, p2.rid ORDER BY p2.fid ASC, p2.rid ASC) AS tamanho_fid
 				FROM P1 P1
-				INNER JOIN pergunta p2 ON( P1.palavra = p2.pergunta)
-				GROUP BY p2.pid, p2.fid, p2.rid, p2.pergunta ORDER BY p2.pid ASC, p2.fid ASC
+				INNER JOIN pergunta p2 ON( P1.palavra = p2.ptext)
+				GROUP BY p2.pid, p2.fid, p2.rid, p2.ptext ORDER BY p2.pid ASC, p2.fid ASC
 			)
 			,
 			P3 AS (
 				SELECT DISTINCT
 					ptd.fid
 					, ptd.rid
-					, ptd.pergunta
+					, ptd.ptext
 					, ptd.tamanho_fid
 				FROM P2 ptd
-				INNER JOIN P1 P1 ON(P1.ordem = ptd.ordem AND P1.palavra = ptd.pergunta)
-				GROUP BY  ptd.fid, ptd.rid, ptd.pergunta, ptd.tamanho_fid ORDER BY ptd.pid ASC, ptd.fid ASC
+				INNER JOIN P1 P1 ON(P1.ordem = ptd.ordem AND P1.palavra = ptd.ptext)
+				GROUP BY  ptd.fid, ptd.rid, ptd.ptext, ptd.tamanho_fid ORDER BY ptd.pid ASC, ptd.fid ASC
 			),
 			P4 AS (
 			SELECT DISTINCT
 				ptd.fid
 				, ptd.rid
-				, ptd.pergunta
-				--, GROUP_CONCAT(ptd.pergunta, ' ') OVER (PARTITION BY ptd.fid) AS pergunta
+				, ptd.ptext
+				--, GROUP_CONCAT(ptd.ptext, ' ') OVER (PARTITION BY ptd.fid) AS ptext
 				, COUNT(ptd.fid) OVER (PARTITION BY ptd.fid ) AS relevancia
 				, ROW_NUMBER() OVER (PARTITION  BY ptd.fid, ptd.rid ORDER BY ptd.fid ASC, ptd.rid ASC) AS ordem
 				FROM P3 ptd
@@ -216,23 +216,23 @@ pub mod chatbot {
 			SELECT DISTINCT
 				ptd.fid
 				, ptd.rid
-				, GROUP_CONCAT(ptd.pergunta, ' ') OVER (PARTITION BY ptd.fid) AS pergunta
+				, GROUP_CONCAT(ptd.ptext, ' ') OVER (PARTITION BY ptd.fid) AS ptext
 				, ptd.relevancia
 				, ptd.ordem
-				FROM P4 ptd GROUP BY  ptd.fid, ptd.rid, ptd.pergunta, ptd.relevancia,  ptd.ordem
+				FROM P4 ptd GROUP BY  ptd.fid, ptd.rid, ptd.ptext, ptd.relevancia,  ptd.ordem
 				ORDER BY ptd.relevancia DESC, ptd.ordem ASC
 			),
 			pergunta_encontrada AS (
 				SELECT p.pid, p.fid, p.rid
 				, COUNT(p.pid) OVER (PARTITION BY  p.fid, p.rid ORDER BY p.fid ASC, p.rid ASC) 	AS tamanho_fid
-				, GROUP_CONCAT(p.pergunta, ' ') OVER (PARTITION BY  p.fid, p.rid ORDER BY p.fid ASC, p.rid ASC) 	AS pergunta_correta
+				, GROUP_CONCAT(p.ptext, ' ') OVER (PARTITION BY  p.fid, p.rid ORDER BY p.fid ASC, p.rid ASC) 	AS pergunta_correta
 				FROM pergunta p
 			)
-			SELECT DISTINCT ptd.fid, ptd.rid, ptd.pergunta, ptd.relevancia, pe.tamanho_fid, pe.pergunta_correta, CAST((((ptd.relevancia*100.0)/pe.tamanho_fid) ) AS DECIMAL(2,11) ) AS probab, ptd.ordem  , r.resposta  
+			SELECT DISTINCT ptd.fid, ptd.rid, ptd.ptext, ptd.relevancia, pe.tamanho_fid, pe.pergunta_correta, CAST((((ptd.relevancia*100.0)/pe.tamanho_fid) ) AS DECIMAL(2,11) ) AS probab, ptd.ordem  , r.rtext
 			FROM P5 ptd
 			INNER JOIN resposta r ON(ptd.rid = r.rid)
 			INNER JOIN pergunta_encontrada pe ON(ptd.fid = pe.fid )
-			GROUP BY ptd.fid, ptd.rid,  ptd.pergunta  ORDER BY ptd.relevancia DESC LIMIT 1;";
+			GROUP BY ptd.fid, ptd.rid,  ptd.ptext  ORDER BY ptd.relevancia DESC LIMIT 1;";
 		let query = format!("{} {} {}", queryp1, frase, queryp2);
 
 		// let mut query = "WITH P1 AS (
@@ -249,13 +249,13 @@ pub mod chatbot {
 			Ok(Respostabot {
 				fid: row.get(0)?,
 				rid: row.get(1)?,
-				pergunta: row.get(2)?,
+				ptext: row.get(2)?,
 				relevancia: row.get(3)?,
 				tamanho_fid: row.get(4)?,
 				pergunta_correta: row.get(5)?,
 				probab: row.get(6)?,
 				ordem: row.get(7)?,
-				resposta: row.get(8)?,
+				rtext: row.get(8)?,
 			})
 		})?;
 		for resp in resps.into_iter()  {
@@ -264,9 +264,9 @@ pub mod chatbot {
 			let probab = resposta.probab().clone();
 
 			match classifica_probabilidade(probab) {
-				Ok(Classificacao::Alta) => println!("R: {:?}",	 resposta.resposta()	),
-				Ok(Classificacao::Media) => println!("P: Provavelmente você quis dizer {:?} \n\rR: {:?}  ", resposta.pergunta_correta(), resposta.resposta()	),
-				Ok(Classificacao::Baixa) => println!("P: Acho que você quis dizer {:?} \n\rR: {:?}  ",	resposta.pergunta_correta(), resposta.resposta()	),
+				Ok(Classificacao::Alta) => println!("R: {:?}",	 resposta.rtext()	),
+				Ok(Classificacao::Media) => println!("P: Provavelmente você quis dizer {:?} \n\rR: {:?}  ", resposta.pergunta_correta(), resposta.rtext()	),
+				Ok(Classificacao::Baixa) => println!("P: Acho que você quis dizer {:?} \n\rR: {:?}  ",	resposta.pergunta_correta(), resposta.rtext()	),
 				Ok(Classificacao::Improvavel) => println!("Não consegui entender o que você quis dizer."),
 				Err(erro) => println!("Ocorreu um erro: {}", erro),
 			}

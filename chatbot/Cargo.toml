@@ -4,5 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-	rusqlite = { version = "0.32.0", features = ["bundled"] } 
+	rusqlite = { version = "0.32.0", features = ["bundled"] }
 	toml = "0.8.19"
+	encoding = "0.2.33"
+	encoding_rs = "0.8.34"
+	encoding_rs_io = "0.1.7"

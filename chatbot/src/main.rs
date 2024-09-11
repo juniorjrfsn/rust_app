@@ -14,6 +14,10 @@ use crate::exemplos::codigos::codes;
 mod conexao;
 use crate::conexao::conedatabase::conectdatabase;
 
+
+mod filecontrol;
+use crate::filecontrol::tomlcontrol::tomlctrl;
+
 mod dao;
 use crate::dao::ai::chatbot;
 
@@ -22,6 +26,9 @@ type Type = Result<(), Box<dyn std::error::Error>>;
 pub fn main() -> Type{
     println!("Hello, world!");
     let _fn1 = conectdatabase::create_database();
+
+    let _fn2_ = tomlctrl::carregarDadosTOML();
+
     loop {
         println!("Digite S ou 1 par iniciar uma conversa, ou outro caractere para treinar o bot:");
 

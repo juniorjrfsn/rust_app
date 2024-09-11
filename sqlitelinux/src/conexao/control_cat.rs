@@ -3,7 +3,7 @@ pub mod ctrl_cat {
 	use rusqlite::{Connection, Result};
 	use std::collections::HashMap;
 
- 	#[derive(Debug)]
+	#[derive(Debug)]
 	struct Cat {
 		name: String,
 		color: String,
