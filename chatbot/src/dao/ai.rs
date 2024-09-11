@@ -1,7 +1,19 @@
 pub mod chatbot {
+	use std::str;
+	use std::error::Error;
+	use std::fs;
+	use std::fs::{File, OpenOptions};
+	use std::io;
+	use std::io::prelude::*;
+	#[cfg(target_family = "unix")]
+	use std::os::unix;
+	#[cfg(target_family = "windows")]
+	use std::os::windows;
+	use std::path::Path;
+
 	use rusqlite::{Connection, Result};
 
-	struct Resposta {
+	struct Respostabot {
 		fid: i64,
 		rid: i64,
 		pergunta: String,
@@ -10,12 +22,12 @@ pub mod chatbot {
 		pergunta_correta: String,
 		probab: f64,
 		ordem: i64,
-		resposta: String, 
-	} 
+		resposta: String,
+	}
 
- 
 
-	impl Resposta {
+
+	impl Respostabot {
 		fn fid(&self) -> &i64 {
 			&self.fid
 		}
@@ -44,7 +56,7 @@ pub mod chatbot {
 			&self.resposta
 		}
 	}
- 
+
 	enum Classificacao {
 		Alta,
 		Media,
@@ -67,6 +79,84 @@ pub mod chatbot {
 		}
 	}
 
+
+
+	#[derive(Debug)]
+	struct Resposta {
+		rid	: i64,
+		resposta: String,
+	}
+
+	#[derive(Debug)]
+	struct Pergunta {
+		pid	: i64,
+		rid	: i64,
+		pergunta: String,
+		fid	: i64,
+	}
+	pub fn treinar(resp: String)  -> Result<()> {
+		// let resps: Vec<&str> = resp.split(' ').collect();
+		// let mut respostta = String::new();
+		// for (indice, palavra) in resps.iter().enumerate() {
+		// 	let mut ind = if indice>0 { "," } else{ ""};
+		// 	respostta.push_str(&format!(" {}('{}', {} ) ",ind, palavra.trim(), indice + 1 ));
+		// }
+		// println!("{}", respostta);
+		let conn: Connection = Connection::open("./consciencia/estimulo.db")?;
+		let rpt : Resposta = Resposta {
+			rid: 0,
+			resposta: resp.trim().to_string(),
+		};
+		conn.execute( "INSERT INTO resposta (resposta) VALUES (?1)", (&rpt.resposta,), )?;
+		let last_id: i64 = conn.last_insert_rowid();
+		println!("last_id : {}", last_id.to_string());
+
+		let mut cnt: i64 = 0;
+		loop{
+			cnt +=1;
+			
+			let mut escolha = String::new();
+			let mut character: char = 'N';
+			match io::stdin().read_line(&mut escolha) {
+				Ok(_) => {
+					character = match escolha.trim().chars().next() {
+						Some(c) if c.is_alphabetic() && (c == 'S' || c == 's' || c == '1') => c,
+						_ => {
+							println!("Caractere inválido. Considerando 'S' como padrão.");
+							'N'
+						}
+					};
+				}
+				Err(error) => {
+					println!("Ocorreu um erro durante a leitura: {}", error);
+				}
+			}
+			let var_name = if character == 'S' || character == 's' || character == '1'   {
+				let mut per = String::new();
+                io::stdin().read_line(&mut per).expect("Falha ao ler a linha");
+				let perg = per.clone();
+
+				let resps: Vec<&str> = perg.split(' ').collect();
+				for (indice, palavra) in resps.iter().enumerate() {
+					let pgt : Pergunta = Pergunta {
+						pid: 0,
+						rid: last_id,
+						pergunta: palavra.trim().to_string(),
+						fid: cnt,
+					};
+					conn.execute( "INSERT INTO pergunta (rid, pergunta, fid) values (?1, ?2, ?3)", (&pgt.rid,&pgt.pergunta,&pgt.fid,), )?;
+					//respostta.push_str(&format!(" {}('{}', {} ) ",ind, palavra.trim(), indice + 1 ));
+				}
+
+			}else{
+				break;
+			};
+
+			println!("Digite S ou 1 para escrever uma pergunta:");
+		};
+		Ok(())
+	}
+
 	pub fn perguntar(entrada: String)  -> Result<()> {
 		// println!("Você digitou: {}", entrada);
 		let palavras: Vec<&str> = entrada.split(' ').collect();
@@ -79,7 +169,7 @@ pub mod chatbot {
 		let mut frase = String::new();
 
 		for (indice, palavra) in palavras.iter().enumerate() {
-			let mut ind = if indice>0 { "," } else{ ""};
+			let ind = if indice>0 { "," } else{ ""};
 			frase.push_str(&format!(" {}('{}', {} ) ",ind, palavra.trim(), indice + 1 ));
 		}
 		// println!("{}", frase);
@@ -89,54 +179,54 @@ pub mod chatbot {
 				SELECT column1 AS palavra, column2 AS ordem
 				FROM (VALUES";
 
-		let   queryp2 =") AS palavras  
+		let   queryp2 =") AS palavras
 			),
 			P2 AS (
 					SELECT DISTINCT p2.pid, p2.fid,  p2.rid, p2.pergunta
-					, ROW_NUMBER()  OVER (PARTITION  BY p2.fid, p2.rid ORDER BY p2.fid ASC, p2.rid ASC) AS ordem 
-					, COUNT(p2.fid)  OVER (PARTITION  BY p2.fid, p2.rid ORDER BY p2.fid ASC, p2.rid ASC) AS tamanho_fid 
-				FROM P1 P1 
-				INNER JOIN pergunta p2 ON( P1.palavra = p2.pergunta) 
-				GROUP BY p2.pid, p2.fid, p2.rid, p2.pergunta ORDER BY p2.pid ASC, p2.fid ASC  
-			)  
+					, ROW_NUMBER()  OVER (PARTITION  BY p2.fid, p2.rid ORDER BY p2.fid ASC, p2.rid ASC) AS ordem
+					, COUNT(p2.fid)  OVER (PARTITION  BY p2.fid, p2.rid ORDER BY p2.fid ASC, p2.rid ASC) AS tamanho_fid
+				FROM P1 P1
+				INNER JOIN pergunta p2 ON( P1.palavra = p2.pergunta)
+				GROUP BY p2.pid, p2.fid, p2.rid, p2.pergunta ORDER BY p2.pid ASC, p2.fid ASC
+			)
 			,
 			P3 AS (
-				SELECT DISTINCT  
+				SELECT DISTINCT
 					ptd.fid
 					, ptd.rid
 					, ptd.pergunta
 					, ptd.tamanho_fid
-				FROM P2 ptd  
+				FROM P2 ptd
 				INNER JOIN P1 P1 ON(P1.ordem = ptd.ordem AND P1.palavra = ptd.pergunta)
-				GROUP BY  ptd.fid, ptd.rid, ptd.pergunta, ptd.tamanho_fid ORDER BY ptd.pid ASC, ptd.fid ASC  
+				GROUP BY  ptd.fid, ptd.rid, ptd.pergunta, ptd.tamanho_fid ORDER BY ptd.pid ASC, ptd.fid ASC
 			),
 			P4 AS (
-			SELECT DISTINCT  
+			SELECT DISTINCT
 				ptd.fid
 				, ptd.rid
 				, ptd.pergunta
-				--, GROUP_CONCAT(ptd.pergunta, ' ') OVER (PARTITION BY ptd.fid) AS pergunta 
-				, COUNT(ptd.fid) OVER (PARTITION BY ptd.fid ) AS relevancia 
-				, ROW_NUMBER() OVER (PARTITION  BY ptd.fid, ptd.rid ORDER BY ptd.fid ASC, ptd.rid ASC) AS ordem 
-				FROM P3 ptd 
+				--, GROUP_CONCAT(ptd.pergunta, ' ') OVER (PARTITION BY ptd.fid) AS pergunta
+				, COUNT(ptd.fid) OVER (PARTITION BY ptd.fid ) AS relevancia
+				, ROW_NUMBER() OVER (PARTITION  BY ptd.fid, ptd.rid ORDER BY ptd.fid ASC, ptd.rid ASC) AS ordem
+				FROM P3 ptd
 				ORDER BY ptd.fid DESC, ptd.rid ASC
-			) -- SELECT * FROM P4 ptd ORDER BY ptd.fid DESC, ptd.rid ASC 
+			) -- SELECT * FROM P4 ptd ORDER BY ptd.fid DESC, ptd.rid ASC
 			,
 			P5 AS (
-			SELECT DISTINCT  
+			SELECT DISTINCT
 				ptd.fid
 				, ptd.rid
-				, GROUP_CONCAT(ptd.pergunta, ' ') OVER (PARTITION BY ptd.fid) AS pergunta 
-				, ptd.relevancia    
-				, ptd.ordem 
+				, GROUP_CONCAT(ptd.pergunta, ' ') OVER (PARTITION BY ptd.fid) AS pergunta
+				, ptd.relevancia
+				, ptd.ordem
 				FROM P4 ptd GROUP BY  ptd.fid, ptd.rid, ptd.pergunta, ptd.relevancia,  ptd.ordem
 				ORDER BY ptd.relevancia DESC, ptd.ordem ASC
 			),
-			pergunta_encontrada AS ( 
-				SELECT p.pid, p.fid, p.rid  
-				, COUNT(p.pid) OVER (PARTITION BY  p.fid, p.rid ORDER BY p.fid ASC, p.rid ASC) 	AS tamanho_fid 
-				, GROUP_CONCAT(p.pergunta, ' ') OVER (PARTITION BY  p.fid, p.rid ORDER BY p.fid ASC, p.rid ASC) 	AS pergunta_correta 
-				FROM pergunta p  
+			pergunta_encontrada AS (
+				SELECT p.pid, p.fid, p.rid
+				, COUNT(p.pid) OVER (PARTITION BY  p.fid, p.rid ORDER BY p.fid ASC, p.rid ASC) 	AS tamanho_fid
+				, GROUP_CONCAT(p.pergunta, ' ') OVER (PARTITION BY  p.fid, p.rid ORDER BY p.fid ASC, p.rid ASC) 	AS pergunta_correta
+				FROM pergunta p
 			)
 			SELECT DISTINCT ptd.fid, ptd.rid, ptd.pergunta, ptd.relevancia, pe.tamanho_fid, pe.pergunta_correta, CAST((((ptd.relevancia*100.0)/pe.tamanho_fid) ) AS DECIMAL(2,11) ) AS probab, ptd.ordem  , r.resposta  
 			FROM P5 ptd
@@ -153,10 +243,10 @@ pub mod chatbot {
 		// 			('é',3),
 		// 			('Cota',4),
 		// 			('Patronal',5)
-		// 		";			
+		// 		";
 		let mut stmt = conn.prepare( query.as_str() , )?;
 		let resps = stmt.query_map([], |row| {
-			Ok(Resposta {
+			Ok(Respostabot {
 				fid: row.get(0)?,
 				rid: row.get(1)?,
 				pergunta: row.get(2)?,
@@ -165,14 +255,14 @@ pub mod chatbot {
 				pergunta_correta: row.get(5)?,
 				probab: row.get(6)?,
 				ordem: row.get(7)?,
-				resposta: row.get(8)?, 
+				resposta: row.get(8)?,
 			})
 		})?;
 		for resp in resps.into_iter()  {
 			let resposta = resp.unwrap();
-			
+
 			let probab = resposta.probab().clone();
- 
+
 			match classifica_probabilidade(probab) {
 				Ok(Classificacao::Alta) => println!("R: {:?}",	 resposta.resposta()	),
 				Ok(Classificacao::Media) => println!("P: Provavelmente você quis dizer {:?} \n\rR: {:?}  ", resposta.pergunta_correta(), resposta.resposta()	),

@@ -17,11 +17,11 @@ use crate::conexao::conedatabase::conectdatabase;
 mod dao;
 use crate::dao::ai::chatbot;
 
-pub(crate) fn main(){
+pub fn main() -> Result<(), Box<dyn std::error::Error>>{
     println!("Hello, world!");
     let _fn1 = conectdatabase::create_database();
     loop {
-        println!("Digite S ou 1 par iniciar uma conversa:");
+        println!("Digite S ou 1 par iniciar uma conversa, ou outro caractere para treinar o bot:");
 
         let mut escolha = String::new();
         // io::stdin().read_line(&mut escolha).expect("Failed to read line");
@@ -50,7 +50,7 @@ pub(crate) fn main(){
         }
 
         // Verificamos se o caractere é 'S' ou '1'
-        let var_name = if character == 'S' || character == 's' || character == '1'   {
+        let _var_name = if character == 'S' || character == 's' || character == '1'   {
             // println!("Você digitou {}.", character);
             println!("O que você gostaria de saber?" );
             loop {
@@ -73,10 +73,38 @@ pub(crate) fn main(){
             println!("Você optou por treinar o chatbot. {}", character);
 
             println!("Escreva a resposta de forma resumida e clara." );
+            loop {
+
+                let mut resp = String::new();
+                io::stdin().read_line(&mut resp).expect("Falha ao ler a linha");
+                let _fn_: Result<(), rusqlite::Error> = chatbot::treinar(resp.clone());
+
+                // verificação de continuidade do loop
+                println!("Digite S ou 1 para escrever uma nova resposta:");
+                let mut escolha2 = String::new();
+                let mut character2: char = 'N';
+                match io::stdin().read_line(&mut escolha2) {
+                    Ok(_) => {
+                        character2 = match escolha2.trim().chars().next() {
+                            Some(c) if c.is_alphabetic() && (c == 'S' || c == 's' || c == '1') => c,
+                            _ => {
+                                println!("Caractere inválido. Considerando 'S' como padrão.");
+                                'N'
+                            }
+                        };
+                    }
+                    Err(error) => {
+                        println!("Ocorreu um erro durante a leitura: {}", error);
+                    }
+                }
+                let var_name = if character == 'S' || character == 's' || character == '1' {
+                } else {
+                    break;
+                };
 
 
+            }
         };
-        var_name
     }
 }
 

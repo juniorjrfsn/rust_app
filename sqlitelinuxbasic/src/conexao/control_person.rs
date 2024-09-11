@@ -35,7 +35,7 @@ pub mod ctrl_person {
 			let vec:Vec<u8> = hello.into_bytes();
 				// let vec: Vec<u8> = vec![0xaa, 0xfc, 0x09, 0x09];
 			let op: Option<Vec<u8>> = Some(vec) ;
-			let me = Pessoa {
+			let me: Pessoa = Pessoa {
 				id: 1,
 				name: "John".to_string(),
 				data: op, // None

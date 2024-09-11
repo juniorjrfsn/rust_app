@@ -1,5 +1,7 @@
 # rust_app
 
+font : Consolas, 'Courier New', monospace
+
 ## aplicativos de códigos na linguagem rust
 
 ```
