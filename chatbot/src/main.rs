@@ -17,7 +17,9 @@ use crate::conexao::conedatabase::conectdatabase;
 mod dao;
 use crate::dao::ai::chatbot;
 
-pub fn main() -> Result<(), Box<dyn std::error::Error>>{
+type Type = Result<(), Box<dyn std::error::Error>>;
+
+pub fn main() -> Type{
     println!("Hello, world!");
     let _fn1 = conectdatabase::create_database();
     loop {
