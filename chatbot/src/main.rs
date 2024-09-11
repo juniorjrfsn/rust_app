@@ -17,7 +17,7 @@ use crate::conexao::conedatabase::conectdatabase;
 mod dao;
 use crate::dao::ai::chatbot;
 
-pub fn main()-> io::Result<()>  {
+pub(crate) fn main(){
     println!("Hello, world!");
     let _fn1 = conectdatabase::create_database();
     loop {
@@ -78,7 +78,6 @@ pub fn main()-> io::Result<()>  {
         };
         var_name
     }
-    Ok(())
 }
 
 // cd estimulo
