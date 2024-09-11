@@ -13,6 +13,7 @@
     cargo new estimulo --bin
     cargo new neural3 --bin
     cargo new arquivosplit --bin
+    cargo new chatbot --bin
 ```
 
 ### **Acessar a pasta da aplicação**
@@ -27,6 +28,7 @@
     cd estimulo
     cd neural3
     cd arquivosplit
+    cd chatbot
 ```
 
 ### **Construir a aplicação**
