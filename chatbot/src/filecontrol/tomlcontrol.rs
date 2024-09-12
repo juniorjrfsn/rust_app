@@ -77,8 +77,9 @@ pub mod tomlctrl {
                     match get_respostas(rtext.trim().to_string()) {
                         Ok(lista) => {
                             if(lista.len() > 0){
+                                 _continue_ = false;
                             }else{
-                                _continue_ = false;
+                               
                             }
                         }
                         Err(e) => {
