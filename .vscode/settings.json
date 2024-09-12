@@ -219,5 +219,6 @@
 				}
 			]
 		}
-	]
+	],
+	"editor.autoClosingComments": "always"
 }
