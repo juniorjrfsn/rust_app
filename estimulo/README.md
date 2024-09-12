@@ -48,3 +48,39 @@ cargo add libsql-rusqlite
 cargo add libsqlite3-sys-ic
 cargo add rusqlite-ic
 ```
+
+### database
+```
+-- pergunta definition
+/*
+DROP TABLE IF EXISTS pergunta 
+DROP TABLE IF EXISTS resposta 
+*/
+
+CREATE TABLE pergunta (
+    pid INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    rid INTEGER,
+    fid INTEGER,
+    ptext TEXT NOT NULL 
+);
+CREATE UNIQUE INDEX pergunta_ptext_IDX ON pergunta (ptext);
+
+
+-- resposta definition
+
+CREATE TABLE resposta (
+    rid INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT,
+    rtext TEXT
+);
+CREATE UNIQUE INDEX resposta_rtext_IDX ON resposta (rtext);-- resposta definition
+
+CREATE TABLE resposta (
+    rid INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT,
+    rtext TEXT
+);
+
+CREATE UNIQUE INDEX resposta_rtext_IDX ON resposta (rtext);
+
+
+
+```
