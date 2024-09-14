@@ -175,64 +175,79 @@ pub mod chatbot {
 		// println!("{}", frase);
 		//let _path = "consciencia/estimulo.db";
 		let conn: Connection = Connection::open("./consciencia/estimulo.db")?;
-		let   queryp1 = "WITH P1 AS (
-				SELECT column1 AS palavra, column2 AS ordem
-				FROM (VALUES";
+		let   queryp1 = "WITH Entrada AS (
+			SELECT column1 AS ptext, column2 AS ordem
+			FROM (VALUES";
 
-		let   queryp2 =") AS palavras
+		let   queryp2 ="    ) AS ptexts
 			),
-			P2 AS (
-					SELECT DISTINCT p2.pid, p2.fid,  p2.rid, p2.ptext
-					, ROW_NUMBER()  OVER (PARTITION  BY p2.fid, p2.rid ORDER BY p2.fid ASC, p2.rid ASC) AS ordem
+					EntradaOrdenada AS (
+				SELECT DISTINCT p2.rid, p2.fid, p2.pid, P1.ordem, P1.ptext
+					, ROW_NUMBER()  OVER (PARTITION  BY  p2.rid, p2.fid ORDER BY  p2.rid ASC, p2.fid ASC, P1.ordem ASC ) AS entradaordem
 					, COUNT(p2.fid)  OVER (PARTITION  BY p2.fid, p2.rid ORDER BY p2.fid ASC, p2.rid ASC) AS tamanho_fid
-				FROM P1 P1
-				INNER JOIN pergunta p2 ON( P1.palavra = p2.ptext)
-				GROUP BY p2.pid, p2.fid, p2.rid, p2.ptext ORDER BY p2.pid ASC, p2.fid ASC
+					, COUNT(P1.ordem)  OVER (PARTITION  BY p2.fid, p2.rid ORDER BY p2.fid ASC, p2.rid ASC) AS tamanho_entrada
+
+				FROM Entrada P1
+				INNER JOIN pergunta p2 ON( P1.ptext = p2.ptext)
+				GROUP BY p2.rid, p2.fid, p2.pid, P1.ordem, P1.ptext ORDER BY p2.rid ASC, p2.fid ASC, P1.ordem ASC,  p2.pid ASC
 			)
 			,
-			P3 AS (
-				SELECT DISTINCT
-					ptd.fid
-					, ptd.rid
-					, ptd.ptext
-					, ptd.tamanho_fid
-				FROM P2 ptd
-				INNER JOIN P1 P1 ON(P1.ordem = ptd.ordem AND P1.palavra = ptd.ptext)
-				GROUP BY  ptd.fid, ptd.rid, ptd.ptext, ptd.tamanho_fid ORDER BY ptd.pid ASC, ptd.fid ASC
+			PerguntaOrdenada AS (
+				SELECT DISTINCT p2.rid, p2.fid, p2.pid,  p2.ptext
+				,  ROW_NUMBER()  OVER (PARTITION  BY  p2.rid, p2.fid ORDER BY  p2.rid ASC, p2.fid ASC) AS perguntaordem
+				FROM EntradaOrdenada eo
+				INNER JOIN pergunta p2 ON(eo.rid = p2.rid AND eo.fid = p2.fid AND eo.ptext = p2.ptext) ORDER BY p2.rid ASC
 			),
-			P4 AS (
-			SELECT DISTINCT
-				ptd.fid
-				, ptd.rid
-				, ptd.ptext
-				--, GROUP_CONCAT(ptd.ptext, ' ') OVER (PARTITION BY ptd.fid) AS ptext
-				, COUNT(ptd.fid) OVER (PARTITION BY ptd.fid ) AS relevancia
-				, ROW_NUMBER() OVER (PARTITION  BY ptd.fid, ptd.rid ORDER BY ptd.fid ASC, ptd.rid ASC) AS ordem
-				FROM P3 ptd
-				ORDER BY ptd.fid DESC, ptd.rid ASC
-			) -- SELECT * FROM P4 ptd ORDER BY ptd.fid DESC, ptd.rid ASC
-			,
-			P5 AS (
-			SELECT DISTINCT
-				ptd.fid
-				, ptd.rid
-				, GROUP_CONCAT(ptd.ptext, ' ') OVER (PARTITION BY ptd.fid) AS ptext
-				, ptd.relevancia
-				, ptd.ordem
-				FROM P4 ptd GROUP BY  ptd.fid, ptd.rid, ptd.ptext, ptd.relevancia,  ptd.ordem
-				ORDER BY ptd.relevancia DESC, ptd.ordem ASC
+			Filtro AS (
+				SELECT  po.*
+				FROM PerguntaOrdenada po
+				INNER JOIN EntradaOrdenada eo ON(po.rid = eo.rid AND po.fid = eo.fid AND po.ptext = eo.ptext AND po.perguntaordem = eo.entradaordem)
+				ORDER BY po.rid ASC
 			),
-			pergunta_encontrada AS (
-				SELECT p.pid, p.fid, p.rid
-				, COUNT(p.pid) OVER (PARTITION BY  p.fid, p.rid ORDER BY p.fid ASC, p.rid ASC) 	AS tamanho_fid
-				, GROUP_CONCAT(p.ptext, ' ') OVER (PARTITION BY  p.fid, p.rid ORDER BY p.fid ASC, p.rid ASC) 	AS pergunta_correta
-				FROM pergunta p
+			Relevanciaresposta AS (
+				SELECT DISTINCT re.rid, re.fid, re.ptext, COUNT(re.rid) OVER(PARTITION BY re.rid, re.fid ) AS relevancia_frase
+				FROM Filtro re
+				ORDER BY re.rid ASC
+			),
+			Relevancia AS (
+				SELECT DISTINCT re.rid, re.fid, re.ptext
+				, COUNT(re.rid) OVER(PARTITION BY re.rid ) AS relevancia_resposta
+				FROM Relevanciaresposta re
+				GROUP BY re.rid, re.ptext
+				ORDER BY re.rid ASC
+			),
+			probabilidade AS (
+				SELECT fi.rid,fi.fid
+				, MAX(rele.relevancia_resposta) AS relevancia_resposta
+				, COUNT(fi.fid) OVER(PARTITION BY fi.rid ) AS qtd_frase
+				, MAX(rr.relevancia_frase) AS relevancia_frase
+				--, GROUP_CONCAT(p2.ptext, ' ') OVER (PARTITION BY  p2.fid ORDER BY p2.fid ASC, p2.pid ASC) 	AS pergunta_correta
+				FROM Relevancia rele
+				INNER JOIN Filtro fi ON(rele.rid = fi.rid)
+				INNER JOIN pergunta p2 ON(fi.fid = p2.fid)
+				INNER JOIN Relevanciaresposta rr ON(rele.rid = rr.rid)
+				INNER JOIN EntradaOrdenada eo ON(p2.rid = eo.rid AND p2.fid = eo.fid )
+				GROUP BY fi.rid,fi.fid
+			),
+			perguntando AS (
+				SELECT co.relevancia_resposta, co.rid,co.fid, co.qtd_frase, CAST((((co.relevancia_resposta*100.0)/7) ) AS DECIMAL(2,11) ) AS probab, co.relevancia_frase
+				FROM probabilidade co
+				ORDER BY co.relevancia_resposta DESC
+			),
+			pesando AS (
+				SELECT DISTINCT co.rid,co.fid, co.qtd_frase, co.relevancia_resposta, co.probab, GROUP_CONCAT(perg.ptext, ' ') OVER (PARTITION BY co.rid,co.fid) AS ptext 
+				FROM perguntando co
+				INNER JOIN pergunta perg ON(co.rid = perg.rid AND co.fid = perg.fid)
+				WHERE co.probab >= 68.26
+				ORDER BY co.relevancia_resposta DESC
+			),
+			Conclusao AS (
+
+			SELECT co.rid,co.fid, co.qtd_frase, co.relevancia_resposta, co.probab, co.ptext, re.rtext 
+			FROM pesando co
+			INNER JOIN resposta re ON(co.rid = re.rid )
 			)
-			SELECT DISTINCT ptd.fid, ptd.rid, ptd.ptext, ptd.relevancia, pe.tamanho_fid, pe.pergunta_correta, CAST((((ptd.relevancia*100.0)/pe.tamanho_fid) ) AS DECIMAL(2,11) ) AS probab, ptd.ordem  , r.rtext
-			FROM P5 ptd
-			INNER JOIN resposta r ON(ptd.rid = r.rid)
-			INNER JOIN pergunta_encontrada pe ON(ptd.fid = pe.fid )
-			GROUP BY ptd.fid, ptd.rid,  ptd.ptext  ORDER BY ptd.relevancia DESC LIMIT 1;";
+			SELECT co.rid,co.fid, co.qtd_frase, co.relevancia_resposta, co.probab, co.ptext, co.rtext FROM Conclusao coLIMIT 1;";
 		let query = format!("{} {} {}", queryp1, frase, queryp2);
 
 		// let mut query = "WITH P1 AS (
@@ -247,8 +262,8 @@ pub mod chatbot {
 		let mut stmt = conn.prepare( query.as_str() , )?;
 		let resps = stmt.query_map([], |row| {
 			Ok(Respostabot {
-				fid: row.get(0)?,
-				rid: row.get(1)?,
+				rid: row.get(0)?,
+				fid: row.get(1)?,
 				ptext: row.get(2)?,
 				relevancia: row.get(3)?,
 				tamanho_fid: row.get(4)?,
