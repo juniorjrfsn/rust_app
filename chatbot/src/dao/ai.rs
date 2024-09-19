@@ -14,43 +14,35 @@ pub mod chatbot {
 	use rusqlite::{Connection, Result};
 
 	struct Respostabot {
-		fid: i64,
 		rid: i64,
-		ptext: String,
-		relevancia: i64,
-		tamanho_fid: i64,
-		pergunta_correta: String,
+		fid: i64,
+		qtd_frase: i32,
+		relevancia_resposta: i32,
 		probab: f64,
-		ordem: i64,
+		ptext: String,
 		rtext: String,
 	}
 
 
 
 	impl Respostabot {
-		fn fid(&self) -> &i64 {
-			&self.fid
-		}
 		fn rid(&self) -> &i64 {
 			&self.rid
 		}
-		fn ptext(&self) -> &String {
-			&self.ptext
+		fn fid(&self) -> &i64 {
+			&self.fid
 		}
-		fn relevancia(&self) -> &i64 {
-			&self.relevancia
+		fn qtd_frase(&self) -> &i32 {
+			&self.qtd_frase
 		}
-		fn tamanho_fid(&self) -> &i64 {
-			&self.tamanho_fid
-		}
-		fn pergunta_correta(&self) -> &String {
-			&self.pergunta_correta
+		fn relevancia_resposta(&self) -> &i32 {
+			&self.relevancia_resposta
 		}
 		fn probab(&self) -> &f64 {
 			&self.probab
 		}
-		fn ordem(&self) -> &i64 {
-			&self.ordem
+		fn ptext(&self) -> &String {
+			&self.ptext
 		}
 		fn rtext(&self) -> &String {
 			&self.rtext
@@ -64,7 +56,7 @@ pub mod chatbot {
 		Improvavel,
 	}
 
-	fn classifica_probabilidade(probab: f64) ->  Result<Classificacao, String> { 
+	fn classifica_probabilidade(probab: f64) ->  Result<Classificacao, String> {
 		if probab >= 99.74 {
 			Ok(Classificacao::Alta)
 		} else if probab >= 95.44 && probab < 99.74  {
@@ -73,7 +65,9 @@ pub mod chatbot {
 			Ok(Classificacao::Baixa)
 		} else if probab < 68.26 {
 			Ok(Classificacao::Improvavel)
-		} else {
+		}else if probab < 68.26 {
+			Ok(Classificacao::Improvavel)
+		}  else {
 			// Handle unexpected values here (optional)
 			Err("Invalid probability value".to_string())
 		}
@@ -177,21 +171,19 @@ pub mod chatbot {
 		let conn: Connection = Connection::open("./consciencia/estimulo.db")?;
 		let   queryp1 = "WITH Entrada AS (
 			SELECT column1 AS ptext, column2 AS ordem
-			FROM (VALUES";
+			FROM (VALUES ";
 
-		let   queryp2 ="    ) AS ptexts
+		let   queryp2 =" ) AS ptexts
 			),
-					EntradaOrdenada AS (
+			EntradaOrdenada AS (
 				SELECT DISTINCT p2.rid, p2.fid, p2.pid, P1.ordem, P1.ptext
 					, ROW_NUMBER()  OVER (PARTITION  BY  p2.rid, p2.fid ORDER BY  p2.rid ASC, p2.fid ASC, P1.ordem ASC ) AS entradaordem
 					, COUNT(p2.fid)  OVER (PARTITION  BY p2.fid, p2.rid ORDER BY p2.fid ASC, p2.rid ASC) AS tamanho_fid
 					, COUNT(P1.ordem)  OVER (PARTITION  BY p2.fid, p2.rid ORDER BY p2.fid ASC, p2.rid ASC) AS tamanho_entrada
-
 				FROM Entrada P1
 				INNER JOIN pergunta p2 ON( P1.ptext = p2.ptext)
 				GROUP BY p2.rid, p2.fid, p2.pid, P1.ordem, P1.ptext ORDER BY p2.rid ASC, p2.fid ASC, P1.ordem ASC,  p2.pid ASC
-			)
-			,
+			),
 			PerguntaOrdenada AS (
 				SELECT DISTINCT p2.rid, p2.fid, p2.pid,  p2.ptext
 				,  ROW_NUMBER()  OVER (PARTITION  BY  p2.rid, p2.fid ORDER BY  p2.rid ASC, p2.fid ASC) AS perguntaordem
@@ -235,19 +227,18 @@ pub mod chatbot {
 				ORDER BY co.relevancia_resposta DESC
 			),
 			pesando AS (
-				SELECT DISTINCT co.rid,co.fid, co.qtd_frase, co.relevancia_resposta, co.probab, GROUP_CONCAT(perg.ptext, ' ') OVER (PARTITION BY co.rid,co.fid) AS ptext 
+				SELECT DISTINCT co.rid,co.fid, co.qtd_frase, co.relevancia_resposta, co.probab, GROUP_CONCAT(perg.ptext, ' ') OVER (PARTITION BY co.rid,co.fid) AS ptext
 				FROM perguntando co
 				INNER JOIN pergunta perg ON(co.rid = perg.rid AND co.fid = perg.fid)
 				WHERE co.probab >= 68.26
 				ORDER BY co.relevancia_resposta DESC
 			),
 			Conclusao AS (
-
-			SELECT co.rid,co.fid, co.qtd_frase, co.relevancia_resposta, co.probab, co.ptext, re.rtext 
-			FROM pesando co
-			INNER JOIN resposta re ON(co.rid = re.rid )
+				SELECT co.rid,co.fid, co.qtd_frase, co.relevancia_resposta, co.probab, co.ptext, re.rtext
+				FROM pesando co
+				INNER JOIN resposta re ON(co.rid = re.rid )
 			)
-			SELECT co.rid,co.fid, co.qtd_frase, co.relevancia_resposta, co.probab, co.ptext, co.rtext FROM Conclusao coLIMIT 1;";
+			SELECT co.rid,co.fid, co.qtd_frase, co.relevancia_resposta, co.probab, co.ptext, co.rtext FROM Conclusao co LIMIT 1;";
 		let query = format!("{} {} {}", queryp1, frase, queryp2);
 
 		// let mut query = "WITH P1 AS (
@@ -260,32 +251,34 @@ pub mod chatbot {
 		// 			('Patronal',5)
 		// 		";
 		let mut stmt = conn.prepare( query.as_str() , )?;
-		let resps = stmt.query_map([], |row| {
+		let mut resps:Vec<_> = stmt.query_map([], |row| {
 			Ok(Respostabot {
 				rid: row.get(0)?,
 				fid: row.get(1)?,
-				ptext: row.get(2)?,
-				relevancia: row.get(3)?,
-				tamanho_fid: row.get(4)?,
-				pergunta_correta: row.get(5)?,
-				probab: row.get(6)?,
-				ordem: row.get(7)?,
-				rtext: row.get(8)?,
+				qtd_frase: row.get(2)?,
+				relevancia_resposta: row.get(3)?,
+				probab: row.get(4)?,
+				ptext: row.get(5)?,
+				rtext: row.get(6)?,
 			})
-		})?;
-		for resp in resps.into_iter()  {
-			let resposta = resp.unwrap();
-
-			let probab = resposta.probab().clone();
-
-			match classifica_probabilidade(probab) {
-				Ok(Classificacao::Alta) => println!("R: {:?}",	 resposta.rtext()	),
-				Ok(Classificacao::Media) => println!("P: Provavelmente você quis dizer {:?} \n\rR: {:?}  ", resposta.pergunta_correta(), resposta.rtext()	),
-				Ok(Classificacao::Baixa) => println!("P: Acho que você quis dizer {:?} \n\rR: {:?}  ",	resposta.pergunta_correta(), resposta.rtext()	),
-				Ok(Classificacao::Improvavel) => println!("Não consegui entender o que você quis dizer."),
-				Err(erro) => println!("Ocorreu um erro: {}", erro),
+		})?.collect();
+		let qtd: i32 = resps.len() as i32;
+		if qtd > 0 {
+			for resp in resps.into_iter()  {
+				let resposta = resp.unwrap();
+				let probab = resposta.probab().clone();
+				match classifica_probabilidade(probab) {
+					Ok(Classificacao::Alta) => println!("R: {:?}",	 resposta.rtext()	),
+					Ok(Classificacao::Media) => println!("P: Provavelmente você quis dizer {:?} \n\rR: {:?}  ", resposta.ptext(), resposta.rtext()	),
+					Ok(Classificacao::Baixa) => println!("P: Acho que você quis dizer {:?} \n\rR: {:?}  ",	resposta.ptext(), resposta.rtext()	),
+					Ok(Classificacao::Improvavel) => println!("Não consegui entender o que você quis dizer."),
+					Err(erro) => println!("Ocorreu um erro: {}", erro),
+				}
 			}
+		}else{
+			println!("Não consegui entender o que você quis dizer.");
 		}
+
 		Ok(())
 	}
 
