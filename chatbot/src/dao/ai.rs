@@ -276,7 +276,7 @@ pub mod chatbot {
 				}
 			}
 		}else{
-			println!("Não consegui entender o que você quis dizer.");
+			println!("Não consegui entender o que você quis dizer :( ");
 		}
 
 		Ok(())
