@@ -447,3 +447,41 @@ fid = 14
 ptext = """
 Qua é a cor que representa o homem?
 """
+
+
+
+[[dados.resposta]]
+rid = 1
+rtext = """
+Antes era o Bolsonaro mas agora é o Luiz Inácio
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 1
+ptext = """
+Quem é o Presidente do Brasil ?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 11
+ptext = """
+Quem é o líder supremos das forças mamadas?
+"""
+
+[[dados.resposta]]
+rid = 1
+rtext = """
+Javier Milei
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 1
+ptext = """
+Quem é o Presidente da Argentina ?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 11
+ptext = """
+Quem é o Presidente da Argentina
+"""
