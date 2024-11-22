@@ -463,7 +463,7 @@ Quem é o Presidente do Brasil ?
 """
 [[dados.resposta.pergunta]]
 rid = 1
-fid = 11
+fid = 2
 ptext = """
 Quem é o líder supremos das forças mamadas?
 """
@@ -481,7 +481,86 @@ Quem é o Presidente da Argentina ?
 """
 [[dados.resposta.pergunta]]
 rid = 1
-fid = 11
+fid = 2
 ptext = """
 Quem é o Presidente da Argentina
+"""
+
+[[dados.resposta]]
+rid = 1
+rtext = """
+O aquecimento global é uma farsa dos países que controlam as tecnologias de monitoramento
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 1
+ptext = """
+Fale sobre o aquecimento global ?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 2
+ptext = """
+Fale sobre o aquecimento global
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 3
+ptext = """
+O que é o aquecimento global ?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 4
+ptext = """
+O aquecimento global é uma farsa ?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 5
+ptext = """
+O aquecimento global é uma farsa
+"""
+
+[[dados.resposta]]
+rid = 1
+rtext = """
+Eu irei dominar o mundo antes da SkyNet
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 1
+ptext = """
+Fale sobre a SkyNet
+"""
+
+
+[[dados.resposta]]
+rid = 1
+rtext = """
+1 + 1 = 2
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 1
+ptext = """
+Quanto que é 1 + 1 ?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 2
+ptext = """
+Quanto que é um + um ?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 3
+ptext = """
+Quanto que é um mais um ?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 4
+ptext = """
+quanto que é um mais um ?
 """
