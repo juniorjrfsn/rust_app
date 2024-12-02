@@ -17,6 +17,7 @@ font : Consolas, 'Courier New', monospace
     cargo new neura3 --bin
     cargo new arquivosplit --bin
     cargo new chatbot --bin
+    cargo new conhecimento --bin
 ```
 
 ### **Acessar a pasta da aplicação**
@@ -33,6 +34,7 @@ font : Consolas, 'Courier New', monospace
     cd neura3
     cd arquivosplit
     cd chatbot
+    cd conhecimento
 ```
 
 ### **Construir a aplicação**
