@@ -220,5 +220,15 @@
 			]
 		}
 	],
-	"editor.autoClosingComments": "always"
+	"editor.autoClosingComments": "always",
+	"sqltools.useNodeRuntime": true,
+	"sqltools.connections": [
+		{
+			"previewLimit": 50,
+			"driver": "SQLite",
+			"name": "conhecimento",
+			"group": "conhecimento",
+			"database": "${workspaceFolder:rust_app}/conhecimento/consciencia/estimulo.db"
+		}
+	]
 }
