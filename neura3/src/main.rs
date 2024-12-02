@@ -35,11 +35,9 @@ impl LanguageModel {
         let mut rng = thread_rng();
         let mut response = String::new();
         let mut current_word = seed_word.to_string();
-
-        while response.len() <= max_length {
+        while response.len() + current_word.len() <= max_length {
             response.push_str(&current_word);
             response.push(' ');
-
             if let Some(possible_next_words) = self.transitions.get(&current_word) {
                 let possible_next_words: Vec<&String> = possible_next_words.iter().collect();
                 if !possible_next_words.is_empty() {
@@ -50,10 +48,14 @@ impl LanguageModel {
             } else {
                 break;
             }
+            // Verifica se o próximo estado é o fim da sentença e encerra a geração se necessário
+            if current_word.is_empty() {
+                break;
+            }
         }
-
-        response
+        response.trim_end().to_string()
     }
+
 }
 
 fn main() {
@@ -117,7 +119,7 @@ fn main() {
     language_model.train(&training_data);
     // Test the language model
     let seed_ = "Seed:";
-    let seed_word = "and";
+    let seed_word = "É installation";
     println!("{} {}", seed_.magenta().bold(), seed_word.blue().bold());
     let response = language_model.generate_response(seed_word, 20);
     let response_ = "Response:";
