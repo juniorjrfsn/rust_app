@@ -14,6 +14,7 @@ font : Consolas, 'Courier New', monospace
     cargo new unimatrix --bin
     cargo new estimulo --bin
     cargo new neural3 --bin
+    cargo new neura3 --bin
     cargo new arquivosplit --bin
     cargo new chatbot --bin
 ```
@@ -29,6 +30,7 @@ font : Consolas, 'Courier New', monospace
     cd unimatrix
     cd estimulo
     cd neural3
+    cd neura3
     cd arquivosplit
     cd chatbot
 ```
