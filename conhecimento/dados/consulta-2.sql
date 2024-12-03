@@ -67,7 +67,11 @@ RespostaEncontrada AS(
     ORDER BY conh.cord
 ),
 Pergunta AS(
-    SELECT conh.cid, REPLACE(GROUP_CONCAT(conh.ctext, ' '),'?', '') AS premissa  
+    SELECT conh.cid,
+    -- REPLACE(
+    GROUP_CONCAT(conh.ctext, ' ')
+    --,'?', '') 
+    AS premissa  
     ,cr.tamanho_entrada,cr.porcentual, cr.percentual, conh.tamanho_pergunta , CAST( ( (cr.percentual * 100.0 / conh.tamanho_pergunta) ) AS FLOAT) AS relevancia
     FROM PerguntaEncontrada conh
     INNER JOIN ConhecimentoRelevante cr ON(conh.cid = cr.cid)
@@ -75,7 +79,12 @@ Pergunta AS(
 
 -- SELECT * FROM Pergunta
 
-SELECT CAST(p.premissa AS TEXT)+ CAST(' ?' AS TEXT) AS premissa, REPLACE(GROUP_CONCAT(re.ctext, ' '),'?', '') AS conclusao
+SELECT 
+    -- CONCAT(CAST(
+    p.premissa 
+    -- AS TEXT), CAST(' ?' AS TEXT)) 
+    AS premissa
+    , REPLACE(GROUP_CONCAT(re.ctext, ' '),'?', '') AS conclusao
 FROM Pergunta p
 INNER JOIN RespostaEncontrada re ON(p.cid = re.cid)
 -- WHERE relevancia > 19.74
