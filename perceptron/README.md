@@ -43,6 +43,8 @@ banco de dados modificado em 22/08/2024
 
 ### dependências
 ```
+cargo add libsqlite3-sys
+cargo add rusqlite
 cargo add rand
 cargo add openssl
 cargo add libsql-rusqlite
