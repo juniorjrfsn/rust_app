@@ -1,0 +1,11 @@
+[package]
+    name = "perceptron"
+    version = "0.1.0"
+    edition = "2021"
+
+[dependencies]
+    libsql-rusqlite = "0.33.0"
+    libsqlite3-sys-ic = "0.25.0"
+    #openssl = "0.10.68"
+    rand = "0.8.5"
+    rusqlite-ic = "0.28.1"

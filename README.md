@@ -18,6 +18,7 @@ font : Consolas, 'Courier New', monospace
     cargo new arquivosplit --bin
     cargo new chatbot --bin
     cargo new conhecimento --bin
+    cargo new perceptron --bin
 ```
 
 ### **Acessar a pasta da aplicação**
@@ -35,6 +36,7 @@ font : Consolas, 'Courier New', monospace
     cd arquivosplit
     cd chatbot
     cd conhecimento
+    cd perceptron
 ```
 
 ### **Construir a aplicação**
