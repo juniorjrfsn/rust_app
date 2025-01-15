@@ -125,7 +125,7 @@ fn main() {
         let threshold = 0.5;
         let formatted_output = if output >= threshold { 1.0 } else { 0.0 };
         let classification   = if output >= threshold { 1.0 } else { 0.0 };
- 
+
         println!("Inputs: {:?}, Target: {}, Output: {:.4} (Output XOR: {})", inputs, target, output, classification);
     }
 }
