@@ -105,12 +105,12 @@ impl MLP {
 }
 
 fn main() {
-    let mut mlp = MLP::new(2, 2, 1, 0.5); // 2 entradas, 2 neurônios ocultos, 1 saída, taxa de aprendizado 0.5
+    let mut mlp = MLP::new(4, 2, 1, 0.5); // 2 entradas, 2 neurônios ocultos, 1 saída, taxa de aprendizado 0.5
     let training_data = vec![
-        (vec![0.0, 0.0], 0.0),
-        (vec![0.0, 1.0], 1.0),
-        (vec![1.0, 0.0], 1.0),
-        (vec![1.0, 1.0], 0.0),
+        (vec![0.0, 0.0, 0.0, 0.0], 0.0),
+        (vec![0.0, 1.0, 0.0, 0.0], 1.0),
+        (vec![1.0, 0.0, 0.0, 0.0], 1.0),
+        (vec![1.0, 1.0, 0.0, 0.0], 0.0),
     ];
 
     for _ in 0..10000 { // Treina por 10000 épocas
