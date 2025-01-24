@@ -25,3 +25,9 @@ unimatrix/target/
 chatbot/target/
 perceptron/target/
 mlp/target/
+gpt/target/
+
+outros/chatbot/target/
+outros/perceptron/target/
+outros/mlp/target/
+outros/gpt/target/
