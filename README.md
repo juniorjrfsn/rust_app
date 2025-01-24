@@ -19,6 +19,7 @@ font : Consolas, 'Courier New', monospace
     cargo new chatbot --bin
     cargo new conhecimento --bin
     cargo new perceptron --bin
+    cargo new mlp --bin
 ```
 
 ### **Acessar a pasta da aplicação**
@@ -37,6 +38,7 @@ font : Consolas, 'Courier New', monospace
     cd chatbot
     cd conhecimento
     cd perceptron
+    cd mlp
 ```
 
 ### **Construir a aplicação**

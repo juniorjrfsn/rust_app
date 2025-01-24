@@ -1,0 +1,566 @@
+[dados]
+
+[[dados.resposta]]
+rid = 1
+rtext = """
+Campo Grande é a Capital da América do Sul
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 1
+ptext = """
+Qual é a capital da América do Sul
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 2
+ptext = """
+Quem é a capital da América do Sul
+"""
+
+[[dados.resposta]]
+rid = 1
+rtext = """
+Mato Grosso do Sul é o estado do Pantanal
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 1
+ptext = """
+Qual o estado do Pantanal ?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 2
+ptext = """
+Onde é o estado Pantanal ?
+"""
+
+
+[[dados.resposta]]
+rid = 1
+rtext = """
+O Pantanal fica no estado de Mato Grosso do Sul
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 1
+ptext = """
+Em qual estado fica o Pantanal ?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 3
+ptext = """
+Onde é o estado Pantanal ?
+"""
+
+[[dados.resposta]]
+rid = 1
+rtext = """
+A cor turquesa é complementar da cor rosa
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 2
+ptext = """
+De qual cor a turquesa é complementar ?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 3
+ptext = """
+Qual é a cor complementar da cor rosa ?
+"""
+
+
+[[dados.resposta]]
+rid = 1
+rtext = """
+O positivo é o antônimo de negativo
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 2
+ptext = """
+O que é diferente do negativo ?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 3
+ptext = """
+Qual é o antônimo de negativo ?
+"""
+
+[[dados.resposta]]
+rid = 1
+rtext = """
+O Português é a lingua falada no Brasil
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 2
+ptext = """
+Qual a lingua falada no Brasil ?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 3
+ptext = """
+Qual a lingua do Brasil ?
+"""
+
+
+[[dados.resposta]]
+rid = 1
+rtext = """
+O Rust é a linguagem mais rápida e eficiente
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 2
+ptext = """
+Qual a linguagem de Programação de baixo nível mais rápida ?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 3
+ptext = """
+Qual a linguagem de Programação mais rápida e eficiente ?
+"""
+
+[[dados.resposta]]
+rid = 1
+rtext = """
+O c#
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 2
+ptext = """
+Qual a linguagem de Programação mais utilizada nas plataformas da Microsoft ?
+"""
+
+
+[[dados.resposta]]
+rid = 1
+rtext = """
+Em 2019 surgiu a Pandemia do Corona Vŕus batizado de COVID-19
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 1
+ptext = """
+Quando surgiu o COVID-19 ?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 2
+ptext = """
+Quando surgiu o COVID 19 ?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 3
+ptext = """
+Em que ano surgiu o COVID-19 ?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 4
+ptext = """
+Em que ano surgiu o COVID 19 ?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 5
+ptext = """
+Como foi chamado o Corona Vírus da Pandemia de 2019 ?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 6
+ptext = """
+Como foi chamado o Corona Vírus da Pandemia de 2019?
+"""
+
+[[dados.resposta]]
+rid = 1
+rtext = """
+Campo Grande é Capital da América do Sul
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 1
+ptext = """
+Qual a cidade brasileira que é a Capital da América do Sul ?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 2
+ptext = """
+Qual a cidade é a Capital da América do Sul ?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 3
+ptext = """
+Onde é a Capital da América do Sul ?
+"""
+
+[[dados.resposta]]
+rid = 1
+rtext = """
+O Verde é a cor do Comunismo no Brasil
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 1
+ptext = """
+Qual é a cor do Comunismo no Brasil?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 2
+ptext = """
+Qual o significado da cor Verde na politica Brasileira ?
+"""
+
+
+[[dados.resposta]]
+rid = 1
+rtext = """
+O Verde é a cor do Comunismo no Brasil por Causa do coletivismo econômico que os ambientalistas promovem
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 1
+ptext = """
+Por que a cor do Comunismo no Brasil é o Verde?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 2
+ptext = """
+Por que a cor do Comunismo no Brasil é o Verde ?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 3
+ptext = """
+Por que o Verde é a cor do Comunismo no Brasil ?
+"""
+
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 4
+ptext = """
+Por que o Verde é a cor do Comunismo no Brasil?
+"""
+
+[[dados.resposta]]
+rid = 1
+rtext = """
+O Social-Fascismo, o Social-Progressista, o Social-Comunismo e o Minarquismo-Libertário
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 1
+ptext = """
+Quais os principais ideais políticos de disputa no BRasil?
+"""
+
+
+[[dados.resposta]]
+rid = 1
+rtext = """
+O Social-Fascismo, o Social-Progressista, o Social-Comunismo e o Minarquismo-Libertário
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 1
+ptext = """
+Quais os principais ideais políticos de disputa no Brasil?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 2
+ptext = """
+Quais os principais ideais políticos no Brasil?
+"""
+
+[[dados.resposta]]
+rid = 1
+rtext = """
+O cultivo de banana é o principal extrativismo agrícola do Brasil
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 1
+ptext = """
+Qual o principal cultivo agrícola no Brasil?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 2
+ptext = """
+Qual o principal extrativismo agrícola no Brasil?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 3
+ptext = """
+Qual é a importância agrícola da banana no Brasil?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 4
+ptext = """
+Qual é a importância extrativista da banana no Brasil?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 5
+ptext = """
+Qual é a relevância da banana no Brasil?
+"""
+
+[[dados.resposta]]
+rid = 1
+rtext = """
+Apenas 40% das mulheres gostam de homens devido a decadência da espécie humana
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 1
+ptext = """
+Qual é a porcentagem de mulheres que gostam de homens ?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 2
+ptext = """
+Por que apenas 40% das mulheres gostam de homens ?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 3
+ptext = """
+Por que apenas 40% das mulheres gostam de homens?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 4
+ptext = """
+Por que apenas quarenta porcento das mulheres gostam de homens?
+"""
+
+[[dados.resposta]]
+rid = 1
+rtext = """
+O vermelho é a cor da masculinidade,
+sendo a mais masculina de todas e o porquê das mulheres gostarem de usar vermelho
+e outras cores próximas como o rosa, magenta e violeta, apesar das cores laranjas e amarelas serem masculinas as mulheres não simpatizam muito por essas cores
+porque estas cores apesar de serem quentes elas possuem natureza infantil
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 1
+ptext = """
+Qual é a cor da masculinidade ?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 2
+ptext = """
+Qual é a cor mais masculina ?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 3
+ptext = """
+Qual é a cor mais masculina?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 4
+ptext = """
+Qual é a cor mais masculina ?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 5
+ptext = """
+Qual é a cor mais masculina?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 6
+ptext = """
+Qual é o detrimento das cores laranjas e amarelas em relação a masculinidade?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 7
+ptext = """
+Porque as mulheres preferem as cores vermelhas, rosas e violetas?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 8
+ptext = """
+Porque as cores amarelas e laranjas apesar de serem quentes as mulheres não têm preferência por elas?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 9
+ptext = """
+Porque amarelo e laranja as mulheres não têm preferência por elas?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 10
+ptext = """
+Porque amarelo e laranja as mulheres não preferem?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 11
+ptext = """
+Porque amarelo e laranja é pouco preferido das mulheres?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 12
+ptext = """
+Porque amarelo é pouco preferido das mulheres?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 13
+ptext = """
+Porque laranja é pouco preferido das mulheres?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 14
+ptext = """
+Qua é a cor que representa o homem?
+"""
+
+
+
+[[dados.resposta]]
+rid = 1
+rtext = """
+Antes era o Bolsonaro mas agora é o Luiz Inácio
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 1
+ptext = """
+Quem é o Presidente do Brasil ?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 2
+ptext = """
+Quem é o líder supremos das forças mamadas?
+"""
+
+[[dados.resposta]]
+rid = 1
+rtext = """
+Javier Milei
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 1
+ptext = """
+Quem é o Presidente da Argentina ?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 2
+ptext = """
+Quem é o Presidente da Argentina
+"""
+
+[[dados.resposta]]
+rid = 1
+rtext = """
+O aquecimento global é uma farsa dos países que controlam as tecnologias de monitoramento
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 1
+ptext = """
+Fale sobre o aquecimento global ?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 2
+ptext = """
+Fale sobre o aquecimento global
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 3
+ptext = """
+O que é o aquecimento global ?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 4
+ptext = """
+O aquecimento global é uma farsa ?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 5
+ptext = """
+O aquecimento global é uma farsa
+"""
+
+[[dados.resposta]]
+rid = 1
+rtext = """
+Eu irei dominar o mundo antes da SkyNet
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 1
+ptext = """
+Fale sobre a SkyNet
+"""
+
+
+[[dados.resposta]]
+rid = 1
+rtext = """
+1 + 1 = 2
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 1
+ptext = """
+Quanto que é 1 + 1 ?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 2
+ptext = """
+Quanto que é um + um ?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 3
+ptext = """
+Quanto que é um mais um ?
+"""
+[[dados.resposta.pergunta]]
+rid = 1
+fid = 4
+ptext = """
+quanto que é um mais um ?
+"""
