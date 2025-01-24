@@ -1,0 +1,7 @@
+D:\projetos\rust_app\chatbot\target\debug\deps\libencoding_index_japanese-bc5b039d6f88c5d0.rmeta: C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\encoding-index-japanese-1.20141219.5\lib.rs C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\encoding-index-japanese-1.20141219.5\jis0208.rs C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\encoding-index-japanese-1.20141219.5\jis0212.rs
+
+D:\projetos\rust_app\chatbot\target\debug\deps\encoding_index_japanese-bc5b039d6f88c5d0.d: C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\encoding-index-japanese-1.20141219.5\lib.rs C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\encoding-index-japanese-1.20141219.5\jis0208.rs C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\encoding-index-japanese-1.20141219.5\jis0212.rs
+
+C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\encoding-index-japanese-1.20141219.5\lib.rs:
+C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\encoding-index-japanese-1.20141219.5\jis0208.rs:
+C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\encoding-index-japanese-1.20141219.5\jis0212.rs:

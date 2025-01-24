@@ -1,0 +1,10 @@
+D:\projetos\rust_app\perceptron\target\debug\deps\liblock_api-e04638da203bb27b.rmeta: C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\lock_api-0.4.12\src\lib.rs C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\lock_api-0.4.12\src\mutex.rs C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\lock_api-0.4.12\src\remutex.rs C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\lock_api-0.4.12\src\rwlock.rs
+
+D:\projetos\rust_app\perceptron\target\debug\deps\liblock_api-e04638da203bb27b.rlib: C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\lock_api-0.4.12\src\lib.rs C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\lock_api-0.4.12\src\mutex.rs C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\lock_api-0.4.12\src\remutex.rs C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\lock_api-0.4.12\src\rwlock.rs
+
+D:\projetos\rust_app\perceptron\target\debug\deps\lock_api-e04638da203bb27b.d: C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\lock_api-0.4.12\src\lib.rs C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\lock_api-0.4.12\src\mutex.rs C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\lock_api-0.4.12\src\remutex.rs C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\lock_api-0.4.12\src\rwlock.rs
+
+C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\lock_api-0.4.12\src\lib.rs:
+C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\lock_api-0.4.12\src\mutex.rs:
+C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\lock_api-0.4.12\src\remutex.rs:
+C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\lock_api-0.4.12\src\rwlock.rs:

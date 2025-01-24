@@ -1,0 +1,8 @@
+D:\projetos\rust_app\chatbot\target\debug\deps\libhashlink-c0aa105f2bae70d5.rmeta: C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\hashlink-0.9.1\src\lib.rs C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\hashlink-0.9.1\src\linked_hash_map.rs C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\hashlink-0.9.1\src\linked_hash_set.rs C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\hashlink-0.9.1\src\lru_cache.rs
+
+D:\projetos\rust_app\chatbot\target\debug\deps\hashlink-c0aa105f2bae70d5.d: C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\hashlink-0.9.1\src\lib.rs C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\hashlink-0.9.1\src\linked_hash_map.rs C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\hashlink-0.9.1\src\linked_hash_set.rs C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\hashlink-0.9.1\src\lru_cache.rs
+
+C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\hashlink-0.9.1\src\lib.rs:
+C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\hashlink-0.9.1\src\linked_hash_map.rs:
+C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\hashlink-0.9.1\src\linked_hash_set.rs:
+C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\hashlink-0.9.1\src\lru_cache.rs:

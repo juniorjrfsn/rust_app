@@ -1,0 +1,10 @@
+D:\projetos\rust_app\perceptron\target\debug\deps\liblog-a8480e7a13261560.rmeta: C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\log-0.4.22\src\lib.rs C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\log-0.4.22\src\macros.rs C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\log-0.4.22\src\serde.rs C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\log-0.4.22\src\__private_api.rs
+
+D:\projetos\rust_app\perceptron\target\debug\deps\liblog-a8480e7a13261560.rlib: C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\log-0.4.22\src\lib.rs C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\log-0.4.22\src\macros.rs C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\log-0.4.22\src\serde.rs C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\log-0.4.22\src\__private_api.rs
+
+D:\projetos\rust_app\perceptron\target\debug\deps\log-a8480e7a13261560.d: C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\log-0.4.22\src\lib.rs C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\log-0.4.22\src\macros.rs C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\log-0.4.22\src\serde.rs C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\log-0.4.22\src\__private_api.rs
+
+C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\log-0.4.22\src\lib.rs:
+C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\log-0.4.22\src\macros.rs:
+C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\log-0.4.22\src\serde.rs:
+C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\log-0.4.22\src\__private_api.rs:

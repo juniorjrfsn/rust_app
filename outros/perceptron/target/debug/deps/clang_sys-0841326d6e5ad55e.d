@@ -1,0 +1,14 @@
+D:\projetos\rust_app\perceptron\target\debug\deps\libclang_sys-0841326d6e5ad55e.rmeta: C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\clang-sys-1.8.1\src\lib.rs C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\clang-sys-1.8.1\src\support.rs C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\clang-sys-1.8.1\src\link.rs D:\projetos\rust_app\perceptron\target\debug\build\clang-sys-ece66310b6ef606f\out/macros.rs D:\projetos\rust_app\perceptron\target\debug\build\clang-sys-ece66310b6ef606f\out/common.rs D:\projetos\rust_app\perceptron\target\debug\build\clang-sys-ece66310b6ef606f\out/dynamic.rs
+
+D:\projetos\rust_app\perceptron\target\debug\deps\libclang_sys-0841326d6e5ad55e.rlib: C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\clang-sys-1.8.1\src\lib.rs C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\clang-sys-1.8.1\src\support.rs C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\clang-sys-1.8.1\src\link.rs D:\projetos\rust_app\perceptron\target\debug\build\clang-sys-ece66310b6ef606f\out/macros.rs D:\projetos\rust_app\perceptron\target\debug\build\clang-sys-ece66310b6ef606f\out/common.rs D:\projetos\rust_app\perceptron\target\debug\build\clang-sys-ece66310b6ef606f\out/dynamic.rs
+
+D:\projetos\rust_app\perceptron\target\debug\deps\clang_sys-0841326d6e5ad55e.d: C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\clang-sys-1.8.1\src\lib.rs C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\clang-sys-1.8.1\src\support.rs C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\clang-sys-1.8.1\src\link.rs D:\projetos\rust_app\perceptron\target\debug\build\clang-sys-ece66310b6ef606f\out/macros.rs D:\projetos\rust_app\perceptron\target\debug\build\clang-sys-ece66310b6ef606f\out/common.rs D:\projetos\rust_app\perceptron\target\debug\build\clang-sys-ece66310b6ef606f\out/dynamic.rs
+
+C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\clang-sys-1.8.1\src\lib.rs:
+C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\clang-sys-1.8.1\src\support.rs:
+C:\Program\ Files\Rust\ stable\ MSVC\ 1.80\registry\src\index.crates.io-6f17d22bba15001f\clang-sys-1.8.1\src\link.rs:
+D:\projetos\rust_app\perceptron\target\debug\build\clang-sys-ece66310b6ef606f\out/macros.rs:
+D:\projetos\rust_app\perceptron\target\debug\build\clang-sys-ece66310b6ef606f\out/common.rs:
+D:\projetos\rust_app\perceptron\target\debug\build\clang-sys-ece66310b6ef606f\out/dynamic.rs:
+
+# env-dep:OUT_DIR=D:\\projetos\\rust_app\\perceptron\\target\\debug\\build\\clang-sys-ece66310b6ef606f\\out
