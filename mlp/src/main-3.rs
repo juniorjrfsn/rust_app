@@ -56,7 +56,7 @@ impl MLP {
     }
 
     fn train(&mut self, training_data: &[(Vec<f64>, f64)], learning_rate: f64, epochs: usize, conn: &Connection) -> Result<()> {
-         for _ in 0..epochs {
+        for _ in 0..epochs {
             for (inputs, target) in training_data.iter() {
                 let prediction = self.forward(inputs);
                 let error = target - prediction;
@@ -93,6 +93,7 @@ impl MLP {
                         self.layers[l][j].bias += learning_rate * deltas[l][j];
                     }
                 }
+
                 let training_data_str = serde_json::to_string(&(inputs, target)).unwrap();
                 conn.execute(
                     "INSERT INTO training_data (data) VALUES (?1)",
@@ -104,7 +105,7 @@ impl MLP {
     }
 
     fn load_from_db(&mut self, conn: &Connection) -> Result<()> {
-         let mut stmt = conn.prepare("SELECT data FROM training_data ORDER BY id DESC LIMIT 1")?;
+        let mut stmt = conn.prepare("SELECT data FROM training_data ORDER BY id DESC LIMIT 1")?;
         let mut rows = stmt.query([])?;
 
         if let Some(row) = rows.next()? {
@@ -130,11 +131,11 @@ fn interpret_bmi(bmi: f64) -> String {
     }
 }
 
-fn main() -> std::result::Result<(), Box<dyn Error>>{
+fn main() -> std::result::Result<(), Box<dyn Error>> {
     let layer_sizes = &[2, 3, 1];
     let mut mlp = MLP::new(layer_sizes);
 
-    let conn = Connection::open("consciencia/training_data.db")?;
+    let conn = Connection::open("training_data.db")?;
     conn.execute(
         "CREATE TABLE IF NOT EXISTS training_data (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -148,11 +149,11 @@ fn main() -> std::result::Result<(), Box<dyn Error>>{
         (vec![70.0, 1.75], 22.86), // Peso normal
         (vec![90.0, 1.80], 27.78), // Sobrepeso
         (vec![60.0, 1.60], 23.44), // Peso normal
-        (vec![110.0, 1.70], 38.06),// Obesidade
+        (vec![110.0, 1.70], 38.06), // Obesidade
         (vec![50.0, 1.70], 17.30), // Abaixo do peso
-        (vec![85.0, 1.75], 27.76), //Sobrepeso
-        (vec![120.0, 1.85],35.15), //Obesidade
-        (vec![60.0, 1.80],18.52), //Peso normal
+        (vec![85.0, 1.75], 27.76), // Sobrepeso
+        (vec![120.0, 1.85], 35.15), // Obesidade
+        (vec![60.0, 1.80], 18.52), // Peso normal
     ];
 
     mlp.train(&training_data, 0.1, 5000, &conn)?;
@@ -170,6 +171,7 @@ fn main() -> std::result::Result<(), Box<dyn Error>>{
 
     Ok(())
 }
+
 
 // cd mlp
 // cargo run
