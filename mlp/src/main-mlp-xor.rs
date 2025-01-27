@@ -1,9 +1,8 @@
 use rand::Rng;
-use rusqlite::{params, Connection, Result};
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 // Define a estrutura de um neurônio
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct Neuron {
     weights: Vec<f64>,
     bias: f64,
@@ -26,7 +25,7 @@ impl Neuron {
 }
 
 // Define a estrutura de uma rede neural multicamadas (MLP)
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct MLP {
     layers: Vec<Vec<Neuron>>,
 }
@@ -55,8 +54,8 @@ impl MLP {
         activations
     }
 
-    fn train(&mut self, training_data: &[(Vec<f64>, Vec<f64>)], learning_rate: f64, epochs: usize, conn: &Connection) -> Result<()> {
-        for _ in 0..epochs {
+    fn train(&mut self, training_data: &[(Vec<f64>, Vec<f64>)], learning_rate: f64, epochs: usize) {
+        for epoch in 0..epochs {
             for (inputs, targets) in training_data.iter() {
                 // Forward pass
                 let mut activations = vec![inputs.clone()];
@@ -100,51 +99,16 @@ impl MLP {
                         self.layers[l][j].bias += learning_rate * errors[l][j];
                     }
                 }
-
-                // Armazena os dados de treinamento no banco de dados
-                let training_data_str = serde_json::to_string(&(inputs, targets)).unwrap();
-                conn.execute(
-                    "INSERT INTO training_data (data) VALUES (?1)",
-                    params![training_data_str],
-                )?;
             }
+            println!("Epoch {} completed.", epoch + 1);
         }
-        Ok(())
-    }
-
-    fn load_from_db(&mut self, conn: &Connection) -> Result<()> {
-        let mut stmt = conn.prepare("SELECT data FROM training_data ORDER BY id DESC LIMIT 1")?;
-        let mut rows = stmt.query([])?;
-
-        if let Some(row) = rows.next()? {
-            let data: String = row.get(0)?;
-            let (inputs, targets): (Vec<f64>, Vec<f64>) = serde_json::from_str(&data).unwrap();
-            println!("Dados carregados do banco de dados: {:?}", (inputs, targets));
-            // Aqui você pode usar os dados para inicializar pesos, etc.
-            // Exemplo: Imprimir os dados recuperados
-        } else {
-            println!("Nenhum dado encontrado no banco de dados.");
-        }
-        Ok(())
     }
 }
 
-fn main() -> Result<()> {
+fn main() {
     // Exemplo de uso
     let layer_sizes = &[2, 3, 1]; // Rede com 2 entradas, 3 neurônios na camada oculta e 1 saída
     let mut mlp = MLP::new(layer_sizes);
-
-    // Conecta ao banco de dados SQLite
-    let conn = Connection::open("consciencia/training_data.db")?;
-
-    // Cria a tabela de dados de treinamento
-    conn.execute(
-        "CREATE TABLE IF NOT EXISTS training_data (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            data TEXT NOT NULL
-        )",
-        [],
-    )?;
 
     // Dados de treinamento (exemplo simples com XOR lógico)
     let training_data = vec![
@@ -155,10 +119,7 @@ fn main() -> Result<()> {
     ];
 
     // Treinamento
-    mlp.train(&training_data, 0.3, 5000, &conn)?;
-
-    // Carrega dados do banco de dados APÓS o treinamento
-    mlp.load_from_db(&conn)?;
+    mlp.train(&training_data, 0.3, 5000);
 
     println!("Rede treinada: {:?}", mlp);
 
@@ -167,6 +128,4 @@ fn main() -> Result<()> {
     println!("Teste [0, 1]: {:?}", mlp.forward(&[0.0, 1.0]));
     println!("Teste [1, 0]: {:?}", mlp.forward(&[1.0, 0.0]));
     println!("Teste [1, 1]: {:?}", mlp.forward(&[1.0, 1.0]));
-
-    Ok(())
 }
