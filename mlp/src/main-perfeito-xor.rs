@@ -2,8 +2,6 @@ use rand::Rng;
 use rusqlite::{params, Connection, Result};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
-use std::io;
-use std::io::prelude::*;
 
 // Define a estrutura de um neurônio
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -18,8 +16,6 @@ pub enum MyError {
     Sqlite(#[from] rusqlite::Error),
     #[error("Serialization error: {0}")]
     Serialization(#[from] serde_json::Error),
-    #[error("IO error: {0}")]
-    Io(#[from] io::Error),
 }
 
 impl Neuron {
@@ -147,86 +143,32 @@ fn initialize_db(db_path: &str) -> Result<()> {
     Ok(())
 }
 
-fn get_user_input(prompt: &str) -> Result<f64, MyError> {
-    print!("{}", prompt);
-    io::stdout().flush()?; // Garante que o prompt seja exibido
-
-    let mut input = String::new();
-    io::stdin().read_line(&mut input)?;
-
-    input.trim().parse().map_err(|_| MyError::Io(io::Error::new(io::ErrorKind::InvalidInput, "Entrada inválida")))
-}
-
 fn main() -> Result<(), MyError> {
-    let layer_sizes = &[3, 5, 1]; // 3 inputs, 5 hidden neurons, 1 output
+    // Exemplo de uso
+    let layer_sizes = &[2, 3, 1]; // Rede com 2 entradas, 3 neurônios na camada oculta e 1 saída
     let mut mlp = MLP::new(layer_sizes);
 
+    // Caminho do arquivo SQLite
     let db_path = "training_data.db";
 
-    // Placeholder training data (REPLACE WITH REAL DATA)
+    // Dados de treinamento (exemplo simples com XOR lógico)
     let training_data = vec![
-        (vec![70.0, 30.0, 1.70], vec![24.2]), // Peso, Idade, Altura -> IMC
-        (vec![90.0, 40.0, 1.75], vec![29.4]),
-        (vec![60.0, 25.0, 1.60], vec![23.4]),
-        (vec![75.0, 35.0, 1.65], vec![27.5]),
-        (vec![80.0, 45.0, 1.80], vec![24.7]),
-        (vec![65.0, 30.0, 1.70], vec![22.5]),
-        (vec![85.0, 50.0, 1.75], vec![27.4]),
-        (vec![70.0, 40.0, 1.60], vec![27.3]),
-        (vec![95.0, 55.0, 1.85], vec![29.3]),
-        (vec![60.0, 20.0, 1.65], vec![22.0]),
-        (vec![100.0, 60.0, 1.90], vec![27.7]),
-        (vec![75.0, 25.0, 1.70], vec![25.9]),
-        (vec![80.0, 35.0, 1.75], vec![26.7]),
-        (vec![65.0, 45.0, 1.60], vec![25.4]),
-        (vec![90.0, 50.0, 1.80], vec![27.8]),
-        (vec![70.0, 30.0, 1.65], vec![25.7]),
-        (vec![85.0, 40.0, 1.70], vec![29.1]),
-        (vec![60.0, 25.0, 1.55], vec![23.5]),
-        (vec![95.0, 55.0, 1.80], vec![29.2]),
-        (vec![75.0, 35.0, 1.75], vec![26.1]),
-        (vec![80.0, 45.0, 1.85], vec![25.6]),
-        (vec![65.0, 20.0, 1.60], vec![24.2]),
-        (vec![100.0, 60.0, 1.95], vec![26.3]),
+        (vec![0.0, 0.0], vec![0.0]),
+        (vec![0.0, 1.0], vec![1.0]),
+        (vec![1.0, 0.0], vec![1.0]),
+        (vec![1.0, 1.0], vec![0.0]),
     ];
 
+    // Treinamento
     mlp.train(&training_data, 0.1, 5000, db_path)?;
 
-    println!("Rede treinada.");
+    println!("Rede treinada: {:?}", mlp);
 
-    let peso = get_user_input("Digite o peso (kg): ")?;
-    let idade = get_user_input("Digite a idade (anos): ")?;
-    let altura = get_user_input("Digite a altura (metros): ")?;
-
-    let inputs = vec![peso, idade, altura];
-    let imc = mlp.forward(&inputs)[0];
-
-    println!("Seu IMC é: {:.2}", imc);
-
-    // Improved Recommendations (More Detailed)
-    let imc_rounded = (imc * 10.0).round() / 10.0; // Round to one decimal place for display
-
-    println!("Seu IMC é: {:.1}", imc_rounded); // Display rounded IMC
-
-    match imc {
-        imc if imc < 16.0 => println!("Você está em estado de magreza severa."),
-        imc if imc < 17.0 => println!("Você está em estado de magreza."),
-        imc if imc < 18.5 => println!("Você está abaixo do peso."),
-        imc if imc < 25.0 => println!("Seu peso está normal."),
-        imc if imc < 30.0 => println!("Você está com sobrepeso."),
-        imc if imc < 35.0 => println!("Você está com obesidade grau I."),
-        imc if imc < 40.0 => println!("Você está com obesidade grau II."),
-        _ => println!("Você está com obesidade grau III."), // Morbid obesity
-    }
-
-    // General Health Recommendations (Placeholder - Consult a professional)
-    println!("\nRecomendações gerais de saúde:");
-    if imc < 18.5 {
-        println!("Procure um médico ou nutricionista para avaliar sua dieta e hábitos.");
-    } else if imc >= 25.0 {
-        println!("Consulte um médico ou nutricionista para um plano alimentar adequado e para discutir opções de atividade física.");
-    }
-    println!("Mantenha uma dieta equilibrada e pratique exercícios regularmente."); // General advice
+    // Teste
+    println!("Teste [0, 0]: {:?}", mlp.forward(&[0.0, 0.0]));
+    println!("Teste [0, 1]: {:?}", mlp.forward(&[0.0, 1.0]));
+    println!("Teste [1, 0]: {:?}", mlp.forward(&[1.0, 0.0]));
+    println!("Teste [1, 1]: {:?}", mlp.forward(&[1.0, 1.0]));
 
     Ok(())
 }
