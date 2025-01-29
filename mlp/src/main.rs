@@ -1,231 +1,194 @@
 use rand::Rng;
-use rusqlite::{params, Connection, Result};
-use serde::{Deserialize, Serialize};
-use thiserror::Error;
 use std::io;
-use std::io::prelude::*;
+use ndarray::prelude::*;
 
-// Defining the structure of a neuron
-#[derive(Debug, Clone, Serialize, Deserialize)]
-struct Neuron {
-    weights: Vec<f64>,
-    bias: f64,
-}
-
-#[derive(Error, Debug)]
-pub enum MyError {
-    #[error("SQLite error: {0}")]
-    Sqlite(#[from] rusqlite::Error),
-    #[error("Serialization error: {0}")]
-    Serialization(#[from] serde_json::Error),
-    #[error("IO error: {0}")]
-    Io(#[from] io::Error),
-}
-
-impl Neuron {
-    fn new(num_inputs: usize) -> Self {
-        let mut rng = rand::thread_rng();
-        Neuron {
-            weights: (0..num_inputs).map(|_| rng.gen_range(-1.0..1.0)).collect(),
-            bias: rng.gen_range(-1.0..1.0),
-        }
-    }
-    fn activate(&self, inputs: &[f64]) -> f64 {
-        let sum: f64 = inputs.iter().zip(&self.weights).map(|(x, w)| x * w).sum();
-        relu(sum + self.bias)
-    }
-    fn activate_derivative(&self, input: f64) -> f64 {
-        relu_derivative(input)
-    }
-}
-
-fn normalize_data(data: Vec<f64>, min: f64, max: f64) -> Vec<f64> {
-    data.iter().map(|&x| (x - min) / (max - min)).collect()
-}
-
-fn relu(x: f64) -> f64 {
+fn relu(x: f32) -> f32 {
     x.max(0.0)
 }
 
-fn relu_derivative(x: f64) -> f64 {
-    if x > 0.0 { 1.0 } else { 0.0 }
+fn sigmoid(x: f32) -> f32 {
+    1.0 / (1.0 + (-x).exp())
+}
+fn leaky_relu(x: f32) -> f32 {
+    if x > 0.0 {
+        x
+    } else {
+        0.01 * x // Coeficiente de vazamento
+    }
 }
 
-// Defining the structure of a multi-layer perceptron (MLP)
-#[derive(Debug, Clone, Serialize, Deserialize)]
-struct MLP {
-    layers: Vec<Vec<Neuron>>,
+
+fn normalizar_dados(dados: &Vec<Vec<f32>>) -> Vec<Vec<f32>> {
+    let dados_array = Array2::from_shape_vec((dados.len(), dados[0].len()), dados.iter().flatten().cloned().collect()).unwrap();
+    let mut dados_normalizados = Array2::zeros(dados_array.dim());
+
+    for i in 0..dados_array.ncols() {
+        let min_val = dados_array.column(i).iter().fold(f32::INFINITY, |a, &b| a.min(b));
+        let max_val = dados_array.column(i).iter().fold(f32::NEG_INFINITY, |a, &b| a.max(b));
+        dados_normalizados.column_mut(i).iter_mut().zip(dados_array.column(i).iter()).for_each(|(normalizado, &original)| {
+            *normalizado = (original - min_val) / (max_val - min_val);
+        });
+    } 
+    // Correctly convert back to Vec<Vec<f32>>
+    let mut result = Vec::new();
+    for row in dados_normalizados.outer_iter() {
+        result.push(row.to_vec());
+    }
+    result
 }
 
-impl MLP {
-    fn new(layer_sizes: &[usize]) -> Self {
-        let mut layers = Vec::new();
-        for i in 0..layer_sizes.len() - 1 {
-            let num_neurons = layer_sizes[i + 1];
-            let num_inputs = layer_sizes[i];
-            let layer = (0..num_neurons).map(|_| Neuron::new(num_inputs)).collect();
-            layers.push(layer);
-        }
-        MLP { layers }
-    }
+// fn inicializar_pesos(tamanho_entrada: usize, tamanho_saida: usize) -> Vec<Vec<f32>> {
+//     let mut rng = rand::rng();
+//     (0..tamanho_saida)
+//         .map(|_| (0..tamanho_entrada).map(|_| rng.random::<f32>() * (2.0 / tamanho_entrada as f32).sqrt()).collect())
+//         .collect()
+// }
 
-    fn forward(&self, inputs: &[f64]) -> Vec<f64> {
-        let mut activations = inputs.to_vec();
-        for layer in &self.layers {
-            let mut new_activations = Vec::new();
-            for neuron in layer {
-                new_activations.push(neuron.activate(&activations));
-            }
-            activations = new_activations;
-        }
-        activations
-    }
+fn inicializar_pesos(tamanho_entrada: usize, tamanho_saida: usize) -> Vec<Vec<f32>> {
+    let mut rng = rand::rng();
+    let limite = (6.0 / (tamanho_entrada + tamanho_saida) as f32).sqrt(); // Cálculo do limite
+    (0..tamanho_saida)
+        .map(|_| (0..tamanho_entrada).map(|_| rng.random_range(-limite..=limite)).collect()) // Pesos entre -limite e +limite
+        .collect()
+}
 
-    fn train(&mut self, training_data: &[(Vec<f64>, Vec<f64>)], learning_rate: f64, epochs: usize, db_path: &str) -> Result<(), MyError> {
-        // Initialize the database
-        initialize_db(db_path)?;
-        let conn = Connection::open(db_path)?;
-        for epoch in 0..epochs {
-            for (inputs, targets) in training_data.iter() {
-                // Forward pass
-                let mut activations = vec![inputs.clone()];
-                for layer in &self.layers {
-                    let mut new_activations = Vec::new();
-                    for neuron in layer {
-                        new_activations.push(neuron.activate(&activations.last().unwrap()));
-                    }
-                    activations.push(new_activations);
-                }
+fn inicializar_biases(tamanho_saida: usize) -> Vec<f32> {
+    vec![0.0; tamanho_saida]
+}
 
-                // Backpropagation
-                let mut errors = Vec::new();
+fn calcular_saida(entrada: &Vec<f32>, pesos: &(Vec<Vec<f32>>, Vec<Vec<f32>>), biases: &(Vec<f32>, Vec<f32>)) -> Vec<f32> {
+    let camada_oculta: Vec<f32> = pesos.0.iter().map(|w| relu(w.iter().zip(entrada).map(|(wi, ei)| wi * ei).sum::<f32>() + biases.0[0])).collect();
+    pesos.1.iter().map(|w| sigmoid(w.iter().zip(&camada_oculta).map(|(wi, ci)| wi * ci).sum::<f32>() + biases.1[0])).collect()
+}
 
-                // Calculate the error of the output layer
-                let output_activations = activations.last().unwrap();
-                let output_errors: Vec<f64> = output_activations.iter().zip(targets).map(|(o, t)| (t - o)).collect();
-                errors.push(output_errors);
+fn treinar_rede(dados_treinamento: &Vec<(Vec<f32>, Vec<f32>)>, taxa_aprendizagem: f32, epocas: usize) -> (Vec<Vec<f32>>, Vec<f32>, Vec<Vec<f32>>, Vec<f32>) {
+    let (mut pesos_oculta, mut pesos_saida) = (inicializar_pesos(4, 5), inicializar_pesos(5, 3));
+    let (mut biases_oculta, mut biases_saida) = (inicializar_biases(5), inicializar_biases(3));
 
-                // Propagate errors to previous layers
-                for l in (0..self.layers.len() - 1).rev() {
-                    let mut layer_errors = Vec::new();
-                    for j in 0..self.layers[l].len() {
-                        let mut error_sum = 0.0;
-                        for k in 0..self.layers[l + 1].len() {
-                            error_sum += errors.last().unwrap()[k] * self.layers[l + 1][k].weights[j];
-                        }
-                        layer_errors.push(error_sum);
-                    }
-                    errors.push(layer_errors);
-                }
-                errors.reverse();
+    for _ in 0..epocas {
+        for (entrada, saida_desejada) in dados_treinamento {
+            // Forward pass
+            let camada_oculta: Vec<f32> = pesos_oculta.iter().map(|w| {
+                relu(w.iter().zip(entrada).map(|(wi, ei)| wi * ei).sum::<f32>() + biases_oculta[0])
+            }).collect();
+            let saida_rede: Vec<f32> = pesos_saida.iter().map(|w| {
+                sigmoid(w.iter().zip(&camada_oculta).map(|(wi, ci)| wi * ci).sum::<f32>() + biases_saida[0])
+            }).collect();
 
-                // Update weights and biases
-                for l in 0..self.layers.len() {
-                    for j in 0..self.layers[l].len() {
-                        for k in 0..self.layers[l][j].weights.len() {
-                            let derivative = self.layers[l][j].activate_derivative(activations[l][k]);
-                            self.layers[l][j].weights[k] += learning_rate * errors[l][j] * activations[l][k] * derivative;
-                        }
-                        self.layers[l][j].bias += learning_rate * errors[l][j]; // Bias update
+            // Backward pass
+            let erro: Vec<f32> = saida_rede.iter().zip(saida_desejada).map(|(s, d)| s - d).collect();
+            let gradiente_saida: Vec<f32> = erro.iter().zip(&saida_rede).map(|(e, s)| e * s * (1.0 - s)).collect();
+
+            let mut gradiente_camada_oculta: Vec<f32> = vec![0.0; pesos_oculta.len()]; // Initialize with zeros
+            for k in 0..pesos_saida[0].len() { // Iterate through output neurons
+                for j in 0..pesos_oculta.len() { // Iterate through hidden neurons
+                    for i in 0..pesos_saida.len() { // Iterate through weights connecting hidden to output
+                        gradiente_camada_oculta[j] += pesos_saida[i][k] * gradiente_saida[i] * if camada_oculta[j] > 0.0 { 1.0 } else { 0.0 };
                     }
                 }
             }
 
-            println!("\r\033[1;34mEpoch {} completed.", epoch + 1);
+            // Update weights and biases
+            for i in 0..pesos_saida.len() {
+                for j in 0..pesos_saida[i].len() {
+                    pesos_saida[i][j] -= taxa_aprendizagem * gradiente_saida[i] * camada_oculta[j];
+                }
+                biases_saida[i] -= taxa_aprendizagem * gradiente_saida[i];
+            }
+
+            for i in 0..pesos_oculta.len() {
+                for j in 0..pesos_oculta[i].len() {
+                    pesos_oculta[i][j] -= taxa_aprendizagem * gradiente_camada_oculta[i] * entrada[j];
+                }
+                biases_oculta[i] -= taxa_aprendizagem * gradiente_camada_oculta[i];
+            }
         }
-
-        // Store the trained model in the database after all training
-        let trained_model_str = serde_json::to_string(&self)?;
-        println!("JSON of trained model: {}", trained_model_str);
-        conn.execute(
-            "INSERT OR REPLACE INTO training_data (epoch, data) VALUES (?1, ?2)",
-            params![epochs as i32, trained_model_str],
-        )?;
-        Ok(())
     }
+    (pesos_oculta, biases_oculta, pesos_saida, biases_saida)
 }
 
-fn initialize_db(db_path: &str) -> Result<()> {
-    let conn = Connection::open(db_path)?;
-    conn.execute("DROP TABLE IF EXISTS training_data;", [])?;
-    conn.execute(
-        "CREATE TABLE IF NOT EXISTS training_data (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            epoch INTEGER NOT NULL,
-            data TEXT NOT NULL
-        )",
-        [],
-    )?;
-    Ok(())
-}
-
-fn get_user_input(prompt: &str) -> Result<f64, MyError> {
-    print!("{}", prompt);
-    io::stdout().flush()?; // Ensures the prompt is displayed
-
+fn obter_entradas() -> Vec<f32> {
     let mut input = String::new();
-    io::stdin().read_line(&mut input)?;
-
-    input.trim().parse().map_err(|_| MyError::Io(io::Error::new(io::ErrorKind::InvalidInput, "Invalid input")))
+    println!("Insira as características de saúde:");
+    println!("1. Peso (kg)");
+    io::stdin().read_line(&mut input).expect("Falha ao ler entrada");
+    let peso: f32 = input.trim().parse().expect("Por favor, insira um número válido");
+    input.clear();
+    println!("2. Altura (m)");
+    io::stdin().read_line(&mut input).expect("Falha ao ler entrada");
+    let altura: f32 = input.trim().parse().expect("Por favor, insira um número válido");
+    input.clear();
+    println!("3. Idade (anos)");
+    io::stdin().read_line(&mut input).expect("Falha ao ler entrada");
+    let idade: f32 = input.trim().parse().expect("Por favor, insira um número válido");
+    input.clear();
+    println!("4. Nível de atividade física (1-5)");
+    io::stdin().read_line(&mut input).expect("Falha ao ler entrada");
+    let atividade_fisica: f32 = input.trim().parse().expect("Por favor, insira um número válido");
+    normalizar_dados(&vec![vec![peso, altura, idade, atividade_fisica]])[0].to_vec()
 }
 
-fn main() -> Result<(), MyError> {
-    let layer_sizes = &[3, 5, 1]; // 3 inputs, 5 hidden neurons, 1 output
-    let mut mlp = MLP::new(layer_sizes);
+fn interpretar_saida(saidas: &Vec<f32>) -> (String, String, String) {
+    let imc_msg = if saidas[0] < 0.5 {
+        "IMC baixo. Pode ser necessário ganhar peso para uma saúde ideal."
+    } else if saidas[0] < 0.75 {
+        "IMC normal. Mantenha um estilo de vida saudável."
+    } else {
+        "IMC alto. Pode ser necessário perder peso para uma saúde ideal."
+    };
 
-    let db_path = "training_data.db";
+    let recomendacao_msg1 = if saidas[1] < 0.5 {
+        "Nível baixo de atividade física recomendado."
+    } else if saidas[1] < 0.75 {
+        "Nível moderado de atividade física recomendado."
+    } else {
+        "Nível alto de atividade física recomendado."
+    };
 
-    // Training data (more realistic and scaled)
-    let training_data = vec![
-        (vec![70.0, 30.0, 1.70], vec![24.2]), // Example: (Weight, Age, Height) -> BMI
-        (vec![90.0, 40.0, 1.75], vec![29.4]),
-        // ... (rest of the training data)
+    let recomendacao_msg2 = if saidas[2] < 0.5 {
+        "Considere atividades físicas leves como caminhada."
+    } else if saidas[2] < 0.75 {
+        "Considere atividades físicas moderadas como ciclismo."
+    } else {
+        "Considere atividades físicas intensas como corrida."
+    };
+
+    (imc_msg.to_string(), recomendacao_msg1.to_string(), recomendacao_msg2.to_string())
+}
+
+fn main() {
+    // let dados_treinamento: Vec<(Vec<f32>, Vec<f32>)> = vec![
+    //     (vec![70.0, 1.75, 30.0, 3.0], vec![0.6, 0.6, 0.6]),
+    //     (vec![90.0, 1.65, 40.0, 2.0], vec![0.8, 0.4, 0.2]),
+    //     (vec![50.0, 1.80, 25.0, 4.0], vec![0.4, 0.8, 0.8]),
+    // ];
+
+    let dados_treinamento: Vec<(Vec<f32>, Vec<f32>)> = vec![
+        (vec![70.0, 1.75, 30.0, 3.0], vec![0.6, 0.6, 0.6]), // Peso normal, atividade moderada
+        (vec![90.0, 1.65, 40.0, 2.0], vec![0.8, 0.4, 0.2]), // Sobrepeso, atividade leve
+        (vec![50.0, 1.80, 25.0, 4.0], vec![0.4, 0.8, 0.8]), // Abaixo do peso, atividade intensa
+        (vec![110.0, 1.70, 50.0, 1.0], vec![0.9, 0.2, 0.1]), // Obesidade grau I, sedentário
+        (vec![60.0, 1.60, 35.0, 5.0], vec![0.5, 0.9, 0.9]), // Peso normal, extremamente ativo
+        (vec![85.0, 1.85, 28.0, 2.0], vec![0.7, 0.3, 0.3]), // Sobrepeso, levemente ativo
+        (vec![45.0, 1.55, 22.0, 3.0], vec![0.3, 0.7, 0.7])  // Abaixo do peso, moderadamente ativo
     ];
- 
-    mlp.train(&training_data, 0.01, 50000, db_path)?;
 
-    println!("Network trained.");
 
-    // Retrieve the trained model from the database
-    let conn = Connection::open(db_path)?;
-    let mut stmt = conn.prepare("SELECT epoch, data FROM training_data")?;
-    let mut rows = stmt.query([])?; 
-    while let Some(row) = rows.next()? {
-        let epoch: i32 = row.get(0)?;
-        let data: String = row.get(1)?;
+    let dados_normalizados: Vec<(Vec<f32>, Vec<f32>)> = dados_treinamento.iter().map(|d| (normalizar_dados(&vec![d.0.clone()])[0].to_vec(), d.1.clone())).collect();
+    let taxa_aprendizagem = 0.1;
+    let epocas = 1000;
+    let (pesos_oculta, biases_oculta, pesos_saida, biases_saida) = treinar_rede(&dados_normalizados, taxa_aprendizagem, epocas);
+
+    loop {
+        let entradas_usuario = obter_entradas();
+        let saida_rede = calcular_saida(&entradas_usuario, &(pesos_oculta.clone(), pesos_saida.clone()), &(biases_oculta.clone(), biases_saida.clone()));
+        let (imc_msg, recomendacao_msg1, recomendacao_msg2) = interpretar_saida(&saida_rede);
+
+        println!("---------------------");
+        println!("IMC estimado: {} - {}", saida_rede[0], imc_msg);
+        println!("---------------------");
+        println!("Recomendações de atividade física:");
+        println!("1. {}", recomendacao_msg1);
+        println!("2. {}", recomendacao_msg2);
     }
-
-    let weight = get_user_input("Digite o peso (kg): ")?;
-    let age = get_user_input("Digite a idade (anos): ")?;
-    let height = get_user_input("Digite a altura (metros): ")?;
-
-    let inputs = vec![weight, age, height];
-    let bmi = mlp.forward(&inputs)[0];
-
-    let bmi_rounded = (bmi * 10.0).round() / 10.0; // Round to one decimal place
-
-    println!("Seu IMC é: {:.1}", bmi_rounded);
-
-    match bmi {
-        bmi if bmi < 16.0 => println!("Você está em estado de magreza severa."),
-        bmi if bmi < 17.0 => println!("Você está em estado de magreza."),
-        bmi if bmi < 18.5 => println!("Você está abaixo do peso."),
-        bmi if bmi < 25.0 => println!("Seu peso está normal."),
-        bmi if bmi < 30.0 => println!("Você está com sobrepeso."),
-        bmi if bmi < 35.0 => println!("Você está com obesidade grau I."),
-        bmi if bmi < 40.0 => println!("Você está com obesidade grau II."),
-        _ => println!("Você está com obesidade grau III."), // Obesidade mórbida
-    }
-
-
-    // Recomendações gerais de saúde
-    println!("\nRecomendações gerais de saúde:");
-    if bmi < 18.5 {
-        println!("Procure um médico ou nutricionista para avaliar sua dieta e hábitos.");
-    } else if bmi >= 25.0 {
-        println!("Consulte um médico ou nutricionista para um plano alimentar adequado e para discutir opções de atividade física.");
-    }
-    println!("Mantenha uma dieta equilibrada e pratique exercícios regularmente."); // Conselho geral
-
-    Ok(())
 }
