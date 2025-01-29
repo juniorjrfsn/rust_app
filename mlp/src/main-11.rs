@@ -5,7 +5,7 @@ use thiserror::Error;
 use std::io;
 use std::io::prelude::*;
 
-// Defining the structure of a neuron
+// Definindo a estrutura de um neurônio
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct Neuron {
     weights: Vec<f64>,
@@ -38,11 +38,9 @@ impl Neuron {
         relu_derivative(input)
     }
 }
-
 fn normalize_data(data: Vec<f64>, min: f64, max: f64) -> Vec<f64> {
     data.iter().map(|&x| (x - min) / (max - min)).collect()
 }
-
 fn relu(x: f64) -> f64 {
     x.max(0.0)
 }
@@ -51,7 +49,7 @@ fn relu_derivative(x: f64) -> f64 {
     if x > 0.0 { 1.0 } else { 0.0 }
 }
 
-// Defining the structure of a multi-layer perceptron (MLP)
+// Definindo a estrutura de uma rede neural multicamadas (MLP)
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct MLP {
     layers: Vec<Vec<Neuron>>,
@@ -82,7 +80,7 @@ impl MLP {
     }
 
     fn train(&mut self, training_data: &[(Vec<f64>, Vec<f64>)], learning_rate: f64, epochs: usize, db_path: &str) -> Result<(), MyError> {
-        // Initialize the database
+        // Inicializa o banco de dados
         initialize_db(db_path)?;
         let conn = Connection::open(db_path)?;
         for epoch in 0..epochs {
@@ -100,12 +98,12 @@ impl MLP {
                 // Backpropagation
                 let mut errors = Vec::new();
 
-                // Calculate the error of the output layer
+                // Calcula o erro da camada de saída
                 let output_activations = activations.last().unwrap();
                 let output_errors: Vec<f64> = output_activations.iter().zip(targets).map(|(o, t)| (t - o)).collect();
                 errors.push(output_errors);
 
-                // Propagate errors to previous layers
+                // Propaga os erros para as camadas anteriores
                 for l in (0..self.layers.len() - 1).rev() {
                     let mut layer_errors = Vec::new();
                     for j in 0..self.layers[l].len() {
@@ -119,7 +117,7 @@ impl MLP {
                 }
                 errors.reverse();
 
-                // Update weights and biases
+                // Atualiza os pesos e biases
                 for l in 0..self.layers.len() {
                     for j in 0..self.layers[l].len() {
                         for k in 0..self.layers[l][j].weights.len() {
@@ -131,12 +129,12 @@ impl MLP {
                 }
             }
 
-            println!("\r\033[1;34mEpoch {} completed.", epoch + 1);
+            println!("Epoch {} completed.", epoch + 1);
         }
 
-        // Store the trained model in the database after all training
+        // Armazena o modelo treinado no banco de dados após todo o treinamento
         let trained_model_str = serde_json::to_string(&self)?;
-        println!("JSON of trained model: {}", trained_model_str);
+        println!("JSON do modelo treinado: {}", trained_model_str); // Adicione esta linha
         conn.execute(
             "INSERT OR REPLACE INTO training_data (epoch, data) VALUES (?1, ?2)",
             params![epochs as i32, trained_model_str],
@@ -161,12 +159,12 @@ fn initialize_db(db_path: &str) -> Result<()> {
 
 fn get_user_input(prompt: &str) -> Result<f64, MyError> {
     print!("{}", prompt);
-    io::stdout().flush()?; // Ensures the prompt is displayed
+    io::stdout().flush()?; // Garante que o prompt seja exibido
 
     let mut input = String::new();
     io::stdin().read_line(&mut input)?;
 
-    input.trim().parse().map_err(|_| MyError::Io(io::Error::new(io::ErrorKind::InvalidInput, "Invalid input")))
+    input.trim().parse().map_err(|_| MyError::Io(io::Error::new(io::ErrorKind::InvalidInput, "Entrada inválida")))
 }
 
 fn main() -> Result<(), MyError> {
@@ -175,54 +173,75 @@ fn main() -> Result<(), MyError> {
 
     let db_path = "training_data.db";
 
-    // Training data (more realistic and scaled)
+    // Dados de treinamento (mais realistas e escalados)
     let training_data = vec![
-        (vec![70.0, 30.0, 1.70], vec![24.2]), // Example: (Weight, Age, Height) -> BMI
+        (vec![70.0, 30.0, 1.70], vec![24.2]), // Exemplo: (Peso, Idade, Altura) -> IMC
         (vec![90.0, 40.0, 1.75], vec![29.4]),
-        // ... (rest of the training data)
+        (vec![60.0, 25.0, 1.60], vec![23.4]),
+        (vec![75.0, 35.0, 1.65], vec![27.5]),
+        (vec![80.0, 45.0, 1.80], vec![24.7]),
+        (vec![65.0, 30.0, 1.70], vec![22.5]),
+        (vec![85.0, 50.0, 1.75], vec![27.7]),
+        (vec![70.0, 40.0, 1.60], vec![27.3]),
+        (vec![95.0, 55.0, 1.85], vec![27.8]),
+        (vec![60.0, 20.0, 1.65], vec![22.0]),
+        (vec![100.0, 60.0, 1.90], vec![27.7]),
+        (vec![75.0, 25.0, 1.70], vec![25.9]),
+        (vec![80.0, 35.0, 1.75], vec![26.1]),
+        (vec![100.0, 34.0, 1.80], vec![30.9]),
+        (vec![55.0, 28.0, 1.55], vec![24.2]),
+        (vec![92.0, 42.0, 1.82], vec![27.8]),
+        (vec![68.0, 32.0, 1.68], vec![24.0]),
+        (vec![78.0, 38.0, 1.72], vec![26.3]),
+        (vec![88.0, 48.0, 1.78], vec![27.7]),
+        (vec![72.0, 36.0, 1.65], vec![26.5]),
     ];
  
     mlp.train(&training_data, 0.01, 50000, db_path)?;
 
-    println!("Network trained.");
+    println!("Rede treinada.");
 
-    // Retrieve the trained model from the database
+    // Recuperar o modelo treinado do banco de dados
     let conn = Connection::open(db_path)?;
     let mut stmt = conn.prepare("SELECT epoch, data FROM training_data")?;
     let mut rows = stmt.query([])?; 
     while let Some(row) = rows.next()? {
         let epoch: i32 = row.get(0)?;
         let data: String = row.get(1)?;
+        println!("Epoch: {}, Data: {}", epoch, data);
     }
+    //
 
-    let weight = get_user_input("Digite o peso (kg): ")?;
-    let age = get_user_input("Digite a idade (anos): ")?;
-    let height = get_user_input("Digite a altura (metros): ")?;
+    let peso = get_user_input("Digite o peso (kg): ")?;
+    let idade = get_user_input("Digite a idade (anos): ")?;
+    let altura = get_user_input("Digite a altura (metros): ")?;
 
-    let inputs = vec![weight, age, height];
-    let bmi = mlp.forward(&inputs)[0];
+    let inputs = vec![peso, idade, altura];
+    let imc = mlp.forward(&inputs)[0];
 
-    let bmi_rounded = (bmi * 10.0).round() / 10.0; // Round to one decimal place
+    println!("Seu IMC é: {:.2}", imc);
 
-    println!("Seu IMC é: {:.1}", bmi_rounded);
+    // Recomendações melhoradas (mais detalhadas)
+    let imc_rounded = (imc * 10.0).round() / 10.0; // Arredondar para uma casa decimal
 
-    match bmi {
-        bmi if bmi < 16.0 => println!("Você está em estado de magreza severa."),
-        bmi if bmi < 17.0 => println!("Você está em estado de magreza."),
-        bmi if bmi < 18.5 => println!("Você está abaixo do peso."),
-        bmi if bmi < 25.0 => println!("Seu peso está normal."),
-        bmi if bmi < 30.0 => println!("Você está com sobrepeso."),
-        bmi if bmi < 35.0 => println!("Você está com obesidade grau I."),
-        bmi if bmi < 40.0 => println!("Você está com obesidade grau II."),
+    println!("Seu IMC é: {:.1}", imc_rounded); // Exibir IMC arredondado
+
+    match imc {
+        imc if imc < 16.0 => println!("Você está em estado de magreza severa."),
+        imc if imc < 17.0 => println!("Você está em estado de magreza."),
+        imc if imc < 18.5 => println!("Você está abaixo do peso."),
+        imc if imc < 25.0 => println!("Seu peso está normal."),
+        imc if imc < 30.0 => println!("Você está com sobrepeso."),
+        imc if imc < 35.0 => println!("Você está com obesidade grau I."),
+        imc if imc < 40.0 => println!("Você está com obesidade grau II."),
         _ => println!("Você está com obesidade grau III."), // Obesidade mórbida
     }
 
-
     // Recomendações gerais de saúde
     println!("\nRecomendações gerais de saúde:");
-    if bmi < 18.5 {
+    if imc < 18.5 {
         println!("Procure um médico ou nutricionista para avaliar sua dieta e hábitos.");
-    } else if bmi >= 25.0 {
+    } else if imc >= 25.0 {
         println!("Consulte um médico ou nutricionista para um plano alimentar adequado e para discutir opções de atividade física.");
     }
     println!("Mantenha uma dieta equilibrada e pratique exercícios regularmente."); // Conselho geral
