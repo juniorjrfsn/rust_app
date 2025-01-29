@@ -33,9 +33,12 @@ impl Neuron {
 
     fn activate(&self, inputs: &[f64]) -> f64 {
         let sum: f64 = inputs.iter().zip(&self.weights).map(|(x, w)| x * w).sum();
-        // Usando sigmoide como função de ativação
-        1.0 / (1.0 + (-sum - self.bias).exp())
+        relu(sum + self.bias)
     }
+}
+
+fn relu(x: f64) -> f64 {
+    x.max(0.0)
 }
 
 // Define a estrutura de uma rede neural multicamadas (MLP)
@@ -90,7 +93,7 @@ impl MLP {
 
                 // Calcula o erro da camada de saída
                 let output_activations = activations.last().unwrap();
-                let output_errors: Vec<f64> = output_activations.iter().zip(targets).map(|(o, t)| (t - o) * o * (1.0 - o)).collect();
+                let output_errors: Vec<f64> = output_activations.iter().zip(targets).map(|(o, t)| (t - o)).collect();
                 errors.push(output_errors);
 
                 // Propaga os erros para as camadas anteriores
@@ -101,8 +104,7 @@ impl MLP {
                         for k in 0..self.layers[l + 1].len() {
                             error_sum += errors.last().unwrap()[k] * self.layers[l + 1][k].weights[j];
                         }
-                        let activation = activations[l + 1][j];
-                        layer_errors.push(error_sum * activation * (1.0 - activation));
+                        layer_errors.push(error_sum);
                     }
                     errors.push(layer_errors);
                 }
@@ -157,6 +159,7 @@ fn get_user_input(prompt: &str) -> Result<f64, MyError> {
     input.trim().parse().map_err(|_| MyError::Io(io::Error::new(io::ErrorKind::InvalidInput, "Entrada inválida")))
 }
 
+
 fn main() -> Result<(), MyError> {
     let layer_sizes = &[3, 5, 1]; // 3 inputs, 5 hidden neurons, 1 output
     let mut mlp = MLP::new(layer_sizes);
@@ -165,32 +168,23 @@ fn main() -> Result<(), MyError> {
 
     // Placeholder training data (REPLACE WITH REAL DATA)
     let training_data = vec![
-        (vec![70.0, 30.0, 1.70], vec![24.2]), // Peso, Idade, Altura -> IMC
-        (vec![90.0, 40.0, 1.75], vec![29.4]),
-        (vec![60.0, 25.0, 1.60], vec![23.4]),
-        (vec![75.0, 35.0, 1.65], vec![27.5]),
-        (vec![80.0, 45.0, 1.80], vec![24.7]),
-        (vec![65.0, 30.0, 1.70], vec![22.5]),
-        (vec![85.0, 50.0, 1.75], vec![27.4]),
-        (vec![70.0, 40.0, 1.60], vec![27.3]),
-        (vec![95.0, 55.0, 1.85], vec![29.3]),
-        (vec![60.0, 20.0, 1.65], vec![22.0]),
-        (vec![100.0, 60.0, 1.90], vec![27.7]),
-        (vec![75.0, 25.0, 1.70], vec![25.9]),
-        (vec![80.0, 35.0, 1.75], vec![26.7]),
-        (vec![65.0, 45.0, 1.60], vec![25.4]),
-        (vec![90.0, 50.0, 1.80], vec![27.8]),
-        (vec![70.0, 30.0, 1.65], vec![25.7]),
-        (vec![85.0, 40.0, 1.70], vec![29.1]),
-        (vec![60.0, 25.0, 1.55], vec![23.5]),
-        (vec![95.0, 55.0, 1.80], vec![29.2]),
-        (vec![75.0, 35.0, 1.75], vec![26.1]),
-        (vec![80.0, 45.0, 1.85], vec![25.6]),
-        (vec![65.0, 20.0, 1.60], vec![24.2]),
-        (vec![100.0, 60.0, 1.95], vec![26.3]),
+        (vec![70.0, 30.0, 1.70], vec![70.0 / (1.70 * 1.70)]), // Peso, Idade, Altura -> IMC
+        (vec![90.0, 40.0, 1.75], vec![90.0 / (1.75 * 1.75)]),
+        (vec![60.0, 25.0, 1.60], vec![60.0 / (1.60 * 1.60)]),
+        (vec![75.0, 35.0, 1.65], vec![75.0 / (1.65 * 1.65)]),
+        (vec![80.0, 45.0, 1.80], vec![80.0 / (1.80 * 1.80)]),
+        (vec![65.0, 30.0, 1.70], vec![65.0 / (1.70 * 1.70)]),
+        (vec![85.0, 50.0, 1.75], vec![85.0 / (1.75 * 1.75)]),
+        (vec![70.0, 40.0, 1.60], vec![70.0 / (1.60 * 1.60)]),
+        (vec![95.0, 55.0, 1.85], vec![95.0 / (1.85 * 1.85)]),
+        (vec![60.0, 20.0, 1.65], vec![60.0 / (1.65 * 1.65)]),
+        (vec![100.0, 60.0, 1.90], vec![100.0 / (1.90 * 1.90)]),
+        (vec![75.0, 25.0, 1.70], vec![75.0 / (1.70 * 1.70)]),
+        (vec![80.0, 35.0, 1.75], vec![80.0 / (1.75 * 1.75)])
+        // Add more data points...
     ];
 
-    mlp.train(&training_data, 0.1, 5000, db_path)?;
+    mlp.train(&training_data, 0.3, 50000, db_path)?;
 
     println!("Rede treinada.");
 
