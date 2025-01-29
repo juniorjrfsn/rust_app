@@ -224,3 +224,9 @@ fn main() -> Result<(), MyError> {
 
     Ok(())
 }
+
+
+// cd mlp
+// cargo run
+// cargo run --bin mlp
+// cargo.exe "run", "--package", "mlp", "--bin", "mlp"
