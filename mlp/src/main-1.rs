@@ -22,7 +22,6 @@ impl Neuron {
         1.0 / (1.0 + (-sum - self.bias).exp())
     }
 }
-
 // Define a estrutura de uma rede neural multicamadas (MLP)
 #[derive(Debug, Clone)]
 struct MLP {
