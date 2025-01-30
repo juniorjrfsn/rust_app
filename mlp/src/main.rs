@@ -9,14 +9,6 @@ fn relu(x: f32) -> f32 {
 fn sigmoid(x: f32) -> f32 {
     1.0 / (1.0 + (-x).exp())
 }
-fn leaky_relu(x: f32) -> f32 {
-    if x > 0.0 {
-        x
-    } else {
-        0.01 * x // Coeficiente de vazamento
-    }
-}
-
 
 fn normalizar_dados(dados: &Vec<Vec<f32>>) -> Vec<Vec<f32>> {
     let dados_array = Array2::from_shape_vec((dados.len(), dados[0].len()), dados.iter().flatten().cloned().collect()).unwrap();
@@ -28,7 +20,7 @@ fn normalizar_dados(dados: &Vec<Vec<f32>>) -> Vec<Vec<f32>> {
         dados_normalizados.column_mut(i).iter_mut().zip(dados_array.column(i).iter()).for_each(|(normalizado, &original)| {
             *normalizado = (original - min_val) / (max_val - min_val);
         });
-    } 
+    }
     // Correctly convert back to Vec<Vec<f32>>
     let mut result = Vec::new();
     for row in dados_normalizados.outer_iter() {
@@ -36,13 +28,6 @@ fn normalizar_dados(dados: &Vec<Vec<f32>>) -> Vec<Vec<f32>> {
     }
     result
 }
-
-// fn inicializar_pesos(tamanho_entrada: usize, tamanho_saida: usize) -> Vec<Vec<f32>> {
-//     let mut rng = rand::rng();
-//     (0..tamanho_saida)
-//         .map(|_| (0..tamanho_entrada).map(|_| rng.random::<f32>() * (2.0 / tamanho_entrada as f32).sqrt()).collect())
-//         .collect()
-// }
 
 fn inicializar_pesos(tamanho_entrada: usize, tamanho_saida: usize) -> Vec<Vec<f32>> {
     let mut rng = rand::rng();
@@ -157,12 +142,6 @@ fn interpretar_saida(saidas: &Vec<f32>) -> (String, String, String) {
 }
 
 fn main() {
-    // let dados_treinamento: Vec<(Vec<f32>, Vec<f32>)> = vec![
-    //     (vec![70.0, 1.75, 30.0, 3.0], vec![0.6, 0.6, 0.6]),
-    //     (vec![90.0, 1.65, 40.0, 2.0], vec![0.8, 0.4, 0.2]),
-    //     (vec![50.0, 1.80, 25.0, 4.0], vec![0.4, 0.8, 0.8]),
-    // ];
-
     let dados_treinamento: Vec<(Vec<f32>, Vec<f32>)> = vec![
         (vec![70.0, 1.75, 30.0, 3.0], vec![0.6, 0.6, 0.6]), // Peso normal, atividade moderada
         (vec![90.0, 1.65, 40.0, 2.0], vec![0.8, 0.4, 0.2]), // Sobrepeso, atividade leve
@@ -172,7 +151,6 @@ fn main() {
         (vec![85.0, 1.85, 28.0, 2.0], vec![0.7, 0.3, 0.3]), // Sobrepeso, levemente ativo
         (vec![45.0, 1.55, 22.0, 3.0], vec![0.3, 0.7, 0.7])  // Abaixo do peso, moderadamente ativo
     ];
-
 
     let dados_normalizados: Vec<(Vec<f32>, Vec<f32>)> = dados_treinamento.iter().map(|d| (normalizar_dados(&vec![d.0.clone()])[0].to_vec(), d.1.clone())).collect();
     let taxa_aprendizagem = 0.1;
@@ -192,3 +170,9 @@ fn main() {
         println!("2. {}", recomendacao_msg2);
     }
 }
+
+
+// cd mlp
+// cargo run
+// cargo run --bin mlp
+// cargo.exe "run", "--package", "mlp", "--bin", "mlp"
