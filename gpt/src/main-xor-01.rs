@@ -145,3 +145,10 @@ fn main() {
     println!("Input: [1, 0], Predicted Output: {:?}", mlp.forward(&[1.0, 0.0]));
     println!("Input: [1, 1], Predicted Output: {:?}", mlp.forward(&[1.0, 1.0]));
 }
+
+
+
+// cd gpt
+// cargo run
+// cargo run --bin gpt
+// cargo.exe "run", "--package", "gpt", "--bin", "gpt"

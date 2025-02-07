@@ -4,14 +4,15 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-	ndarray = "0.16.1"  # Or the latest version
+	#ndarray = "0.16.1"  # Or the latest version
+	ndarray = { version = "0.16.1", features = ["serde"] }
 	#image = "0.25.5"  # Or latest 0.x version
 	#plotters = "0.3.4"
 	time = "0.3.36"
 	rand = "0.9.0"
 	thiserror = "2.0.11"
 	rand_distr = "0.5.0"
-	toml = "0.8.19"
+	toml = "0.8.20"
 	#encoding = "0.2.33"
 	#encoding_rs = "0.8.34"
 	#encoding_rs_io = "0.1.7"
@@ -23,7 +24,7 @@ edition = "2021"
 	#libsqlite3-sys = "0.29.0"
 	rusqlite = { version = "0.32.0", features = ["bundled"] }
 	serde_bson = "0.0.1" # Or latest 0.x version
-
+    smartcore = "0.4.0"
 	crossbeam = "0.8"  # Or latest 0.x version
 	#[build-dependencies]
 	#bindgen = "0.71.1"

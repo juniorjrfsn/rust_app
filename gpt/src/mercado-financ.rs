@@ -1,6 +1,5 @@
 use rand::Rng;
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct Neuron {
@@ -114,17 +113,13 @@ fn normalize(data: &[f64]) -> (Vec<f64>, f64, f64) {
 }
 
 fn main() {
-    // Dados JSON fornecidos
-    let json_data = r#"[{"code":"EUR","codein":"USD","name":"Euro/Dólar Americano","high":"1.0411","low":"1.0305","varBid":"-0.0053","pctChange":"-0.51","bid":"1.0329","ask":"1.0331","timestamp":"1738956489","create_date":"2025-02-07 16:28:09"},{"high":"1.0387","low":"1.0382","varBid":"0.0002","pctChange":"0.02","bid":"1.0384","ask":"1.0386","timestamp":"1738886388"}, ...]"#;
-
-    // Parse dos dados JSON
-    let parsed_data: Vec<Value> = serde_json::from_str(json_data).expect("Invalid JSON");
-
-    // Extrair os valores de 'bid'
-    let bid_prices: Vec<f64> = parsed_data
-        .iter()
-        .map(|entry| entry["bid"].as_str().unwrap().parse::<f64>().unwrap())
-        .collect();
+    // Dados históricos: dias (x) e bid prices (y)
+    let days: Vec<f64> = (0..30).map(|x| x as f64).collect(); // Dias 0 a 29
+    let bid_prices: Vec<f64> = vec![
+        1.0411, 1.0387, 1.0406, 1.0381, 1.0351, 1.0271, 1.0435, 1.0434, 1.0399, 1.0428,
+        1.0431, 1.0495, 1.0487, 1.0523, 1.0522, 1.0421, 1.0415, 1.0434, 1.0426, 1.0285,
+        1.0331, 1.0330, 1.0305, 1.0355, 1.0309, 1.0278, 1.0247, 1.0313, 1.0216, 1.0329,
+    ];
 
     // Normalizar os dados
     let (normalized_prices, min_price, max_price) = normalize(&bid_prices);
@@ -139,9 +134,9 @@ fn main() {
     }
 
     // Criar e treinar a MLP
-    let layer_sizes = &[window_size, 20, 10, 1]; // Arquitetura mais profunda
+    let layer_sizes = &[window_size, 10, 1]; // Camada de entrada (5), oculta (10), saída (1)
     let mut mlp = MLP::new(layer_sizes);
-    mlp.train(&training_data, 0.005, 20000); // Taxa de aprendizado ajustada e mais épocas
+    mlp.train(&training_data, 0.01, 10000);
 
     // Prever o próximo valor (dia 30)
     let last_inputs: Vec<f64> = normalized_prices[normalized_prices.len() - window_size..].to_vec();

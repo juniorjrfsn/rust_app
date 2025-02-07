@@ -1,6 +1,5 @@
 use rand::Rng;
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct Neuron {
@@ -11,7 +10,7 @@ struct Neuron {
 impl Neuron {
     fn new(num_inputs: usize) -> Self {
         let mut rng = rand::thread_rng();
-        let bound = (6.0 / (num_inputs + 1) as f64).sqrt(); // Xavier initialization
+        let bound = (6.0 / (num_inputs + 1) as f64).sqrt();
         Neuron {
             weights: (0..num_inputs).map(|_| rng.gen_range(-bound..bound)).collect(),
             bias: rng.gen_range(-bound..bound),
@@ -21,8 +20,8 @@ impl Neuron {
     fn activate(&self, inputs: &[f64], activation_fn: &str) -> f64 {
         let sum: f64 = inputs.iter().zip(&self.weights).map(|(x, w)| x * w).sum::<f64>() + self.bias;
         match activation_fn {
-            "linear" => sum, // Linear activation for output layer
             "tanh" => sum.tanh(),
+            "sigmoid" => 1.0 / (1.0 + (-sum).exp()),
             _ => panic!("Unsupported activation function"),
         }
     }
@@ -50,7 +49,7 @@ impl MLP {
         for (i, layer) in self.layers.iter().enumerate() {
             let mut new_activations = Vec::new();
             let activation_fn = if i == self.layers.len() - 1 {
-                "linear" // Linear activation for output layer
+                "sigmoid"
             } else {
                 "tanh"
             };
@@ -62,18 +61,29 @@ impl MLP {
         activations
     }
 
-    fn train(&mut self, training_data: &[(Vec<f64>, f64)], learning_rate: f64, epochs: usize) {
+    fn train(&mut self, training_data: &[(Vec<f64>, Vec<f64>)], learning_rate: f64, epochs: usize) {
         for epoch in 0..epochs {
             let mut total_error = 0.0;
-            for (inputs, target) in training_data.iter() {
+            for (inputs, targets) in training_data.iter() {
                 // Forward pass
                 let activations = self.forward(inputs);
-                let output = activations.last().unwrap()[0];
-                // Calculate error (MSE)
-                let error = target - output;
-                total_error += error * error;
+                let output = activations.last().unwrap();
+
+                // Calculate output error (using MSE for simplicity)
+                let output_errors: Vec<f64> = output
+                    .iter()
+                    .zip(targets)
+                    .map(|(o, t)| t - o) // Just the difference for MSE
+                    .collect();
+                total_error += output_errors.iter().map(|e| e * e).sum::<f64>(); // Sum of squared errors
+
                 // Backpropagation
-                let mut deltas = vec![vec![error]]; // Delta for output layer
+                let mut deltas = vec![output_errors
+                    .iter()
+                    .zip(output.iter())
+                    .map(|(err, out)| err * out * (1.0 - out)) // Sigmoid derivative
+                    .collect::<Vec<f64>>()]; // Output layer deltas
+
                 for l in (0..self.layers.len() - 1).rev() {
                     let mut layer_deltas = Vec::new();
                     for j in 0..self.layers[l].len() {
@@ -82,11 +92,12 @@ impl MLP {
                             delta_sum += deltas.last().unwrap()[k] * self.layers[l + 1][k].weights[j];
                         }
                         let activation = activations[l + 1][j];
-                        layer_deltas.push(delta_sum * (1.0 - activation * activation)); // Derivative of tanh
+                        layer_deltas.push(delta_sum * (1.0 - activation * activation)); // Tanh derivative
                     }
                     deltas.push(layer_deltas);
                 }
                 deltas.reverse();
+
                 // Update weights and biases
                 for l in 0..self.layers.len() {
                     for j in 0..self.layers[l].len() {
@@ -99,59 +110,37 @@ impl MLP {
                 }
             }
             let avg_error = total_error / training_data.len() as f64;
-            if epoch % 1000 == 0 || epoch == epochs - 1 {
-                println!("Epoch {}: Average Error = {:.6}", epoch + 1, avg_error);
-            }
+            println!("Epoch {}: Average Error = {:.6}", epoch + 1, avg_error);
         }
     }
 }
 
-fn normalize(data: &[f64]) -> (Vec<f64>, f64, f64) {
-    let min = data.iter().cloned().fold(f64::INFINITY, f64::min);
-    let max = data.iter().cloned().fold(f64::NEG_INFINITY, f64::max);
-    let normalized: Vec<f64> = data.iter().map(|x| (x - min) / (max - min)).collect();
-    (normalized, min, max)
-}
-
 fn main() {
-    // Dados JSON fornecidos
-    let json_data = r#"[{"code":"EUR","codein":"USD","name":"Euro/Dólar Americano","high":"1.0411","low":"1.0305","varBid":"-0.0053","pctChange":"-0.51","bid":"1.0329","ask":"1.0331","timestamp":"1738956489","create_date":"2025-02-07 16:28:09"},{"high":"1.0387","low":"1.0382","varBid":"0.0002","pctChange":"0.02","bid":"1.0384","ask":"1.0386","timestamp":"1738886388"}, ...]"#;
-
-    // Parse dos dados JSON
-    let parsed_data: Vec<Value> = serde_json::from_str(json_data).expect("Invalid JSON");
-
-    // Extrair os valores de 'bid'
-    let bid_prices: Vec<f64> = parsed_data
-        .iter()
-        .map(|entry| entry["bid"].as_str().unwrap().parse::<f64>().unwrap())
-        .collect();
-
-    // Normalizar os dados
-    let (normalized_prices, min_price, max_price) = normalize(&bid_prices);
-
-    // Criar dados de treinamento
-    let window_size = 5; // Usar os últimos 5 dias como entrada
-    let mut training_data = Vec::new();
-    for i in window_size..normalized_prices.len() {
-        let inputs: Vec<f64> = normalized_prices[i - window_size..i].to_vec();
-        let target = normalized_prices[i];
-        training_data.push((inputs, target));
-    }
-
-    // Criar e treinar a MLP
-    let layer_sizes = &[window_size, 20, 10, 1]; // Arquitetura mais profunda
+    let layer_sizes = &[2, 3, 1];
     let mut mlp = MLP::new(layer_sizes);
-    mlp.train(&training_data, 0.005, 20000); // Taxa de aprendizado ajustada e mais épocas
+    let training_data = vec![
+        (vec![0.0, 0.0], vec![0.0]),
+        (vec![0.0, 1.0], vec![1.0]),
+        (vec![1.0, 0.0], vec![1.0]),
+        (vec![1.0, 1.0], vec![0.0]),
+    ];
+    mlp.train(&training_data, 0.1, 10000);
 
-    // Prever o próximo valor (dia 30)
-    let last_inputs: Vec<f64> = normalized_prices[normalized_prices.len() - window_size..].to_vec();
-    let normalized_prediction = mlp.forward(&last_inputs).last().unwrap()[0];
-
-    // Desnormalizar a previsão
-    let denormalized_prediction = normalized_prediction * (max_price - min_price) + min_price;
-
+    println!("\nTest Results:");
     println!(
-        "Previsão para o bid price em 08/02/2025: {:.4}",
-        denormalized_prediction
+        "Input: [0, 0], Predicted Output: {:?}",
+        mlp.forward(&[0.0, 0.0]).last().unwrap()
+    );
+    println!(
+        "Input: [0, 1], Predicted Output: {:?}",
+        mlp.forward(&[0.0, 1.0]).last().unwrap()
+    );
+    println!(
+        "Input: [1, 0], Predicted Output: {:?}",
+        mlp.forward(&[1.0, 0.0]).last().unwrap()
+    );
+    println!(
+        "Input: [1, 1], Predicted Output: {:?}",
+        mlp.forward(&[1.0, 1.0]).last().unwrap()
     );
 }
