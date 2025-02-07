@@ -69,7 +69,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let (treino, validacao) = imagens.split_at(n_treino);
 
     // Configuração para usar a CPU
-    let vs = nn::VarStore::new(tch::Device::Cpu); 
+    let vs = nn::VarStore::new(tch::Device::Cpu);
     let model = criar_modelo(&vs);
 
     let opt = tch::optim::Adam::new(&vs, 1e-3)?;
