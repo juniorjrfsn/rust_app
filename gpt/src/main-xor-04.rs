@@ -144,3 +144,9 @@ fn main() {
         mlp.forward(&[1.0, 1.0]).last().unwrap()
     );
 }
+
+
+// cd gpt
+// cargo run
+// cargo run --bin gpt
+// cargo.exe "run", "--package", "gpt", "--bin", "gpt"
