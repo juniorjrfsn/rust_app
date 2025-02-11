@@ -64,7 +64,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     // Cria e treina o modelo MLP
     let mut model = rna::MLP::new(&[5, 64, 32, 16, 8, 1]); // Modelo mais profundo
-    model.train(train_inputs, train_labels, 100, 0.0001, "tanh"); // Usa tanh como ativação
+    model.train(train_inputs, train_labels, 100, 0.001, "tanh"); // Usa tanh como ativação
 
     // Avalia o modelo nos dados de teste
     let mut test_loss = 0.0;

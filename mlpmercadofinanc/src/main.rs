@@ -20,12 +20,37 @@ fn denormalize(value: f64, mean: f64, std: f64) -> f64 {
 
 fn main() -> Result<(), Box<dyn Error>> {
     // Carrega os dados do CSV
-    let matrix = ler_csv("dados/WEGE3.csv")?;
+    let ativo_financeiro = "WEGE3";
+    let file_path = format!("dados/{}.csv", ativo_financeiro);
+    let matrix = ler_csv(&file_path)?;
 
-    // Converte os dados para formato numérico
+    // Verifica se há pelo menos uma linha de dados após o cabeçalho
+    if matrix.len() < 2 {
+        return Err("O arquivo CSV não contém dados suficientes.".into());
+    }
+
+    // Pega os valores da segunda linha (primeira linha de dados após o cabeçalho)
+    let segunda_linha = &matrix[0]; // Index 0 porque o cabeçalho é retirado no retorno da função ler_csv
+
+    // Converte os valores da segunda linha para o formato numérico
+    let _abertura: f64 = segunda_linha[1].replace(',', ".").parse()?;
+    let _fechamento: f64 = segunda_linha[2].replace(',', ".").parse()?;
+    let _variacao: f64 = segunda_linha[3].replace(',', ".").parse()?;
+    let _minimo: f64 = segunda_linha[4].replace(',', ".").parse()?;
+    let _maximo: f64 = segunda_linha[5].replace(',', ".").parse()?;
+    let _volume: f64 = segunda_linha[6]
+        .trim_end_matches(|c| c == 'M' || c == 'B')
+        .replace(',', ".")
+        .parse::<f64>()?
+        * if segunda_linha[6].ends_with('B') { 1_000.0 } else { 1.0 };
+
+    // Cria o vetor de previsão para amanhã com os valores da segunda linha
+    let previsao_para_amanha = vec![_abertura, _variacao, _minimo, _maximo, _volume];
+
+    // Converte os dados para formato numérico (restante do CSV)
     let mut inputs = Vec::new();
     let mut labels = Vec::new();
-    for row in matrix {
+    for row in matrix.iter().skip(1) { // Pula o cabeçalho
         if row[1] == "n/d" || row[2] == "n/d" {
             continue;
         }
@@ -64,7 +89,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     // Cria e treina o modelo MLP
     let mut model = rna::MLP::new(&[5, 64, 32, 16, 8, 1]); // Modelo mais profundo
-    model.train(train_inputs, train_labels, 100, 0.0001, "tanh"); // Usa tanh como ativação
+    model.train(train_inputs, train_labels, 100, 0.001, "tanh"); // Usa tanh como ativação
 
     // Avalia o modelo nos dados de teste
     let mut test_loss = 0.0;
@@ -74,17 +99,8 @@ fn main() -> Result<(), Box<dyn Error>> {
     }
     println!("Test Loss: {:.4}", test_loss / test_inputs.len() as f64);
 
-    // Previsão para o dia 11/02/2025
-    let input_11_fev_2025 = vec![
-        54.21, // Abertura (valor do fechamento do dia anterior)
-        0.50,  // Variação (hipótese: mesma variação do último dia)
-        53.80, // Mínimo (mesmo valor mínimo do último dia)
-        54.42, // Máximo (mesmo valor máximo do último dia)
-        129.21, // Volume (em milhões, mesmo valor do último dia)
-    ];
-
     // Normaliza os dados de entrada para previsão
-    let normalized_input: Vec<f64> = input_11_fev_2025
+    let normalized_input: Vec<f64> = previsao_para_amanha
         .iter()
         .enumerate()
         .map(|(i, &value)| (value - means[i]) / stds[i])
@@ -93,10 +109,17 @@ fn main() -> Result<(), Box<dyn Error>> {
     // Faz a previsão
     let predicted_normalized = model.forward(&normalized_input, "tanh")[0];
     let predicted_denormalized = denormalize(predicted_normalized, means[0], stds[0]);
-
+    
+    println!();
+    println!("Dados do primeiro registro do CSV (Segunda linha que é contém os últimos valores da cotação):");
     println!(
-        "Previsão de fechamento para 11/02/2025: {:.2}",
-        predicted_denormalized
+        "abertura: {} - variacao: {} - minimo: {} - maximo: {} - volume: {} - fechamento: {}",
+        _abertura, _variacao, _minimo, _maximo, _volume, _fechamento
+    );
+    println!();
+    println!(
+        "Ativo: {} - Previsão de fechamento para amanhã: {:.2}",
+        ativo_financeiro, predicted_denormalized
     );
 
     Ok(())

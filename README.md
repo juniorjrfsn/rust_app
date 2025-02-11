@@ -20,6 +20,7 @@ font : Consolas, 'Courier New', monospace
     cargo new conhecimento --bin
     cargo new perceptron --bin
     cargo new mlp --bin
+    cargo new mlpmercadofinanc --bin
 ```
 
 ### **Acessar a pasta da aplicação**
@@ -39,6 +40,7 @@ font : Consolas, 'Courier New', monospace
     cd conhecimento
     cd perceptron
     cd mlp
+    cd mlpmercadofinanc 
 ```
 
 ### **Construir a aplicação**

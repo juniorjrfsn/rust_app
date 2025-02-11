@@ -1,8 +1,9 @@
 [package]
-name = "gpt"
+name = "mlpmercadofinanc"
 version = "0.1.0"
 edition = "2021"
 
+ authors = ["Júnior NSF"]
 [dependencies]
 	#ndarray = "0.16.1"  # Or the latest version
 	ndarray = { version = "0.16.1", features = ["serde"] }
