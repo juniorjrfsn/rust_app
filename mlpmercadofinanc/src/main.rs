@@ -109,7 +109,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     // Faz a previsão
     let predicted_normalized = model.forward(&normalized_input, "tanh")[0];
     let predicted_denormalized = denormalize(predicted_normalized, means[0], stds[0]);
-    
+
     println!();
     println!("Dados do primeiro registro do CSV (Segunda linha que é contém os últimos valores da cotação):");
     println!(

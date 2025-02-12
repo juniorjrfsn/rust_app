@@ -15,13 +15,14 @@
 	$ cd mlpmercadofinanc
 	$ cargo run
 	$ cargo.exe "run", "--package", "mlpmercadofinanc", "--bin", "mlpmercadofinanc"
+ 
 	$ cargo run --bin mlpmercadofinanc
 ```
 
 ### white paper
 
 ```
-mlpmercadofinanc é uma inteligência artificial baseada em rede neural multicamadas (MLP) 
+mlpmercadofinanc é uma inteligência artificial baseada em rede neural multicamadas (MLP)
 ```
 
 
