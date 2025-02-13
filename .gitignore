@@ -27,6 +27,7 @@ perceptron/target/
 mlp/target/
 gpt/target/
 mlpmercadofinanc/target/
+mlpcotacao/target/
 
 
 outros/chatbot/target/
