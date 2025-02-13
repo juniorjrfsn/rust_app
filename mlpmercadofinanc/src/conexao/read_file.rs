@@ -1,77 +1,127 @@
 use csv::ReaderBuilder;
 use serde::Deserialize;
-use std::error::Error;
 use std::fs;
+use thiserror::Error;
+use serde::de::DeserializeOwned;
+
+#[derive(Error, Debug)]
+pub enum DataError {
+    #[error("IO error: {0}")]
+    IoError(#[from] std::io::Error),
+    #[error("CSV error: {0}")]
+    CsvError(#[from] csv::Error),
+    #[error("Invalid data format: {0}")]
+    InvalidDataFormat(String),
+}
+
+#[derive(Debug, Deserialize)]
+struct ObjectInvestingHistCotacaoAtivo {
+    #[serde(rename = "Data")]
+    data: String,
+    #[serde(rename = "Último")]
+    fechamento: String,
+    #[serde(rename = "Abertura")]
+    abertura: String,
+    #[serde(rename = "Máxima")]
+    maximo: String,
+    #[serde(rename = "Mínima")]
+    minimo: String,
+    #[serde(rename = "Vol.")]
+    volume: String,
+    #[serde(rename = "Var%")]
+    variacao: String,
+}
 
 #[derive(Debug, Deserialize)]
 struct Record {
     #[serde(rename = "DATA")]
     data: String,
-
     #[serde(rename = "ABERTURA")]
     abertura: String,
-
     #[serde(rename = "FECHAMENTO")]
     fechamento: String,
-
     #[serde(rename = "VARIAÇÃO")]
     variacao: String,
-
     #[serde(rename = "MÍNIMO")]
     minimo: String,
-
     #[serde(rename = "MÁXIMO")]
     maximo: String,
-
     #[serde(rename = "VOLUME")]
     volume: String,
 }
 
-/// Função privada para ler o CSV e transformá-lo em uma matriz de strings.
-pub fn read_csv_to_matrix(file_path: &str) -> Result<Vec<Vec<String>>, Box<dyn Error>> {
-    // Verifica se o arquivo existe
+trait CsvRecord {
+    fn into_row(self) -> Vec<String>;
+}
+
+impl CsvRecord for ObjectInvestingHistCotacaoAtivo {
+    fn into_row(self) -> Vec<String> {
+        vec![
+            self.data,
+            self.abertura,
+            self.fechamento,
+            self.variacao,
+            self.minimo,
+            self.maximo,
+            self.volume,
+        ]
+    }
+}
+
+impl CsvRecord for Record {
+    fn into_row(self) -> Vec<String> {
+        vec![
+            self.data,
+            self.abertura,
+            self.fechamento,
+            self.variacao,
+            self.minimo,
+            self.maximo,
+            self.volume,
+        ]
+    }
+}
+
+fn read_csv_generic<T: DeserializeOwned + CsvRecord>(file_path: &str) -> Result<Vec<Vec<String>>, DataError> {
     if !fs::metadata(file_path).is_ok() {
-        return Err(format!("Arquivo não encontrado: {}", file_path).into());
+        return Err(DataError::InvalidDataFormat(format!(
+            "Arquivo não encontrado: {}",
+            file_path
+        )));
     }
 
-    // Abre o arquivo CSV
-    let file = fs::File::open(file_path)?;
+    let file = fs::File::open(file_path).map_err(DataError::IoError)?;
+    let mut rdr = ReaderBuilder::new().has_headers(true).from_reader(file);
 
-    // Cria um leitor CSV
-    let mut rdr = ReaderBuilder::new()
-        .has_headers(true)
-        .from_reader(file);
-
-    // Inicializa a matriz de dados
     let mut matrix: Vec<Vec<String>> = Vec::new();
-
-    // Itera sobre os registros no arquivo CSV
     for result in rdr.deserialize() {
-        // Desserializa cada linha em uma estrutura `Record`
-        let record: Record = result?;
-
-        // Converte o registro em um vetor de strings
-        let row = vec![
-            record.data,
-            record.abertura,
-            record.fechamento,
-            record.variacao,
-            record.minimo,
-            record.maximo,
-            record.volume,
-        ];
-
-        // Adiciona a linha à matriz
-        matrix.push(row);
+        let record: T = result.map_err(DataError::CsvError)?;
+        matrix.push(record.into_row());
     }
 
     Ok(matrix)
 }
 
-/// Função pública para ler o arquivo CSV e retornar a matriz de dados.
-pub fn ler_csv(file_path: &str) -> Result<Vec<Vec<String>>, Box<dyn Error>> {
-    // Lê o arquivo CSV e retorna a matriz de dados
-    let matrix = read_csv_to_matrix(file_path)?;
+pub fn ler_csv(
+    file_path: &str,
+    cotac_fonte: &str,
+    _ativo_financeiro: &str,
+) -> Result<Vec<Vec<String>>, DataError> {
+    let matrix = match cotac_fonte {
+        "investing" => read_csv_generic::<ObjectInvestingHistCotacaoAtivo>(file_path)?,
+        "infomoney" => read_csv_generic::<Record>(file_path)?,
+        _ => return Err(DataError::InvalidDataFormat(format!(
+            "Fonte de cotação desconhecida: {}",
+            cotac_fonte
+        ))),
+    };
+
+    // Validate the matrix
+    if matrix.is_empty() || matrix.iter().any(|row| row.len() != 7) {
+        return Err(DataError::InvalidDataFormat(
+            "O arquivo CSV não contém dados suficientes ou formato inválido.".to_string(),
+        ));
+    }
 
     Ok(matrix)
 }
