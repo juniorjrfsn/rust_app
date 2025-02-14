@@ -23,6 +23,7 @@ font : Consolas, 'Courier New', monospace
     cargo new mlpmercadofinanc --bin
     cargo new mlpcotacao --bin
     cargo new mlpcotacao2 --bin
+    cargo new mlpxor --bin
 ```
 
 ### **Acessar a pasta da aplicação**
@@ -45,6 +46,7 @@ font : Consolas, 'Courier New', monospace
     cd mlpmercadofinanc
     cd mlpcotacao
     cd mlpcotacao2
+    cd mlpxor
 ```
 
 ### **Construir a aplicação**
