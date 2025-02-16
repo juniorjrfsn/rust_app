@@ -1,19 +1,21 @@
-// previsao.rs
-use crate::conexao::read_file::ler_csv;
+// previsao.rs 
 use crate::mlp::mlp_cotacao::rna; // Import the rna module
-use std::error::Error as StdError; // Import the Error trait
 use thiserror::Error; // Import the Error trait
 use std::collections::HashMap;
  
 
 #[derive(Debug, Error)]
 pub enum PrevCotacaoError {
+    /*
     #[error("Model not found in database")]
     ModelNotFoundError,
+    */
     #[error("Invalid data format: {0}")]
     InvalidDataFormat(String),
+   
     #[error("Failed to parse float: {0}")]
     ParseFloatError(#[from] std::num::ParseFloatError),
+    
     #[error("Empty input data")]
     EmptyInputData,
 }
@@ -35,7 +37,7 @@ pub fn normalize(data: &[f64]) -> Result<(f64, f64), PrevCotacaoError> {
 }
 
 pub fn parse_row(row: &[String], column_map: &HashMap<&str, usize>) -> Result<Vec<f64>, PrevCotacaoError> {
-    println!("Processando linha: {:?}", row); // Log da linha atual
+    print!("\rProcessando linha: {:?}", row); // Log da linha atual
 
     if row.len() < 7 {
         return Err(PrevCotacaoError::InvalidDataFormat(format!(
@@ -106,7 +108,7 @@ pub fn treinar(
         let label = row[2].replace(',', ".").parse::<f64>()?;
         labels.push(label);
     }
-
+    println!("");
     // Normalizar os dados de entrada
     let mut means = vec![0.0; 5];
     let mut stds = vec![0.0; 5];
@@ -121,7 +123,7 @@ pub fn treinar(
             input[feature] = (value - mean) / std;
         }
     }
-
+    println!("");
     // Normalizar os rótulos
     let label_mean = labels.iter().sum::<f64>() / labels.len() as f64;
     let label_std = (labels.iter().map(|x| (x - label_mean).powi(2)).sum::<f64>() / labels.len() as f64).sqrt();
@@ -176,9 +178,9 @@ pub fn prever(
     column_map.insert("Vol.", 6);
 
     let cotacao_mais_recente = &matrix[0]; // ultima_linha = &matrix[matrix.len() - 1];
-    
+    println!("");
     let parsed_row = parse_row(cotacao_mais_recente, &column_map)?;
-
+    println!("");
     let normalized_input: Vec<f64> = parsed_row
         .iter()
         .enumerate()

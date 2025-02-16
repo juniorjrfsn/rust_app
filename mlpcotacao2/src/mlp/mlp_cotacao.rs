@@ -1,7 +1,7 @@
 pub mod rna {
     use rand::Rng;
     use serde::{Serialize, Deserialize};
-    use bincode;
+    // use bincode;
 
     // Função para aplicar a ativação escolhida
     fn apply_activation(x: f64, activation: &str) -> f64 {
@@ -41,9 +41,9 @@ pub mod rna {
     impl DenseLayer {
         pub fn new(input_size: usize, output_size: usize) -> Self {
             let scale = (2.0 / (input_size + output_size) as f64).sqrt();
-            let mut rng = rand::thread_rng();
+            let mut rng = rand::rng();
             let weights = (0..output_size)
-                .map(|_| (0..input_size).map(|_| rng.gen_range(-scale..scale)).collect())
+                .map(|_| (0..input_size).map(|_| rng.random_range(-scale..scale)).collect())
                 .collect();
             let biases = vec![0.0; output_size];
             DenseLayer { weights, biases }
@@ -148,10 +148,11 @@ pub mod rna {
                             .sum();
                     }
                 }
-                println!("Epoch: {}, Loss: {:.4}", epoch + 1, total_loss / inputs.len() as f64);
+                print!("\rEpoch: {}, Loss: {:.4}", epoch + 1, total_loss / inputs.len() as f64);
             }
+            println!("");
         }
-
+        /*
         pub fn serialize(&self) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
             let serialized = bincode::serialize(self)?;
             Ok(serialized)
@@ -161,5 +162,6 @@ pub mod rna {
             let deserialized = bincode::deserialize(data)?;
             Ok(deserialized)
         }
+        */
     }
 }
