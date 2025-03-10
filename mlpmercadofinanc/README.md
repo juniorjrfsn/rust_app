@@ -50,3 +50,19 @@ cargo add libsql-rusqlite
 cargo add libsqlite3-sys-ic
 cargo add rusqlite-ic
 ```
+
+
+
+## LSTM (Long Short-Term Memory) é uma rede neural recorrente que armazena informações a longo prazo. 
+## É uma técnica de treinamento de redes neurais que usa memórias de curto e longo prazo.  
+
+
+
+
+```
+
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+rustc --version
+
+```

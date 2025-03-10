@@ -201,3 +201,26 @@ pub mod rna { // módulo rna : machine learning MLP (Multi-Layer Perceptron)
     }
 
 }
+
+use tch::{nn, nn::Module, Tensor};
+
+pub struct LSTM {
+    lstm: nn::Lstm,
+    linear: nn::Linear,
+}
+
+impl LSTM {
+    pub fn new(vs: nn::Path, input_size: i64, hidden_size: i64, num_layers: i64, output_size: i64) -> LSTM {
+        let lstm = nn::lstm(vs / "lstm", input_size, hidden_size, num_layers);
+        let linear = nn::linear(vs / "linear", hidden_size, output_size, Default::default());
+        LSTM { lstm, linear }
+    }
+}
+
+impl Module for LSTM {
+    fn forward(&self, xs: &Tensor) -> Tensor {
+        let (output, _) = self.lstm.forward(xs);
+        let last_output = output.select(1, -1); // Pegar a última saída da sequência
+        self.linear.forward(&last_output)
+    }
+}
