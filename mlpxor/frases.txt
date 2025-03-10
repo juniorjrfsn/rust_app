@@ -1,0 +1,494 @@
+DuckDuckGo
+A tua proteção, a nossa prioridade.Abra o menu
+ Todos
+Imagens
+Vídeos
+Notícias
+Mapas
+ Chat
+Definições de pesquisa
+Duck.ai
+Nova conversa
+Conversas recentes
+
+
+Hoje
+
+use rand::Rng; use serde::{Deserialize, Serialize}; #[derive(Debug, Clone, Serialize, Deserialize)] struct Neuron { weights: Vec<f64>, bias: f64, } impl Neuron { fn new(num_inputs: usize) -> Self { let mut rng = rand::thread_rng(); let bound = (6.0 / (num_inputs + 1) as f64).sqrt(); Neuron { weights: (0..num_inputs).map(|_| rng.gen_range(-bound..bound)).collect(), bias: rng.gen_range(-bound..bound), } } fn activate(&self, inputs: &[f64], activation_fn: &str) -> f64 { let sum: f64 = inputs.iter().zip(&self.weights).map(|(x, w)| x * w).sum::<f64>() + self.bias; match activation_fn { "tanh" => sum.tanh(), "sigmoid" => 1.0 / (1.0 + (-sum).exp()), _ => panic!("Unsupported activation function"), } } } #[derive(Debug, Clone, Serialize, Deserialize)] struct MLP { layers: Vec<Vec<Neuron>>, } impl MLP { fn new(layer_sizes: &[usize]) -> Self { let mut layers = Vec::new(); for i in 0..layer_sizes.len() - 1 { let num_neurons = layer_sizes[i + 1]; let num_inputs = layer_sizes[i]; let layer = (0..num_neurons).map(|_| Neuron::new(num_inputs)).collect(); layers.push(layer); } MLP { layers } } fn forward(&self, inputs: &[f64]) -> Vec<Vec<f64>> { let mut activations = vec![inputs.to_vec()]; for (i, layer) in self.layers.iter().enumerate() { let mut new_activations = Vec::new(); let activation_fn = if i == self.layers.len() - 1 { "sigmoid" } else { "tanh" }; for neuron in layer { new_activations.push(neuron.activate(&activations.last().unwrap(), activation_fn)); } activations.push(new_activations); } activations } fn train(&mut self, training_data: &[(Vec<f64>, Vec<f64>)], learning_rate: f64, epochs: usize) { for epoch in 0..epochs { let mut total_error = 0.0; for (inputs, targets) in training_data.iter() { // Forward pass let activations = self.forward(inputs); let output = activations.last().unwrap(); // Calculate output error (using MSE for simplicity) let output_errors: Vec<f64> = output .iter() .zip(targets) .map(|(o, t)| t - o) // Just the difference for MSE .collect(); total_error += output_errors.iter().map(|e| e * e).sum::<f64>(); // Sum of squared errors // Backpropagation let mut deltas = vec![output_errors .iter() .zip(output.iter()) .map(|(err, out)| err * out * (1.0 - out)) // Sigmoid derivative .collect::<Vec<f64>>()]; for l in (0..self.layers.len() - 1).rev() { let mut layer_deltas = Vec::new(); for j in 0..self.layers[l].len() { let mut delta_sum = 0.0; for k in 0..self.layers[l + 1].len() { delta_sum += deltas.last().unwrap()[k] * self.layers[l + 1][k].weights[j]; } let activation = activations[l + 1][j]; layer_deltas.push(delta_sum * (1.0 - activation * activation)); // Tanh derivative } deltas.push(layer_deltas); } deltas.reverse(); // Update weights and biases for l in 0..self.layers.len() { for j in 0..self.layers[l].len() { for k in 0..self.layers[l][j].weights.len() { self.layers[l][j].weights[k] += learning_rate * deltas[l][j] * activations[l][k]; } self.layers[l][j].bias += learning_rate * deltas[l][j]; } } } let avg_error = total_error / training_data.len() as f64; println!("Epoch {}: Average Error = {:.6}", epoch + 1, avg_error); } } } fn main() { let layer_sizes = &[2, 3, 1]; let mut mlp = MLP::new(layer_sizes); let training_data = vec![ (vec![0.0, 0.0], vec![0.0]), (vec![0.0, 1.0], vec![1.0]), (vec![1.0, 0.0], vec![1.0]), (vec![1.0, 1.0], vec![0.0]), ]; mlp.train(&training_data, 0.1, 50000); // Ajuste a taxa de aprendizado e aumente o número de épocas println!("\nTest Results:"); println!( "Input: [0, 0], Predicted Output: {:?}", mlp.forward(&[0.0, 0.0]).last().unwrap() ); println!( "Input: [0, 1], Predicted Output: {:?}", mlp.forward(&[0.0, 1.0]).last().unwrap() ); println!( "Input: [1, 0], Predicted Output: {:?}", mlp.forward(&[1.0, 0.0]).last().unwrap() ); println!( "Input: [1, 1], Predicted Output: {:?}", mlp.forward(&[1.0, 1.0]).last().unwrap() ); } // cargo new mlpxor --bin // cd mlpxor // cargo run // cargo run --bin mlpxor // cargo.exe "run", "--package", "mlpxor", "--bin", "mlpxor"
+
+
+
+Comentários
+
+
+use rand::Rng;
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct Neuron {
+    weights: Vec<f64>,
+    bias: f64,
+}
+
+impl Neuron {
+    fn new(num_inputs: usize) -> Self {
+        let mut rng = rand::thread_rng();
+        let bound = (6.0 / (num_inputs + 1) as f64).sqrt();
+        Neuron {
+            weights: (0..num_inputs).map(|_| rng.gen_range(-bound..bound)).collect(),
+            bias: rng.gen_range(-bound..bound),
+        }
+    }
+
+    fn activate(&self, inputs: &[f64], activation_fn: &str) -> f64 {
+        let sum: f64 = inputs.iter().zip(&self.weights).map(|(x, w)| x * w).sum::<f64>() + self.bias;
+        match activation_fn {
+            "tanh" => sum.tanh(),
+            "sigmoid" => 1.0 / (1.0 + (-sum).exp()),
+            _ => panic!("Unsupported activation function"),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct MLP {
+    layers: Vec<Vec<Neuron>>,
+}
+
+impl MLP {
+    fn new(layer_sizes: &[usize]) -> Self {
+        let mut layers = Vec::new();
+        for i in 0..layer_sizes.len() - 1 {
+            let num_neurons = layer_sizes[i + 1];
+            let num_inputs = layer_sizes[i];
+            let layer = (0..num_neurons).map(|_| Neuron::new(num_inputs)).collect();
+            layers.push(layer);
+        }
+        MLP { layers }
+    }
+
+    fn forward(&self, inputs: &[f64]) -> Vec<Vec<f64>> {
+        let mut activations = vec![inputs.to_vec()];
+        for (i, layer) in self.layers.iter().enumerate() {
+            let mut new_activations = Vec::new();
+            let activation_fn = if i == self.layers.len() - 1 {
+                "sigmoid"
+            } else {
+                "tanh"
+            };
+            for neuron in layer {
+                new_activations.push(neuron.activate(&activations.last().unwrap(), activation_fn));
+            }
+            activations.push(new_activations);
+        }
+        activations
+    }
+
+    fn train(&mut self, training_data: &[(Vec<f64>, Vec<f64>)], learning_rate: f64, epochs: usize) {
+        for epoch in 0..epochs {
+            let mut total_error = 0.0;
+            for (inputs, targets) in training_data.iter() {
+                // Forward pass
+                let activations = self.forward(inputs);
+                let output = activations.last().unwrap();
+
+                // Calculate output error (using MSE for simplicity)
+                let output_errors: Vec<f64> = output
+                    .iter()
+                    .zip(targets)
+                    .map(|(o, t)| t - o) // Just the difference for MSE
+                    .collect();
+                total_error += output_errors.iter().map(|e| e * e).sum::<f64>(); // Sum of squared errors
+
+                // Backpropagation
+                let mut deltas = vec![output_errors
+                    .iter()
+                    .zip(output.iter())
+                    .map(|(err, out)| err * out * (1.0 - out)) // Sigmoid derivative
+                    .collect::<Vec<f64>>()];
+
+                for l in (0..self.layers.len() - 1).rev() {
+                    let mut layer_deltas = Vec::new();
+                    for j in 0..self.layers[l].len() {
+                        let mut delta_sum = 0.0;
+                        for k in 0..self.layers[l + 1].len() {
+                            delta_sum += deltas.last().unwrap()[k] * self.layers[l + 1][k].weights[j];
+                        }
+                        let activation = activations[l + 1][j];
+                        layer_deltas.push(delta_sum * (1.0 - activation * activation)); // Tanh derivative
+                    }
+                    deltas.push(layer_deltas);
+                }
+                deltas.reverse();
+
+                // Update weights and biases
+                for l in 0..self.layers.len() {
+                    for j in 0..self.layers[l].len() {
+                        for k in 0..self.layers[l][j].weights.len() {
+                            self.layers[l][j].weights[k] +=
+                                learning_rate * deltas[l][j] * activations[l][k];
+                        }
+                        self.layers[l][j].bias += learning_rate * deltas[l][j];
+                    }
+                }
+            }
+            let avg_error = total_error / training_data.len() as f64;
+            println!("Epoch {}: Average Error = {:.6}", epoch + 1, avg_error);
+        }
+    }
+}
+
+fn main() {
+    let layer_sizes = &[2, 3, 1];
+    let mut mlp = MLP::new(layer_sizes);
+    let training_data = vec![
+        (vec![0.0, 0.0], vec![0.0]),
+        (vec![0.0, 1.0], vec![1.0]),
+        (vec![1.0, 0.0], vec![1.0]),
+        (vec![1.0, 1.0], vec![0.0]),
+    ];
+    mlp.train(&training_data, 0.1, 50000); // Ajuste a taxa de aprendizado e aumente o número de épocas
+
+    println!("\nTest Results:");
+    println!(
+        "Input: [0, 0], Predicted Output: {:?}",
+        mlp.forward(&[0.0, 0.0]).last().unwrap()
+    );
+    println!(
+        "Input: [0, 1], Predicted Output: {:?}",
+        mlp.forward(&[0.0, 1.0]).last().unwrap()
+    );
+    println!(
+        "Input: [1, 0], Predicted Output: {:?}",
+        mlp.forward(&[1.0, 0.0]).last().unwrap()
+    );
+    println!(
+        "Input: [1, 1], Predicted Output: {:?}",
+        mlp.forward(&[1.0, 1.0]).last().unwrap()
+    );
+}
+
+
+// cargo new mlpxor --bin
+
+
+// cd mlpxor
+// cargo run
+// cargo run --bin mlpxor
+// cargo.exe "run", "--package", "mlpxor", "--bin", "mlpxor"
+
+.
+Llama 3.3 70B
+
+
+The provided code is a simple implementation of a Multilayer Perceptron (MLP) in Rust, designed to learn the XOR function. Here's a breakdown of the code:
+
+Neuron Structure
+The Neuron struct represents a single neuron in the network, with the following properties:
+
+weights: a vector of weights for the neuron's inputs
+bias: the bias term for the neuron
+The Neuron implementation includes methods for:
+
+new: creating a new neuron with random weights and bias
+activate: computing the output of the neuron given a set of inputs and an activation function
+MLP Structure
+The MLP struct represents the multilayer perceptron, with the following properties:
+
+layers: a vector of vectors, where each inner vector represents a layer of neurons
+The MLP implementation includes methods for:
+
+new: creating a new MLP with a specified layer structure
+forward: computing the output of the network given a set of inputs
+train: training the network using backpropagation and stochastic gradient descent
+Training and Testing
+In the main function, an MLP is created with a layer structure of [2, 3, 1], which means the network has 2 input neurons, 3 hidden neurons, and 1 output neuron. The network is then trained on the XOR function using a set of training data.
+
+After training, the network is tested on the same input patterns to evaluate its performance.
+
+Code Quality and Readability
+The code is well-structured and readable, with clear and concise variable names and function implementations. The use of Rust's type system and borrow checker helps ensure memory safety and prevents common errors.
+
+However, there are a few areas for improvement:
+
+The train method is quite long and complex, and could be broken down into smaller, more manageable functions.
+The use of unwrap and last methods can be error-prone, and should be replaced with more robust error handling mechanisms.
+The code could benefit from more comments and documentation, especially in the train method, to explain the logic and mathematics behind the backpropagation algorithm.
+Overall, the code provides a good starting point for implementing an MLP in Rust, and can be improved and extended to support more complex neural network architectures and training algorithms.
+
+To solve the mathematical equation of the activation function for the output layer, we have y= 
+1+e 
+−x
+ 
+1
+​
+  where y is the output and x is the input to the activation function. For the hidden layers, we use the tanh activation function, which is given by y=tanh(x)= 
+e 
+x
+ +e 
+−x
+ 
+e 
+x
+ −e 
+−x
+ 
+​
+ 
+
+These equations can be used to compute the output of each neuron in the network, given the inputs and weights.
+
+To compute the derivative of the activation function for the output layer, we have  
+dx
+dy
+​
+ =y(1−y) and for the hidden layers, we have  
+dx
+dy
+​
+ =1−y 
+2
+ 
+
+These derivatives are used in the backpropagation algorithm to compute the gradients of the loss function with respect to the weights and biases.
+
+For example, given the input x=2 and the weight w=3, the output of the neuron can be computed as y= 
+1+e 
+−3⋅2
+ 
+1
+​
+ = 
+1+e 
+−6
+ 
+1
+​
+ 
+
+The derivative of the activation function can be computed as  
+dx
+dy
+​
+ =y(1−y)= 
+1+e 
+−6
+ 
+1
+​
+ ⋅(1− 
+1+e 
+−6
+ 
+1
+​
+ )
+
+These values can be used to update the weights and biases of the network during training.
+
+Here is an example of how to use the equations to compute the output of a neuron:
+x=2,w=3,b=1
+y= 
+1+e 
+−(3⋅2+1)
+ 
+1
+​
+ = 
+1+e 
+−7
+ 
+1
+​
+ 
+dx
+dy
+​
+ =y(1−y)= 
+1+e 
+−7
+ 
+1
+​
+ ⋅(1− 
+1+e 
+−7
+ 
+1
+​
+ )
+
+Note that these equations are for a single neuron, and the actual implementation of the network will involve computing the outputs and derivatives for multiple neurons and layers.
+
+Also, note that the equations are for the sigmoid and tanh activation functions, and other activation functions may have different equations.
+
+For example, the ReLU activation function is given by y=max(0,x) and its derivative
+
+faça um código em rust que treina dados do tipo texto que processa as frases e no final a saída é uma frase montada
+
+.
+Llama 3.3 70B
+
+
+
+Aqui está um exemplo de código em Rust que treina um modelo de linguagem para processar frases e gerar uma frase de saída:
+
+rust
+
+Copiar código
+use std::collections::HashMap;
+use std::fs::File;
+use std::io::{BufRead, BufReader};
+use std::path::Path;
+
+// Estrutura para representar uma frase
+struct Frase {
+    palavras: Vec<String>,
+}
+
+// Implementação da estrutura Frase
+impl Frase {
+    fn new(palavras: Vec<String>) -> Frase {
+        Frase { palavras }
+    }
+
+    fn get_palavras(&self) -> &Vec<String> {
+        &self.palavras
+    }
+}
+
+// Estrutura para representar o modelo de linguagem
+struct Modelo {
+    vocabulario: HashMap<String, usize>,
+    matriz_de_transicao: Vec<Vec<f64>>,
+}
+
+// Implementação da estrutura Modelo
+impl Modelo {
+    fn new() -> Modelo {
+        Modelo {
+            vocabulario: HashMap::new(),
+            matriz_de_transicao: Vec::new(),
+        }
+    }
+
+    fn treinar(&mut self, frases: Vec<Frase>) {
+        // Cria o vocabulário
+        for frase in &frases {
+            for palavra in frase.get_palavras() {
+                if !self.vocabulario.contains_key(palavra) {
+                    self.vocabulario.insert(palavra.clone(), self.vocabulario.len());
+                }
+            }
+        }
+
+        // Cria a matriz de transição
+        let tamanho_vocabulario = self.vocabulario.len();
+        self.matriz_de_transicao = vec![vec![0.0; tamanho_vocabulario]; tamanho_vocabulario];
+
+        // Treina o modelo
+        for frase in &frases {
+            let palavras = frase.get_palavras();
+            for i in 0..palavras.len() - 1 {
+                let palavra_atual = palavras[i].clone();
+                let palavra_proxima = palavras[i + 1].clone();
+                let indice_atual = *self.vocabulario.get(&palavra_atual).unwrap();
+                let indice_proxima = *self.vocabulario.get(&palavra_proxima).unwrap();
+                self.matriz_de_transicao[indice_atual][indice_proxima] += 1.0;
+            }
+        }
+
+        // Normaliza a matriz de transição
+        for i in 0..tamanho_vocabulario {
+            let soma = self.matriz_de_transicao[i].iter().sum::<f64>();
+            for j in 0..tamanho_vocabulario {
+                self.matriz_de_transicao[i][j] /= soma;
+            }
+        }
+    }
+
+    fn gerar_frase(&self, palavra_inicial: &str) -> Vec<String> {
+        let mut frase = Vec::new();
+        let mut palavra_atual = palavra_inicial.to_string();
+        for _ in 0..10 {
+            frase.push(palavra_atual.clone());
+            let indice_atual = *self.vocabulario.get(&palavra_atual).unwrap();
+            let mut probabilidade_maxima = 0.0;
+            let mut indice_proxima = 0;
+            for i in 0..self.matriz_de_transicao[indice_atual].len() {
+                if self.matriz_de_transicao[indice_atual][i] > probabilidade_maxima {
+                    probabilidade_maxima = self.matriz_de_transicao[indice_atual][i];
+                    indice_proxima = i;
+                }
+            }
+            palavra_atual = self.vocabulario.iter().find(|(_, &indice)| indice == indice_proxima).unwrap().0.clone();
+        }
+        frase
+    }
+}
+
+fn main() {
+    // Carrega as frases de treinamento
+    let caminho_arquivo = Path::new("frases.txt");
+    let arquivo = File::open(caminho_arquivo).unwrap();
+    let leitor = BufReader::new(arquivo);
+    let mut frases = Vec::new();
+    for linha in leitor.lines() {
+        let linha = linha.unwrap();
+        let palavras: Vec<String> = linha.split_whitespace().map(|palavra| palavra.to_string()).collect();
+        frases.push(Frase::new(palavras));
+    }
+
+    // Treina o modelo
+    let mut modelo = Modelo::new();
+    modelo.treinar(frases);
+
+    // Gera uma frase
+    let palavra_inicial = "Olá";
+    let frase_gerada = modelo.gerar_frase(palavra_inicial);
+    println!("Frase gerada: {:?}", frase_gerada);
+}
+Esse código carrega as frases de treinamento de um arquivo chamado frases.txt, treina um modelo de linguagem e gera uma frase a partir de uma palavra inicial.
+
+O arquivo frases.txt deve conter as frases de treinamento, separadas por linhas. Por exemplo:
+
+Code
+
+Copiar código
+Olá mundo
+Conversar com Llama 3.3
+
+Estás a conversar com Llama 3.3. Os chats de IA podem apresentar informações imprecisas ou ofensivas.
+
+Fechar menu
+Busca
+Página inicial
+Temas
+Configurações
+Compartilhar comentários
+
+
+Transferências
+Navegador para iOS
+Navegador para Android
+Navegador para Mac
+Navegador para Windows
+Extensões para navegadores
+Mais da DuckDuckGo
+Duck.ai
+Novo
+Proteção de e-mail
+Newsletter
+Blogue
+Saiba mais
+Novidades
+Comparar privacidade
+Acerca do nosso navegador
+Sobre o DuckDuckGo
+Outros recursos
+Ajuda
+Carreiras
+Política de privacidade
+Termos de Serviço
+Pacote de imprensa
+Anunciar na Pesquisa

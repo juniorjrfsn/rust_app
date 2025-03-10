@@ -145,8 +145,11 @@ fn main() {
     );
 }
 
+
+// cargo new mlpxor --bin
+
+
 // cd mlpxor
 // cargo run
 // cargo run --bin mlpxor
 // cargo.exe "run", "--package", "mlpxor", "--bin", "mlpxor"
-// cargo.exe "run" "--package" "mlpxor" "--bin" "mlpxor"
