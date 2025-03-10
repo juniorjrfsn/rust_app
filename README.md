@@ -24,6 +24,7 @@ font : Consolas, 'Courier New', monospace
     cargo new mlpcotacao --bin
     cargo new mlpcotacao2 --bin
     cargo new mlpxor --bin
+    cargo new reconhececor --bin
 ```
 
 ### **Acessar a pasta da aplicação**
@@ -47,6 +48,7 @@ font : Consolas, 'Courier New', monospace
     cd mlpcotacao
     cd mlpcotacao2
     cd mlpxor
+    cd reconhececor
 ```
 
 ### **Construir a aplicação**
