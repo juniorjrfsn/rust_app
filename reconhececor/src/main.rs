@@ -175,3 +175,10 @@ fn main() {
         );
     }
 }
+
+/*
+
+ cd reconhececor  
+ cargo run --bin reconhececor
+
+ */
