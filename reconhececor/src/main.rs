@@ -178,7 +178,7 @@ fn main() {
 
 /*
 
- cd reconhececor  
+ cd reconhececor
  cargo run --bin reconhececor
 
  */
