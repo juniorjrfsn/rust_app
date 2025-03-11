@@ -6,7 +6,7 @@
 
 [dependencies]
 	#ndarray = "0.16.1"  # Or the latest version
-	ndarray = { version = "0.16.1", features = ["serde"] }
+	ndarray = { version = "0.15.4", features = ["serde"] }
 	#image = "0.25.5"  # Or latest 0.x version
 	#plotters = "0.3.4"
 	time = "0.3.36"
@@ -25,3 +25,8 @@
     smartcore = "0.4.0"
 	crossbeam = "0.8"  # Or latest 0.x version
 	chrono = "0.4"
+
+	
+	
+	ndarray-rand = "0.15.0"
+	itertools = "0.14.0"

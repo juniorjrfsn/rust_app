@@ -1,9 +1,10 @@
-use ndarray::{Array1, Array2, Array, arr1, prelude::*};
-use ndarray_rand::{rand_distr::Normal, RandomExt};
+// use ndarray::{Array1, Array2, Array, arr1, prelude::*};
+use ndarray::{Array1, Array2, Array, arr1};
 use std::collections::HashMap;
 use itertools::Itertools;
+use rand::{rng, Rng};
+use rand_distr::{Normal, Distribution};
 
-// Define the MLP struct
 pub struct MLP {
     input_size: usize,
     hidden_size: usize,
@@ -16,16 +17,17 @@ pub struct MLP {
 }
 
 impl MLP {
-    // Constructor with He initialization
     pub fn new(input_size: usize, hidden_size: usize, output_size: usize, learning_rate: f64) -> Self {
-        let weights_input_hidden = Array::random(
+        let normal = Normal::new(0.0, (1.0 / input_size as f64).sqrt()).unwrap();
+        let weights_input_hidden = Array::from_shape_fn(
             (input_size, hidden_size),
-            Normal::new(0.0, (2.0 / input_size as f64).sqrt()).unwrap()
+            |_| normal.sample(&mut rng())
         );
         
-        let weights_hidden_output = Array::random(
+        let normal_hidden = Normal::new(0.0, (1.0 / hidden_size as f64).sqrt()).unwrap();
+        let weights_hidden_output = Array::from_shape_fn(
             (hidden_size, output_size),
-            Normal::new(0.0, (2.0 / hidden_size as f64).sqrt()).unwrap()
+            |_| normal_hidden.sample(&mut rng())
         );
 
         MLP {
@@ -40,7 +42,6 @@ impl MLP {
         }
     }
 
-    // Forward pass
     pub fn forward(&self, inputs: &Array1<f64>) -> (Array1<f64>, Array1<f64>) {
         let hidden_inputs = self.weights_input_hidden.t().dot(inputs) + &self.bias_hidden;
         let hidden_outputs = hidden_inputs.mapv(|x| 1.0 / (1.0 + (-x).exp()));
@@ -51,34 +52,37 @@ impl MLP {
         (hidden_outputs, output)
     }
 
-    // Training step
     pub fn train(&mut self, inputs: &Array1<f64>, target: &Array1<f64>) {
         let (hidden_outputs, output) = self.forward(inputs);
         let output_errors = &output - target;
         
         let sigmoid_derivative = hidden_outputs.mapv(|x| x * (1.0 - x));
-        let hidden_errors = self.weights_hidden_output.dot(output_errors) * sigmoid_derivative;
+        let hidden_errors = self.weights_hidden_output.dot(&output_errors) * sigmoid_derivative;
 
-        // Update output layer weights and biases
-        self.weights_hidden_output -= 
-            &(hidden_outputs.outer(output_errors) * self.learning_rate);
+        // Update output layer weights
+        let outer_product = hidden_outputs.to_owned().into_shape((hidden_outputs.len(), 1)).unwrap() *
+            output_errors.to_owned().into_shape((1, output_errors.len())).unwrap();
+        self.weights_hidden_output -= &(outer_product * self.learning_rate);
         self.bias_output -= &(output_errors * self.learning_rate);
 
-        // Update input layer weights and biases
-        self.weights_input_hidden -= 
-            &(inputs.outer(&hidden_errors) * self.learning_rate);
+        // Update input layer weights
+        let input_outer = inputs.to_owned().into_shape((inputs.len(), 1)).unwrap() *
+            hidden_errors.to_owned().into_shape((1, hidden_errors.len())).unwrap();
+        self.weights_input_hidden -= &(input_outer * self.learning_rate);
         self.bias_hidden -= &(hidden_errors * self.learning_rate);
     }
 }
 
-// Softmax activation function
 fn softmax(x: &Array1<f64>) -> Array1<f64> {
     let exp_x = x.mapv(|v| v.exp());
-    exp_x / exp_x.sum()
+    let sum_exp = exp_x.sum();
+    exp_x / sum_exp
 }
 
+
+
+
 fn main() {
-    // Training data
     let training_data: Vec<([u8; 3], &str)> = vec![
         ([255, 0, 127], "Rose"),
         ([127, 0, 0], "Vermelho"),
@@ -103,7 +107,6 @@ fn main() {
         ([255, 255, 255], "Branco"),
     ];
 
-    // Prepare color mappings
     let colors: Vec<&str> = training_data.iter()
         .map(|(_, c)| *c)
         .unique()
@@ -113,7 +116,6 @@ fn main() {
         .map(|(i, &c)| (c, i))
         .collect();
 
-    // Normalize data and create one-hot encodings
     let normalized_data: Vec<(Array1<f64>, Array1<f64>)> = training_data.iter()
         .map(|&(rgb, color)| {
             let inputs = arr1(&[
@@ -129,32 +131,26 @@ fn main() {
         })
         .collect();
 
-    // Initialize network
     let mut mlp = MLP::new(3, 32, colors.len(), 0.01);
     let epochs = 10000;
 
-    // Training loop
     for epoch in 0..epochs {
         for (inputs, target) in &normalized_data {
             mlp.train(inputs, target);
         }
 
-        // Print loss every 1000 epochs
         if epoch % 1000 == 0 {
             let loss: f64 = normalized_data.iter()
                 .map(|(i, t)| {
                     let (_, o) = mlp.forward(i);
-                    o.iter()
-                        .zip(t.iter())
-                        .map(|(o, t)| (o - t).powi(2))
-                        .sum::<f64>()
+                    let target_class = t.iter().position_max_by(|a, b| a.partial_cmp(b).unwrap()).unwrap();
+                    -o[target_class].ln()
                 })
                 .sum();
             println!("Epoch {:5} | Loss: {:.4}", epoch, loss);
         }
     }
 
-    // Test data
     let test_data = vec![
         [200, 0, 70],
         [165, 156, 159],
@@ -169,7 +165,7 @@ fn main() {
         ]);
 
         let (_, output) = mlp.forward(&inputs);
-        let max_idx = output.argmax().unwrap();
+        let max_idx = output.iter().position_max_by(|a, b| a.partial_cmp(b).unwrap()).unwrap();
         let predicted = colors[max_idx];
         let confidence = output[max_idx] * 100.0;
 
