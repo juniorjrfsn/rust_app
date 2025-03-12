@@ -17,12 +17,6 @@ fn relu_derivative(x: f64) -> f64 {
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct ColorClassifier {
-    mlp: MLP,
-    color_classes: Vec<String>,  // Changed to owned String for serialization
-}
-
-#[derive(Serialize, Deserialize)]
 pub struct MLP {
     input_size: usize,
     hidden_size: usize,
@@ -35,7 +29,7 @@ pub struct MLP {
 }
 
 impl MLP {
-    fn new(input_size: usize, hidden_size: usize, output_size: usize, learning_rate: f64) -> Self {
+    pub fn new(input_size: usize, hidden_size: usize, output_size: usize, learning_rate: f64) -> Self {
         let mut rng = StdRng::seed_from_u64(42);
         let normal = Normal::new(0.0, (1.0 / input_size as f64).sqrt()).unwrap();
         let weights_input_hidden = Array::from_shape_fn(
@@ -61,7 +55,7 @@ impl MLP {
         }
     }
 
-    fn forward(&self, inputs: &Array1<f64>) -> (Array1<f64>, Array1<f64>) {
+    pub fn forward(&self, inputs: &Array1<f64>) -> (Array1<f64>, Array1<f64>) {
         let hidden_inputs = self.weights_input_hidden.t().dot(inputs) + &self.bias_hidden;
         let hidden_outputs = hidden_inputs.mapv(relu);
         let output_inputs = self.weights_hidden_output.t().dot(&hidden_outputs) + &self.bias_output;
@@ -69,7 +63,7 @@ impl MLP {
         (hidden_outputs, output)
     }
 
-    fn train(&mut self, inputs: &Array1<f64>, target: &Array1<f64>) {
+    pub fn train(&mut self, inputs: &Array1<f64>, target: &Array1<f64>) {
         let (hidden_outputs, output) = self.forward(inputs);
         let output_errors = &output - target;
 
@@ -86,36 +80,20 @@ impl MLP {
         self.weights_input_hidden -= &(input_outer * self.learning_rate);
         self.bias_hidden -= &(hidden_errors * self.learning_rate);
     }
-}
 
-impl ColorClassifier {
-    fn save(&self, path: &str) -> io::Result<()> {
+    pub fn save(&self, path: &str) -> io::Result<()> {
         let serialized = serde_json::to_string(self)?;
         let mut file = File::create(path)?;
         file.write_all(serialized.as_bytes())?;
         Ok(())
     }
 
-    fn load(path: &str) -> io::Result<Self> {
+    pub fn load(path: &str) -> io::Result<Self> {
         let mut file = File::open(path)?;
         let mut contents = String::new();
         file.read_to_string(&mut contents)?;
-        let classifier = serde_json::from_str(&contents)?;
-        Ok(classifier)
-    }
-
-    fn predict(&self, rgb: [u8; 3]) -> (String, f64) {
-        let inputs = arr1(&[
-            rgb[0] as f64 / 255.0,
-            rgb[1] as f64 / 255.0,
-            rgb[2] as f64 / 255.0,
-        ]);
-
-        let (_, output) = self.mlp.forward(&inputs);
-        let max_idx = output.iter().position_max_by(|a, b| a.partial_cmp(b).unwrap()).unwrap();
-        let predicted = self.color_classes[max_idx].clone();
-        let confidence = output[max_idx] * 100.0;
-        (predicted, confidence)
+        let mlp = serde_json::from_str(&contents)?;
+        Ok(mlp)
     }
 }
 
@@ -150,17 +128,13 @@ fn train_model() -> io::Result<()> {
         ([255, 255, 255], "Branco"),
     ];
 
-    let colors: Vec<String> = training_data.iter()
-        .map(|(_, c)| c.to_string())
-        .unique()
-        .sorted()
-        .collect();
-    let color_idx: HashMap<&str, usize> = training_data.iter()
+    let colors: Vec<&str> = training_data.iter()
         .map(|(_, c)| *c)
         .unique()
         .sorted()
-        .enumerate()
-        .map(|(i, c)| (c, i))
+        .collect();
+    let color_idx: HashMap<&str, usize> = colors.iter().enumerate()
+        .map(|(i, &c)| (c, i))
         .collect();
 
     let normalized_data: Vec<(Array1<f64>, Array1<f64>)> = training_data.iter()
@@ -176,8 +150,9 @@ fn train_model() -> io::Result<()> {
         })
         .collect();
 
-    let model_path = "dados/color_classifier.json";
+    let model_path = "dados/color_mlp.json";
 
+    // Create directory if it doesn't exist
     if let Some(parent) = Path::new(model_path).parent() {
         std::fs::create_dir_all(parent)?;
     }
@@ -203,30 +178,44 @@ fn train_model() -> io::Result<()> {
         }
     }
 
-    let classifier = ColorClassifier {
-        mlp,
-        color_classes: colors,
-    };
-
-    classifier.save(model_path)?;
+    mlp.save(model_path)?;
     println!("Model saved to {}", model_path);
     Ok(())
 }
 
 fn test_model() -> io::Result<()> {
-    let model_path = "dados/color_classifier.json";
+    let model_path = "dados/color_mlp.json";
 
-    let classifier = ColorClassifier::load(model_path)?;
+    // Load color classes (need to match training data)
+    let color_classes: Vec<&str> = vec![
+        "Amarelo", "Azul", "Branco", "Ciano", "Cinza", "Cobalto",
+        "Laranja", "Magenta", "Preto", "Primavera", "Rose",
+        "Turquesa", "Verde", "Vermelho", "Violeta"
+    ].into_iter().sorted().collect();
+
+    // Load the trained model
+    let mlp = MLP::load(model_path)?;
     println!("Loaded model from {}", model_path);
 
+    // Test data
     let test_data = vec![
         [200, 0, 70],
-        [30, 10, 240],
+        [240, 100, 240],
     ];
 
     println!("\n================ TESTE ===============");
     for rgb in test_data {
-        let (predicted, confidence) = classifier.predict(rgb);
+        let inputs = arr1(&[
+            rgb[0] as f64 / 255.0,
+            rgb[1] as f64 / 255.0,
+            rgb[2] as f64 / 255.0,
+        ]);
+
+        let (_, output) = mlp.forward(&inputs);
+        let max_idx = output.iter().position_max_by(|a, b| a.partial_cmp(b).unwrap()).unwrap();
+        let predicted = color_classes[max_idx];
+        let confidence = output[max_idx] * 100.0;
+
         println!(
             "Cor RGB: {:?} | Previsão: {:<10} | Confiança: {:.1}%",
             rgb, predicted, confidence
@@ -254,9 +243,15 @@ fn main() -> io::Result<()> {
     }
 }
 
-/*
 
-cargo run -- treino    # Trains and saves the model
-cargo run -- reconhecer # Loads and tests the model
+ /*
+
+ cd reconhececor
+cargo run -- treino
+
+ ...
+
+cd reconhececor
+cargo run -- reconhecer
 
 */
