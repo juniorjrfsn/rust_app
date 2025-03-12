@@ -1,7 +1,7 @@
 use ndarray::{Array1, Array2, Array, arr1};
 use std::collections::HashMap;
 use itertools::Itertools;
-use rand::{rngs::StdRng, Rng, SeedableRng};
+use rand::{rngs::StdRng, SeedableRng};
 use rand_distr::{Normal, Distribution};
 use serde::{Serialize, Deserialize};
 use std::fs::File;
@@ -76,13 +76,13 @@ impl MLP {
         let relu_deriv = hidden_outputs.mapv(relu_derivative);
         let hidden_errors = self.weights_hidden_output.dot(&output_errors) * relu_deriv;
 
-        let outer_product = hidden_outputs.to_owned().into_shape((hidden_outputs.len(), 1)).unwrap() *
-            output_errors.to_owned().into_shape((1, output_errors.len())).unwrap();
+        let outer_product = hidden_outputs.to_owned().into_shape_with_order((hidden_outputs.len(), 1)).unwrap() *
+            output_errors.to_owned().into_shape_with_order((1, output_errors.len())).unwrap();
         self.weights_hidden_output -= &(outer_product * self.learning_rate);
         self.bias_output -= &(output_errors * self.learning_rate);
 
-        let input_outer = inputs.to_owned().into_shape((inputs.len(), 1)).unwrap() *
-            hidden_errors.to_owned().into_shape((1, hidden_errors.len())).unwrap();
+        let input_outer = inputs.to_owned().into_shape_with_order((inputs.len(), 1)).unwrap() *
+            hidden_errors.to_owned().into_shape_with_order((1, hidden_errors.len())).unwrap();
         self.weights_input_hidden -= &(input_outer * self.learning_rate);
         self.bias_hidden -= &(hidden_errors * self.learning_rate);
     }
