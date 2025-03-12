@@ -17,6 +17,11 @@
 	$ cargo.exe "run", "--package", "reconhececor", "--bin", "reconhececor"
 
 	$ cargo run --bin reconhececor
+
+	cargo run -- treino
+
+	cargo run -- reconhecer
+
 ```
 
 ### white paper

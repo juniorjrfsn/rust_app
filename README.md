@@ -103,3 +103,8 @@ CYAN = "\033[36m"
 CARGO_HOME
 C:\Program Files\Rust stable MSVC 1.80
 ```
+
+```
+Audiowide, Hasklig, Overpass Mono, monospace
+
+```
