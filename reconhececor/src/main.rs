@@ -153,7 +153,7 @@ fn main() {
 
     let test_data = vec![
         [200, 0, 70],
-        [165, 156, 159],
+        [25, 156, 159],
     ];
 
     println!("\n================ TESTE ===============");
@@ -178,7 +178,7 @@ fn main() {
 
 /*
 
- cd reconhececor
- cargo run --bin reconhececor
+    cd reconhececor
+    cargo run --bin reconhececor
 
- */
+*/
