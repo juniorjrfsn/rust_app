@@ -1,8 +1,7 @@
 [package]
-    name = "reconhececor"
-    version = "0.1.0"
-    edition = "2021"
-    authors = ["Júnior NSF"]
+name = "cnn_reconhece_texto"
+version = "0.1.0"
+edition = "2021"
 
 [dependencies]
 	#ndarray = "0.16.1"  # Or the latest version
@@ -29,3 +28,7 @@
 	ndarray-rand = "0.15.0"
 	image = "0.25.5"
 	itertools = "0.14.0"
+	imageproc = "0.25.0"
+	rusttype = "0.9"
+	ab_glyph = "0.2"  #
+	rayon = "1.7"
