@@ -221,7 +221,8 @@ fn list_fonts(font_dir: &str) -> Vec<String> {
 fn train_model() -> io::Result<()> {
     println!("Starting training...");
     let char_classes: Vec<char> = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".chars().collect();
-    let font_dir = "D:\\projetos\\rust_app\\cnn_reconhece_texto\\dados\\FontsTrain";
+    // let font_dir = "D:\\projetos\\rust_app\\cnn_reconhece_texto\\dados\\FontsTrain";
+    let font_dir = "dados/FontsTrain";
     let fonts = list_fonts(font_dir);
 
     let mut classifier = TextClassifier {
@@ -254,7 +255,8 @@ fn train_model() -> io::Result<()> {
 fn test_model() -> io::Result<()> {
     let classifier = TextClassifier::load("dados/text_classifier.json")?;
     let test_chars = ['A', 'B', 'C'];
-    let font_dir = "D:\\projetos\\rust_app\\cnn_reconhece_texto\\dados\\FontsTest";
+    // let font_dir = "D:\\projetos\\rust_app\\cnn_reconhece_texto\\dados\\FontsTest";
+    let font_dir = "dados/FontsTest";
     let fonts = list_fonts(font_dir);
 
     for ch in test_chars.iter() {
