@@ -56,7 +56,7 @@ impl CNN {
             conv_bias,
             fc_weights,
             fc_bias,
-            learning_rate: 0.005,  // Adjusted learning rate
+            learning_rate: 0.01,
             momentum: 0.9,
             conv_weight_vel: Array3::zeros((conv_filters, filter_size, filter_size)),
             conv_bias_vel: Array1::zeros(conv_filters),
@@ -116,7 +116,7 @@ impl CNN {
 
     fn train(&mut self, image: &Array2<f64>, target: &Array1<f64>) {
         let (output, conv_outputs, pooled_outputs, flattened) = self.forward(image);
-        let output_error = output - target;
+        let output_error = &output - target;
 
         // Fully connected layer gradients
         let fc_weight_grad = output_error.clone()
@@ -138,6 +138,7 @@ impl CNN {
             let conv = &conv_outputs[k];
             let mut conv_error = Array2::zeros(conv.raw_dim());
 
+            // Upsample pooling error
             for i in 0..pooled.shape()[0] {
                 for j in 0..pooled.shape()[1] {
                     let region = conv.slice(s![i * 2..i * 2 + 2, j * 2..j * 2 + 2]);
@@ -150,6 +151,7 @@ impl CNN {
                 }
             }
 
+            // Compute convolution gradients
             let mut conv_grad = Array2::zeros((self.filter_size, self.filter_size));
             for i in 0..self.filter_size {
                 for j in 0..self.filter_size {
@@ -164,11 +166,12 @@ impl CNN {
             conv_bias_grads.push(conv_error.sum());
         }
 
-        // Update parameters
+        // Update parameters with momentum
         for k in 0..self.conv_filters {
             let conv_grad = &conv_weight_grads[k];
             let bias_grad = conv_bias_grads[k];
 
+            // Update convolution weights
             let weight_vel = self.conv_weight_vel.slice(s![k, .., ..]).to_owned();
             let weight_vel_update = weight_vel * self.momentum - (conv_grad * self.learning_rate);
             self.conv_weight_vel.slice_mut(s![k, .., ..]).assign(&weight_vel_update);
@@ -177,10 +180,12 @@ impl CNN {
             let updated_weights = weights + &weight_vel_update;
             self.conv_weights.slice_mut(s![k, .., ..]).assign(&updated_weights);
 
+            // Update convolution bias
             self.conv_bias_vel[k] = self.momentum * self.conv_bias_vel[k] - self.learning_rate * bias_grad;
             self.conv_bias[k] += self.conv_bias_vel[k];
         }
 
+        // Update fully connected layer
         self.fc_weight_vel = &self.fc_weight_vel * self.momentum - &(fc_weight_grad * self.learning_rate);
         self.fc_weights += &self.fc_weight_vel;
         self.fc_bias_vel = &self.fc_bias_vel * self.momentum - &(fc_bias_grad * self.learning_rate);
@@ -212,11 +217,10 @@ impl TextClassifier {
     }
 }
 
-fn generate_char_image(ch: char, size: u32, font_path: &str) -> Result<RgbImage, io::Error> {
+fn generate_char_image(ch: char, size: u32, font_path: &str) -> RgbImage {
     let mut img = ImageBuffer::from_fn(size, size, |_, _| Rgb([255, 255, 255]));
-    let font_data = fs::read(font_path)?;
-    let font = FontRef::try_from_slice(&font_data)
-        .map_err(|e| io::Error::new(io::ErrorKind::Other, e))?;
+    let font_data = fs::read(font_path).expect("Failed to read font file");
+    let font = FontRef::try_from_slice(&font_data).expect("Failed to load font");
     let scale = AbScale {
         x: size as f32 * 0.7,
         y: size as f32 * 0.7,
@@ -230,7 +234,7 @@ fn generate_char_image(ch: char, size: u32, font_path: &str) -> Result<RgbImage,
         &font,
         &ch.to_string(),
     );
-    Ok(img)
+    img
 }
 
 fn normalize_image(img: &RgbImage) -> Array2<f64> {
@@ -242,7 +246,7 @@ fn normalize_image(img: &RgbImage) -> Array2<f64> {
 
 fn list_fonts(font_dir: &str) -> Vec<String> {
     fs::read_dir(font_dir)
-        .unwrap_or_else(|e| panic!("Failed to read font directory {}: {}", font_dir, e))
+        .expect("Failed to read font directory")
         .filter_map(|entry| {
             let path = entry.ok()?.path();
             if path.extension().map_or(false, |ext| ext == "ttf") {
@@ -264,20 +268,19 @@ fn train_model() -> io::Result<()> {
         return Err(io::Error::new(io::ErrorKind::NotFound, "No font files found in dados/FontsTrain"));
     }
 
-    println!("Found {} training fonts", fonts.len());
     let mut classifier = TextClassifier {
         cnn: CNN::new(16, 5, char_classes.len()),
         char_classes: char_classes.clone(),
     };
 
-    for epoch in 0..100 {  // Increased epochs
+    for epoch in 0..50 {
         let mut total_loss = 0.0;
         let mut correct = 0;
         let mut total = 0;
 
         for font_path in &fonts {
             for (i, &ch) in char_classes.iter().enumerate() {
-                let img = generate_char_image(ch, 28, font_path)?;
+                let img = generate_char_image(ch, 28, font_path);
                 let input = normalize_image(&img);
                 let mut target = Array1::zeros(char_classes.len());
                 target[i] = 1.0;
@@ -311,9 +314,8 @@ fn train_model() -> io::Result<()> {
 }
 
 fn test_model() -> io::Result<()> {
-    let classifier = TextClassifier::load("dados/text_classifier.json")
-        .map_err(|e| io::Error::new(io::ErrorKind::Other, format!("Failed to load model: {}", e)))?;
-    let test_chars = ['A', 'B', 'C', 'J', 'K', 'L', 'X', 'Y', 'Z'];
+    let classifier = TextClassifier::load("dados/text_classifier.json")?;
+    let test_chars = ['A', 'B', 'C'];
     let font_dir = "dados/FontsTest";
     let fonts = list_fonts(font_dir);
 
@@ -321,13 +323,12 @@ fn test_model() -> io::Result<()> {
         return Err(io::Error::new(io::ErrorKind::NotFound, "No font files found in dados/FontsTest"));
     }
 
-    println!("Found {} test fonts", fonts.len());
     let mut correct = 0;
     let mut total = 0;
 
     for ch in test_chars.iter() {
         for font_path in &fonts {
-            let img = generate_char_image(*ch, 28, font_path)?;
+            let img = generate_char_image(*ch, 28, font_path);
             let input = normalize_image(&img);
             let (predicted, confidence) = classifier.predict(&input);
 
@@ -345,8 +346,7 @@ fn test_model() -> io::Result<()> {
             total += 1;
         }
     }
-    let accuracy = (correct as f64 / total as f64) * 100.0;
-    println!("Test Accuracy: {:.2}% ({} out of {})", accuracy, correct, total);
+    println!("Test Accuracy: {:.2}%", (correct as f64 / total as f64) * 100.0);
     Ok(())
 }
 
@@ -366,7 +366,6 @@ fn main() -> io::Result<()> {
         Ok(())
     }
 }
-
 
 
 /*
