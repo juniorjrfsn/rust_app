@@ -12,9 +12,9 @@ fn main() -> Result<(), Box<dyn StdError>> {
     let cotac_fonte = "investing";
     let ativo = "WEGE3";
     let file_path = format!("dados/{}/{}.csv", cotac_fonte, ativo);
-    
+
     let matrix = ler_csv(&file_path, cotac_fonte)?;
     treinar::<NdArrayBackend<f32>>(matrix, &device)?;
-    
+
     Ok(())
 }

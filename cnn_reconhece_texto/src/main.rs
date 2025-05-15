@@ -256,7 +256,7 @@ fn list_fonts(font_dir: &str) -> Vec<String> {
 
 fn train_model() -> io::Result<()> {
     println!("Starting training...");
-    let char_classes: Vec<char> = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".chars().collect();
+    let char_classes: Vec<char> = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ.:,;'\"(!?)+-*/=".chars().collect();
     let font_dir = "dados/FontsTrain";
     let fonts = list_fonts(font_dir);
 

@@ -15,7 +15,7 @@
 	$ cd mlpmercadofinanc
 	$ cargo run
 	$ cargo.exe "run", "--package", "mlpmercadofinanc", "--bin", "mlpmercadofinanc"
- 
+
 	$ cargo run --bin mlpmercadofinanc
 ```
 
