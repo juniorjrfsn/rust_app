@@ -35,10 +35,10 @@ impl<B: Backend> LSTMModel<B> {
     pub fn new(device: &B::Device) -> Self {
         let config_lstm = LSTMConfig::new(5, 64); // 5 features
         let lstm = LSTM::new(device, config_lstm);
-        
+
         let config_linear = LinearConfig::new(64, 1);
         let linear = Linear::new(device, config_linear);
-        
+
         Self { lstm, linear }
     }
 
