@@ -224,7 +224,7 @@ fn test_model() -> io::Result<()> {
         [30, 10, 240],
     ];
 
-    println!("\n================ TESTE ===============");
+    println!("\n===================== TESTE =====================");
     for rgb in test_data {
         let (predicted, confidence) = classifier.predict(rgb);
         println!(
