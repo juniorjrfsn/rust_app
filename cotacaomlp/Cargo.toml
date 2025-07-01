@@ -1,0 +1,76 @@
+[package]
+name = "cotacaomlp"
+version = "0.1.0"
+edition = "2021"
+
+
+authors = ["Júnior NSF"]
+
+[dependencies]
+# Manipulação de matrizes com suporte a serialização
+ndarray = { version = "0.16.1", features = ["serde"] }
+# Leitura/escrita de arquivos CSV
+csv = "1.1"
+# Serialização/deserialização
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+bincode = "1.3.3"
+serde_bson = "0.0.1"  # Consider updating to a newer version
+# Manipulação de tempo e datas
+time = "0.3.36"
+chrono = "0.4.41"
+# Geração de números aleatórios
+rand = "0.9.1"
+rand_distr = "0.5.0"
+# Tratamento de erros
+thiserror = "2.0.11"
+# Biblioteca de aprendizado de máquina
+smartcore = "0.4.0"
+# Concorrência
+crossbeam = "0.8"
+# Integração com SQLite (usando apenas rusqlite)
+rusqlite = { version = "0.36.0", features = ["bundled"] }
+# Criptografia (opcional, dependendo do uso)
+# openssl = "0.10.73"
+# Configuração via TOML
+toml = "0.8.20"
+
+
+#[dependencies]
+	#ndarray = "0.16.1"  # Or the latest version
+#	ndarray = { version = "0.16.1", features = ["serde"] }
+	#image = "0.25.5"  # Or latest 0.x version
+	#plotters = "0.3.4"
+#	time = "0.3.36"
+#	rand = "0.9.1"
+#	thiserror = "2.0.11"
+#	rand_distr = "0.5.0"
+#	toml = "0.8.20"
+	#encoding = "0.2.33"
+	#encoding_rs = "0.8.34"
+	#encoding_rs_io = "0.1.7"
+#	csv = "1.1"
+#	serde = { version = "1.0", features = ["derive"] }
+#	serde_json = "1.0"
+	#libsqlite3-sys = { path = "deps/libsqlite3-sys" }
+	#libsqlite3-sys = { path = "/home/junior/Documentos/projetos/rust_app/caminho/para/libsqlite3-sys" }
+	#rusqlite = { version = "0.31.0", features = ["bundled"] }
+	#libsqlite3-sys = "0.29.0"
+#	rusqlite = { version = "0.36.0", features = ["bundled"] }
+#	serde_bson = "0.0.1" # Or latest 0.x version
+#    smartcore = "0.4.0"
+#	crossbeam = "0.8"  # Or latest 0.x version
+#	chrono = "0.4.41"
+#	bincode = "2.0.1" 
+    #libsql-rusqlite = "0.33.0"
+    #libsqlite3-sys = "0.34.0"
+ #   libsqlite3-sys-ic = "0.25.0"
+#	
+ #   openssl = "0.10.73" 
+  #  rusqlite-ic = "0.28.1"
+	#[build-dependencies]
+	#bindgen = "0.71.1"
+    #tch = { version = "0.19" } # Removido o recurso "cuda"
+	#tch = { version = "0.19", features = ["cuda"] } # Habilita CUDA se disponível
+	
+ 

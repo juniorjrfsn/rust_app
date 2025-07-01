@@ -1,0 +1,11 @@
+/home/junior/Documentos/projetos/rust_app/cotacaomlp/target/debug/deps/libapprox-d793310ab25a082f.rmeta: /home/junior/.cargo/registry/src/index.crates.io-6f17d22bba15001f/approx-0.5.1/src/lib.rs /home/junior/.cargo/registry/src/index.crates.io-6f17d22bba15001f/approx-0.5.1/src/abs_diff_eq.rs /home/junior/.cargo/registry/src/index.crates.io-6f17d22bba15001f/approx-0.5.1/src/relative_eq.rs /home/junior/.cargo/registry/src/index.crates.io-6f17d22bba15001f/approx-0.5.1/src/ulps_eq.rs /home/junior/.cargo/registry/src/index.crates.io-6f17d22bba15001f/approx-0.5.1/src/macros.rs
+
+/home/junior/Documentos/projetos/rust_app/cotacaomlp/target/debug/deps/libapprox-d793310ab25a082f.rlib: /home/junior/.cargo/registry/src/index.crates.io-6f17d22bba15001f/approx-0.5.1/src/lib.rs /home/junior/.cargo/registry/src/index.crates.io-6f17d22bba15001f/approx-0.5.1/src/abs_diff_eq.rs /home/junior/.cargo/registry/src/index.crates.io-6f17d22bba15001f/approx-0.5.1/src/relative_eq.rs /home/junior/.cargo/registry/src/index.crates.io-6f17d22bba15001f/approx-0.5.1/src/ulps_eq.rs /home/junior/.cargo/registry/src/index.crates.io-6f17d22bba15001f/approx-0.5.1/src/macros.rs
+
+/home/junior/Documentos/projetos/rust_app/cotacaomlp/target/debug/deps/approx-d793310ab25a082f.d: /home/junior/.cargo/registry/src/index.crates.io-6f17d22bba15001f/approx-0.5.1/src/lib.rs /home/junior/.cargo/registry/src/index.crates.io-6f17d22bba15001f/approx-0.5.1/src/abs_diff_eq.rs /home/junior/.cargo/registry/src/index.crates.io-6f17d22bba15001f/approx-0.5.1/src/relative_eq.rs /home/junior/.cargo/registry/src/index.crates.io-6f17d22bba15001f/approx-0.5.1/src/ulps_eq.rs /home/junior/.cargo/registry/src/index.crates.io-6f17d22bba15001f/approx-0.5.1/src/macros.rs
+
+/home/junior/.cargo/registry/src/index.crates.io-6f17d22bba15001f/approx-0.5.1/src/lib.rs:
+/home/junior/.cargo/registry/src/index.crates.io-6f17d22bba15001f/approx-0.5.1/src/abs_diff_eq.rs:
+/home/junior/.cargo/registry/src/index.crates.io-6f17d22bba15001f/approx-0.5.1/src/relative_eq.rs:
+/home/junior/.cargo/registry/src/index.crates.io-6f17d22bba15001f/approx-0.5.1/src/ulps_eq.rs:
+/home/junior/.cargo/registry/src/index.crates.io-6f17d22bba15001f/approx-0.5.1/src/macros.rs:

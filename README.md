@@ -26,6 +26,7 @@ font : Consolas, 'Courier New', monospace
     cargo new mlpxor --bin
     cargo new reconhececor --bin
     cargo new cnn_reconhece_texto --bin
+    cargo new cotacaomlp --bin
 ```
 
 ### **Acessar a pasta da aplicação**
@@ -51,6 +52,7 @@ font : Consolas, 'Courier New', monospace
     cd mlpxor
     cd reconhececor
     cd cnn_reconhece_texto
+    cd cotacaomlp
 ```
 
 ### **Construir a aplicação**
