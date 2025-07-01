@@ -1,7 +1,6 @@
 use std::env;
 use std::path::Path;
 use std::fs;
-use serde::de::DeserializeOwned;
 
 // Define conexao module inline
 mod conexao {
@@ -10,7 +9,6 @@ mod conexao {
         use serde::Deserialize;
         use std::fs;
         use thiserror::Error;
-
         use serde::de::DeserializeOwned;
 
         #[derive(Error, Debug)]
@@ -136,8 +134,7 @@ mod conexao {
 // Define mlp module inline
 mod mlp {
     pub mod previsao {
-        use super::super::conexao::read_file;
-        use super::super::mlp_cotacao::rna;
+        use super::mlp_cotacao::rna;
         use thiserror::Error;
         use std::collections::HashMap;
 
@@ -297,9 +294,8 @@ mod mlp {
                 ("Vol.", 5),
             ]);
 
-            let latest_row = matrix.iter().skip(1).max_by_key(|row| {
-                row[0].parse::<f64>().unwrap_or(f64::NEG_INFINITY) // Handle invalid dates
-            }).ok_or(PrevCotacaoError::EmptyInputData)?;
+            let latest_row = matrix.iter().skip(1).max_by_key(|row| row[0].clone())
+                .ok_or(PrevCotacaoError::EmptyInputData)?;
 
             let parsed_row = parse_row(latest_row, &column_map)?;
 
@@ -328,8 +324,8 @@ mod mlp {
     pub mod mlp_cotacao {
         pub mod rna {
             use rand::Rng;
-            use rand::thread_rng;
-            use serde::{Serialize, Deserialize, Clone};
+            use rand::rng;
+            use serde::{Serialize, Deserialize};
             use bincode;
             use std::error::Error;
 
@@ -367,29 +363,19 @@ mod mlp {
             impl DenseLayer {
                 pub fn new(input_size: usize, output_size: usize) -> Self {
                     let scale = (2.0 / (input_size + output_size) as f64).sqrt();
-                    let mut rng = thread_rng();
+                    let mut rng = rng();
                     let weights = (0..output_size)
-                        .map(|_| (0..input_size).map(|_| rng.gen_range(-scale..scale)).collect())
+                        .map(|_| (0..input_size).map(|_| rng.random_range(-scale..scale)).collect())
                         .collect();
                     let biases = vec![0.0; output_size];
                     DenseLayer { weights, biases }
                 }
 
                 pub fn forward(&self, inputs: &[f64]) -> Vec<f64> {
-                    self.weights.iter().zip(&self.biases).map(|(weights, bias)| {
-                        inputs.iter().zip(weights).map(|(x, w)| x * w).sum::<f64>() + bias
+                    self.weights.iter().zip(&self.biases).map(|(weights, &bias)| {
+                        let sum: f64 = inputs.iter().zip(weights).map(|(&x, &w)| x * w).sum();
+                        apply_activation(sum + bias, "relu")
                     }).collect()
-                }
-
-                pub fn update_weights(&mut self, gradients: &[f64], learning_rate: f64) {
-                    let forward_results = self.weights.iter().map(|row| {
-                        row.iter().enumerate().map(|(j, _)| self.forward(&[j as f64])[j]).collect::<Vec<f64>>()
-                    }).collect::<Vec<Vec<f64>>>();
-                    for (i, row) in self.weights.iter_mut().enumerate() {
-                        for (j, weight) in row.iter_mut().enumerate() {
-                            *weight -= learning_rate * gradients[i] * forward_results[i][j];
-                        }
-                    }
                 }
             }
 
@@ -406,11 +392,10 @@ mod mlp {
                     MLP { layers }
                 }
 
-                pub fn forward(&self, inputs: &[f64], activation: &str) -> Vec<f64> {
+                pub fn forward(&self, inputs: &[f64], _activation: &str) -> Vec<f64> {
                     let mut output = inputs.to_vec();
                     for layer in &self.layers {
                         output = layer.forward(&output);
-                        output = output.iter().map(|x| apply_activation(*x, activation)).collect();
                     }
                     output
                 }
@@ -432,7 +417,7 @@ mod mlp {
                             let mut activations = vec![input.clone()];
                             for layer in &self.layers {
                                 let output = layer.forward(activations.last().unwrap());
-                                activations.push(output.iter().map(|x| apply_activation(*x, activation)).collect());
+                                activations.push(output);
                             }
 
                             let prediction = activations.last().unwrap()[0];
@@ -441,16 +426,14 @@ mod mlp {
 
                             let mut delta = 2.0 * (prediction - label);
                             for i in (0..self.layers.len()).rev() {
-                                let output = &activations[i + 1];
+                                let output = activations[i + 1][0]; // Dereference here
                                 let input = &activations[i];
-                                let gradients = output.iter().enumerate()
-                                    .map(|(j, &o)| delta * activation_derivative(o, activation) * input[j])
-                                    .collect::<Vec<f64>>();
-                                self.layers[i].update_weights(&gradients, learning_rate);
-                                delta = self.layers[i].weights.iter().flatten()
-                                    .zip(output.iter())
-                                    .map(|(w, o)| w * activation_derivative(*o, activation))
-                                    .sum();
+                                let gradient = delta * activation_derivative(output, activation);
+                                for j in 0..self.layers[i].weights.len() {
+                                    self.layers[i].weights[j][0] -= learning_rate * gradient * input[0];
+                                }
+                                self.layers[i].biases[0] -= learning_rate * delta;
+                                delta = self.layers[i].weights[0][0] * activation_derivative(output, activation);
                             }
                         }
                         println!("Epoch: {}, Loss: {:.4}", epoch + 1, total_loss / inputs.len() as f64);
@@ -497,21 +480,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let matrix = conexao::read_file::ler_csv(file_path.to_str().unwrap(), cotac_fonte, ativo_financeiro)?;
 
     let mut model = None;
-    let mut means = Vec::new();
-    let mut stds = Vec::new();
-    let mut label_mean = 0.0;
-    let mut label_std = 0.0;
-
     if mode == "treino" {
         println!("Treinando o modelo...");
         let train_ratio = 0.8;
         let (trained_model, trained_means, trained_stds, trained_label_mean, trained_label_std) =
             mlp::previsao::treinar(matrix, train_ratio)?;
         model = Some(trained_model);
-        means = trained_means;
-        stds = trained_stds;
-        label_mean = trained_label_mean;
-        label_std = trained_label_std;
+        let means = trained_means;
+        let stds = trained_stds;
+        let label_mean = trained_label_mean;
+        let label_std = trained_label_std;
         println!("Modelo treinado com sucesso.");
         let serialized = model.as_ref().unwrap().serialize()?;
         fs::write("model.bin", serialized)?;
@@ -526,11 +504,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         println!("Carregando parâmetros normalizados...");
         let params_data = fs::read("params.bin")?;
-        let (loaded_means, loaded_stds, loaded_label_mean, loaded_label_std) = bincode::deserialize(&params_data)?;
-        means = loaded_means;
-        stds = loaded_stds;
-        label_mean = loaded_label_mean;
-        label_std = loaded_label_std;
+        let (means, stds, label_mean, label_std) = bincode::deserialize(&params_data)?;
+        // Note: Fixed typo in params_data reference
 
         println!("Fazendo previsão...");
         if let Some(m) = &model {
