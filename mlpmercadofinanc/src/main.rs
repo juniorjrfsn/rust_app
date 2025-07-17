@@ -18,3 +18,5 @@ fn main() -> Result<(), Box<dyn StdError>> {
 
     Ok(())
 }
+ 
+// cargo run --bin mlpmercadofinanc  --p  "treino"

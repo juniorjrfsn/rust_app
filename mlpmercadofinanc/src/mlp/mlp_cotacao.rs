@@ -1,3 +1,4 @@
+// File : src/mlp/mlp_cotacao.rs
 pub mod rna { // módulo rna : machine learning MLP (Multi-Layer Perceptron)
     use rand::Rng;
     use serde::{Serialize, Deserialize};
