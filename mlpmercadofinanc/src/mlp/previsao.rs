@@ -5,7 +5,13 @@ use std::error::Error as StdError;
  
 use thiserror::Error;
 
- 
+use crate::mlp::mlp_cotacao::LSTMModel;
+use burn::backend::NdArray;
+
+pub fn predict(matrix: Vec<Vec<String>>) -> Result<Vec<f32>, Box<dyn std::error::Error>> {
+    let model = LSTMModel::<NdArray>::new(64, &NdArray::Device::default());
+    Ok(model.predict(matrix)?)
+}
 
 #[derive(Debug, Error)]
 pub enum PrevCotacaoError {
