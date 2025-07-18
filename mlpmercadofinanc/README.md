@@ -49,6 +49,11 @@ cargo add openssl
 cargo add libsql-rusqlite
 cargo add libsqlite3-sys-ic
 cargo add rusqlite-ic
+
+cargo install cargo-tree
+cargo tree | grep -E "rusqlite|libsqlite3-sys"
+cargo install cargo-tree
+cargo tree | grep -E "rusqlite|libsqlite3-sys"
 ```
 
 

@@ -1,227 +1,137 @@
 // File : src/mlp/mlp_cotacao.rs
-pub mod rna { // módulo rna : machine learning MLP (Multi-Layer Perceptron)
-    use rand::Rng;
-    use serde::{Serialize, Deserialize};
-    use bincode;
-    use crate::mlp::mlp_cotacao::rna;
-    
-    // Função para aplicar a ativação escolhida
-    fn apply_activation(x: f64, activation: &str) -> f64 {
-        match activation {
-            "relu" => relu(x),
-            "tanh" => tanh(x),
-            "sigmoid" => sigmoid(x),
-            _ => x, // Linear (sem ativação)
-        }
-    }
-    
-    // Função para calcular a derivada da ativação escolhida
-    fn activation_derivative(x: f64, activation: &str) -> f64 {
-        match activation {
-            "relu" => relu_derivative(x),
-            "tanh" => tanh_derivative(x),
-            "sigmoid" => sigmoid_derivative(x),
-            _ => 1.0, // Derivada da função linear
-        }
-    }
-    
-    // Função de ativação Tanh
-    fn tanh(x: f64) -> f64 {
-        x.tanh()
-    }
-    
-    // Derivada da função de ativação Tanh
-    fn tanh_derivative(x: f64) -> f64 {
-        1.0 - x.tanh().powi(2)
-    }
-    
-    // Função de ativação Sigmoid
-    fn sigmoid(x: f64) -> f64 {
-        1.0 / (1.0 + (-x).exp())
-    }
-    
-    // Derivada da função de ativação Sigmoid
-    fn sigmoid_derivative(x: f64) -> f64 {
-        let s = sigmoid(x);
-        s * (1.0 - s)
-    }
-    
-    // Função de ativação ReLU
-    fn relu(x: f64) -> f64 {
-        if x > 0.0 { x } else { 0.0 }
-    }
-    
-    // Derivada da função de ativação ReLU
-    fn relu_derivative(x: f64) -> f64 {
-        if x > 0.0 { 1.0 } else { 0.0 }
-    }
-    
-    // Estrutura para representar uma camada densa
-    #[derive(Serialize, Deserialize)]
-    pub struct DenseLayer {
-        pub weights: Vec<Vec<f64>>,
-        pub biases: Vec<f64>,
-    }
-    
-    impl DenseLayer {
-        // Cria uma nova camada densa com inicialização Xavier
-        pub fn new(input_size: usize, output_size: usize) -> Self {
-            let scale = (2.0 / (input_size + output_size) as f64).sqrt();
-            let mut rng = rand::rng();
-            let weights = (0..output_size)
-                .map(|_| (0..input_size).map(|_| rng.gen_range(-scale..scale)).collect())
-                .collect();
-            let biases = vec![0.0; output_size];
-            DenseLayer { weights, biases }
-        }
-    
-        // Propagação para frente (forward pass)
-        pub fn forward(&self, inputs: &[f64]) -> Vec<f64> {
-            self.weights
-                .iter()
-                .zip(&self.biases)
-                .map(|(weights, bias)| {
-                    inputs
-                        .iter()
-                        .zip(weights)
-                        .map(|(x, w)| x * w)
-                        .sum::<f64>()
-                        + bias
-                })
-                .collect()
-        }
-    
-        // Atualiza os pesos usando gradientes e taxa de aprendizado
-        pub fn update_weights(&mut self, gradients: &[Vec<f64>], learning_rate: f64) {
-            for (i, row) in self.weights.iter_mut().enumerate() {
-                for (j, weight) in row.iter_mut().enumerate() {
-                    *weight -= learning_rate * gradients[i][j];
-                }
-            }
-        }
-    }
-    
-    // Estrutura para representar o modelo MLP
-    #[derive(Serialize, Deserialize)]
-    pub struct MLP {
-        pub layers: Vec<DenseLayer>,
-    }
-    
-    impl MLP {
-        // Cria um novo modelo MLP com tamanhos de camadas especificados
-        pub fn new(layer_sizes: &[usize]) -> Self {
-            let layers = layer_sizes
-                .windows(2)
-                .map(|sizes| DenseLayer::new(sizes[0], sizes[1]))
-                .collect();
-            MLP { layers }
-        }
-    
-        // Propagação para frente (forward pass)
-        pub fn forward(&self, inputs: &[f64], activation: &str) -> Vec<f64> {
-            let mut output = inputs.to_vec();
-            for layer in &self.layers {
-                output = layer.forward(&output);
-                output = output.iter().map(|x| apply_activation(*x, activation)).collect();
-            }
-            output
-        }
-    
-        // Treina o modelo usando gradiente descendente
-        pub fn train(
-            &mut self,
-            inputs: &[Vec<f64>],
-            labels: &[f64],
-            epochs: usize,
-            learning_rate: f64,
-            activation: &str,
-        ) {
-            for epoch in 0..epochs {
-                let mut total_loss = 0.0;
-                for (input, label) in inputs.iter().zip(labels) {
-                    // Forward pass
-                    let mut outputs = vec![input.clone()];
-                    for layer in &self.layers {
-                        let output = layer.forward(outputs.last().unwrap());
-                        outputs.push(output.iter().map(|x| apply_activation(*x, activation)).collect());
-                    }
-    
-                    // Calcula a perda (MSE)
-                    let prediction = outputs.last().unwrap()[0];
-                    let loss = (prediction - label).powi(2);
-                    total_loss += loss;
-    
-                    // Backward pass
-                    let mut delta = 2.0 * (prediction - label);
-                    for i in (0..self.layers.len()).rev() {
-                        let output = &outputs[i + 1];
-                        let input = &outputs[i];
-                        let gradients: Vec<Vec<f64>> = self.layers[i]
-                            .weights
-                            .iter()
-                            .enumerate()
-                            .map(|(j, weights)| {
-                                weights
-                                    .iter()
-                                    .enumerate()
-                                    .map(|(k, _)| {
-                                        delta * activation_derivative(output[j], activation) * input[k]
-                                    })
-                                    .collect()
-                            })
-                            .collect();
-                        self.layers[i].update_weights(&gradients, learning_rate);
-                        delta = self.layers[i]
-                            .weights
-                            .iter()
-                            .map(|weights| {
-                                weights
-                                    .iter()
-                                    .zip(output.iter())
-                                    .map(|(w, o)| w * activation_derivative(*o, activation))
-                                    .sum::<f64>()
-                            })
-                            .sum();
-                    }
-                }
-                println!("Epoch: {}, Loss: {:.4}", epoch + 1, total_loss / inputs.len() as f64);
-            }
-        }
-    
-        // Serializa o modelo para bytes
-        pub fn serialize(&self) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
-            let serialized = bincode::serialize(self)?;
-            Ok(serialized)
-        }
-    
-        // Desserializa o modelo a partir de bytes
-        pub fn deserialize(data: &[u8]) -> Result<Self, Box<dyn std::error::Error>> {
-            let deserialized = bincode::deserialize(data)?;
-            Ok(deserialized)
-        }
-    }
 
+
+use burn::{
+    module::Module,
+    nn::{Linear, LinearConfig, LSTM, LSTMConfig},
+    tensor::{backend::Backend, Data, Shape, Tensor},
+};
+use thiserror::Error;
+
+#[derive(Error, Debug)]
+pub enum LSTMError {
+    #[error("Invalid data format: {0}")]
+    InvalidData(String),
+    #[error("Tensor error: {0}")]
+    Tensor(#[from] burn::tensor::TensorError),
 }
 
-use tch::{nn, nn::Module, Tensor};
-
-pub struct LSTM {
-    lstm: nn::Lstm,
-    linear: nn::Linear,
+#[derive(Module, Debug)]
+pub struct LSTMModel<B: Backend> {
+    lstm: LSTM<B>,
+    linear: Linear<B>,
 }
 
-impl LSTM {
-    pub fn new(vs: nn::Path, input_size: i64, hidden_size: i64, num_layers: i64, output_size: i64) -> LSTM {
-        let lstm = nn::lstm(vs / "lstm", input_size, hidden_size, num_layers);
-        let linear = nn::linear(vs / "linear", hidden_size, output_size, Default::default());
-        LSTM { lstm, linear }
+impl<B: Backend> LSTMModel<B> {
+    pub fn new(device: &B::Device) -> Self {
+        let config_lstm = LSTMConfig::new(5, 64); // 5 features, 64 hidden units
+        let lstm = config_lstm.init(device);
+        let config_linear = LinearConfig::new(64, 1); // 64 input features, 1 output
+        let linear = config_linear.init(device);
+        Self { lstm, linear }
+    }
+
+    pub fn forward(&self, inputs: Tensor<B, 3>) -> Tensor<B, 2> {
+        let (outputs, _) = self.lstm.forward(inputs, None);
+        let last_output = outputs.slice([0..outputs.dims()[0], outputs.dims()[1] - 1..outputs.dims()[1]]);
+        self.linear.forward(last_output)
+    }
+
+    pub fn predict(&self, matrix: Vec<Vec<String>>, device: &B::Device) -> Result<Vec<f32>, LSTMError> {
+        let (x, _) = preprocess::<B>(matrix, device)?;
+        let output = self.forward(x);
+        Ok(output.to_data().value)
     }
 }
 
-impl Module for LSTM {
-    fn forward(&self, xs: &Tensor) -> Tensor {
-        let (output, _) = self.lstm.forward(xs);
-        let last_output = output.select(1, -1); // Pegar a última saída da sequência
-        self.linear.forward(&last_output)
+fn preprocess<B: Backend>(
+    matrix: Vec<Vec<String>>,
+    device: &B::Device,
+) -> Result<(Tensor<B, 3>, Tensor<B, 2>), LSTMError> {
+    let seq_length = 30;
+    let (means, stds) = calculate_stats(&matrix)?;
+    let mut sequences = Vec::new();
+    let mut targets = Vec::new();
+    for i in 0..matrix.len().saturating_sub(seq_length) {
+        let seq: Result<Vec<Vec<f32>>, LSTMError> = matrix[i..i + seq_length]
+            .iter()
+            .map(|row| Ok(normalize_row(parse_row(row)?, &means, &stds)))
+            .collect();
+        let seq = seq?;
+        let target = parse_row(&matrix[i + seq_length])?[2]; // Closing price
+        sequences.push(seq);
+        targets.push(target);
     }
+    let x = Tensor::from_data(
+        Data::new(
+            sequences.into_iter().flatten().collect(),
+            Shape::new([sequences.len() as i64, seq_length as i64, 5]),
+        ),
+        device,
+    );
+    let y = Tensor::from_data(
+        Data::new(
+            targets,
+            Shape::new([targets.len() as i64, 1]),
+        ),
+        device,
+    );
+    Ok((x, y))
+}
+
+fn parse_row(row: &[String]) -> Result<Vec<f32>, LSTMError> {
+    let parse = |s: &str| -> Result<f32, LSTMError> {
+        s.replace(',', ".")
+            .parse::<f32>()
+            .map_err(|_| LSTMError::InvalidData("Failed to parse number".into()))
+    };
+    Ok(vec![
+        parse(&row[1])?, // Open (Abertura)
+        parse(&row[5])?, // High (Máxima)
+        parse(&row[4])?, // Low (Mínima)
+        parse(&row[3].trim_end_matches('%'))?, // Change % (Var%)
+        parse_volume(&row[6])?, // Volume
+    ])
+}
+
+fn parse_volume(s: &str) -> Result<f32, LSTMError> {
+    let multiplier = if s.ends_with('B') {
+        1e9
+    } else if s.ends_with('M') {
+        1e6
+    } else {
+        1.0
+    };
+    s.trim_end_matches(|c| c == 'B' || c == 'M')
+        .replace(',', ".")
+        .parse::<f32>()
+        .map(|v| v * multiplier)
+        .map_err(|_| LSTMError::InvalidData("Invalid volume format".into()))
+}
+
+fn normalize_row(row: Vec<f32>, means: &[f32], stds: &[f32]) -> Vec<f32> {
+    row.iter()
+        .enumerate()
+        .map(|(i, &x)| (x - means[i]) / stds[i].max(1e-8))
+        .collect()
+}
+
+fn calculate_stats(matrix: &[Vec<String>]) -> Result<(Vec<f32>, Vec<f32>), LSTMError> {
+    let mut data = Vec::new();
+    for row in matrix {
+        data.push(parse_row(row)?);
+    }
+    let means = (0..5)
+        .map(|i| {
+            data.iter().map(|row| row[i]).sum::<f32>() / data.len() as f32
+        })
+        .collect::<Vec<_>>();
+    let stds = (0..5)
+        .map(|i| {
+            let variance = data.iter().map(|row| (row[i] - means[i]).powi(2)).sum::<f32>()
+                / data.len() as f32;
+            variance.sqrt()
+        })
+        .collect::<Vec<_>>();
+    Ok((means, stds))
 }

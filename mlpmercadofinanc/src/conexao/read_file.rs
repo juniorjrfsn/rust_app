@@ -1,9 +1,10 @@
 // conexao/read_file.rs
+
+
 use csv::ReaderBuilder;
 use serde::Deserialize;
 use std::fs;
 use thiserror::Error;
-use serde::de::DeserializeOwned;
 
 #[derive(Error, Debug)]
 pub enum DataError {
@@ -83,7 +84,7 @@ impl CsvRecord for Record {
     }
 }
 
-fn read_csv_generic<T: DeserializeOwned + CsvRecord>(file_path: &str) -> Result<Vec<Vec<String>>, DataError> {
+fn read_csv_generic<T: for<'de> Deserialize<'de> + CsvRecord>(file_path: &str) -> Result<Vec<Vec<String>>, DataError> {
     if !fs::metadata(file_path).is_ok() {
         return Err(DataError::InvalidDataFormat(format!(
             "Arquivo não encontrado: {}",
@@ -91,12 +92,15 @@ fn read_csv_generic<T: DeserializeOwned + CsvRecord>(file_path: &str) -> Result<
         )));
     }
 
-    let file = fs::File::open(file_path).map_err(DataError::IoError)?;
-    let mut rdr = ReaderBuilder::new().has_headers(true).from_reader(file);
+    let file = fs::File::open(file_path)?;
+    let mut rdr = ReaderBuilder::new()
+        .has_headers(true)
+        .delimiter(b',')
+        .from_reader(file);
 
-    let mut matrix: Vec<Vec<String>> = Vec::new();
+    let mut matrix = Vec::new();
     for result in rdr.deserialize() {
-        let record: T = result.map_err(DataError::CsvError)?;
+        let record: T = result?;
         matrix.push(record.into_row());
     }
 
@@ -117,7 +121,6 @@ pub fn ler_csv(
         ))),
     };
 
-    // Validate the matrix
     if matrix.is_empty() || matrix.iter().any(|row| row.len() != 7) {
         return Err(DataError::InvalidDataFormat(
             "O arquivo CSV não contém dados suficientes ou formato inválido.".to_string(),
