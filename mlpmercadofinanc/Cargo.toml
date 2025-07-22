@@ -9,7 +9,7 @@ authors = ["Júnior NSF"]
     clap = { version = "4.0", features = ["derive"] }
     ndarray = { version = "0.16.1", features = ["serde"] }
     chrono = "0.4"
-    rand = "0.9.1"
+    rand = "0.9.2"
     rand_distr = "0.5.0"
     thiserror = "2.0.12"
     toml = "0.9.2"
