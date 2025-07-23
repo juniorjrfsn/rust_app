@@ -1,15 +1,13 @@
-// src/main.rs
+// File : src/main.rs
+
+
 mod conexao;
 mod mlp;
 
 use std::error::Error as StdError;
-use burn::tensor::backend::NdArrayBackend;
-use crate::conexao::read_file::ler_csv;
-use crate::mlp::previsao_lstm::treinar;
 use clap::{Arg, Command};
-use burn::backend::NdArrayBackend;
-use burn::backend::NdArray;
-use crate::mlp::train_lstm::treinar;
+// Import the correct backend types
+use burn::backend::{NdArrayBackend, Autodiff};
 
 fn main() -> Result<(), Box<dyn StdError>> {
     let matches = Command::new("mlpmercadofinanc")
@@ -25,15 +23,23 @@ fn main() -> Result<(), Box<dyn StdError>> {
         return Err("Only 'treino' phase is supported".into());
     }
 
-    let device = NdArray::Device::default();
+    // Define the backend types correctly
+    type Backend = NdArrayBackend<f32>;
+    type MyAutodiffBackend = Autodiff<Backend>; // Use the imported Autodiff
+    
+    let device = Backend::default(); // Create device instance correctly
     let cotac_fonte = "investing";
     let ativo = "WEGE3";
     let file_path = format!("dados/{}/{}.csv", cotac_fonte, ativo);
-    let matrix = ler_csv(&file_path, cotac_fonte, ativo)?;
-    treinar::<NdArray>(&matrix, &device)?;
+    let matrix = crate::conexao::read_file::ler_csv(&file_path, cotac_fonte, ativo)?;
+    
+    // Call training function with the correct Autodiff backend
+    crate::mlp::train_lstm::treinar::<MyAutodiffBackend>(matrix, &device)?;
     Ok(())
 }
- 
+
+
+
 // cargo run --bin mlpmercadofinanc -- --ph treino
 
 // 

@@ -1,6 +1,8 @@
 // file: src/mlp/previsao_lstm.rs
 
 
+
+
 use burn::{
     module::Module,
     nn::{Linear, LinearConfig, Lstm, LstmConfig},
@@ -22,7 +24,8 @@ pub struct LSTMModel<B: Backend> {
 
 impl<B: Backend> LSTMModel<B> {
     pub fn new(hidden_size: usize, device: &B::Device) -> Self {
-        let config_lstm = LstmConfig::new(5, hidden_size, true);
+        // Fix LstmConfig constructor - it needs 3 parameters
+        let config_lstm = LstmConfig::new(6, hidden_size, false); // Set bidirectional to false
         let lstm = config_lstm.init(device);
         let config_linear = LinearConfig::new(hidden_size, 1);
         let linear = config_linear.init(device);
@@ -31,16 +34,41 @@ impl<B: Backend> LSTMModel<B> {
 
     pub fn forward(&self, inputs: Tensor<B, 3>) -> Tensor<B, 2> {
         let (outputs, _) = self.lstm.forward(inputs, None);
-        let last_output = outputs.slice([0..outputs.dims()[0], outputs.dims()[1] - 1..outputs.dims()[1]]);
-        let last_output_2d = last_output.reshape([last_output.dims()[0], last_output.dims()[2]]);
+        // Fix borrow issues by cloning before slice/reshape
+        let last_output = outputs.clone().slice([0..outputs.dims()[0], outputs.dims()[1] - 1..outputs.dims()[1]]);
+        let last_output_2d = last_output.clone().reshape([last_output.dims()[0], last_output.dims()[2]]);
         self.linear.forward(last_output_2d)
     }
 
-    pub fn predict(&self, matrix: Vec<Vec<String>>) -> Result<Vec<f32>, LSTMError> {
-        let (x, _, _, _, target_mean, target_std) = preprocess::<B>(&matrix, &B::Device::default())?;
+    pub fn predict(&self, matrix: Vec<Vec<String>>, device: &B::Device) -> Result<Vec<f32>, LSTMError> {
+        let (x, _, _, _, target_mean, target_std) = preprocess::<B>(&matrix, device)?;
         let output = self.forward(x);
-        let output_data = output.to_data().to_vec();
-        Ok(output_data.into_iter().map(|x| x * target_std + target_mean).collect())
+        
+        // Fix tensor data access - use to_data() correctly
+        let output_data = output.to_data(); // This returns TensorData
+        
+        // Process the raw bytes to extract f32 values
+        // The data is stored as bytes, we need to convert them back to f32
+        let shape_vec: Vec<usize> = output_data.shape.dims().to_vec();
+        let total_elements = shape_vec.iter().product::<usize>();
+        let mut output_vec = Vec::with_capacity(total_elements);
+        
+        // Convert bytes to f32 values
+        let bytes = &output_data.bytes;
+        for i in 0..total_elements {
+            let start = i * std::mem::size_of::<f32>();
+            let end = start + std::mem::size_of::<f32>();
+            if end <= bytes.len() {
+                let bytes_slice = &bytes[start..end];
+                let float_val = f32::from_le_bytes([
+                    bytes_slice[0], bytes_slice[1], bytes_slice[2], bytes_slice[3]
+                ]);
+                // Apply inverse normalization
+                output_vec.push(float_val * target_std + target_mean);
+            }
+        }
+        
+        Ok(output_vec)
     }
 }
 
@@ -70,10 +98,14 @@ fn preprocess<B: Backend>(
 
     let target_mean = targets.iter().sum::<f32>() / targets.len() as f32;
     let target_std = (targets.iter().map(|&x| (x - target_mean).powi(2)).sum::<f32>() / targets.len() as f32).sqrt();
-    let targets: Vec<f32> = targets.into_iter().map(|x| (x - target_mean) / target_std.max(1e-8)).collect();
+    let _targets_normalized: Vec<f32> = targets.into_iter().map(|x| (x - target_mean) / target_std.max(1e-8)).collect();
 
+    // Fix borrow issue by cloning sequences before consuming
     let x = Tensor::from_floats(
-        TensorData::new(sequences.into_iter().flatten().flatten().collect::<Vec<f32>>(), Shape::new([sequences.len(), seq_length, 5])),
+        TensorData::new(
+            sequences.clone().into_iter().flatten().flatten().collect::<Vec<f32>>(), 
+            Shape::new([sequences.len(), seq_length, 6]) // Use 6 features
+        ),
         device,
     );
 
@@ -81,17 +113,23 @@ fn preprocess<B: Backend>(
 }
 
 fn parse_row(row: &[String]) -> Result<Vec<f32>, LSTMError> {
-    let parse = |s: &str| -> Result<f32, LSTMError> {
+    if row.len() < 7 {
+        return Err(LSTMError::InvalidData(format!("Row has insufficient columns: expected 7, got {}", row.len())));
+    }
+    
+    let parse = |s: &str, field: &str| -> Result<f32, LSTMError> {
         s.replace(',', ".")
             .parse::<f32>()
-            .map_err(|_| LSTMError::InvalidData(format!("Failed to parse number: {}", s)))
+            .map_err(|_| LSTMError::InvalidData(format!("Failed to parse {}: {}", field, s)))
     };
+    
     Ok(vec![
-        parse(&row[1])?, // Abertura
-        parse(&row[5])?, // Máximo
-        parse(&row[4])?, // Mínimo
-        parse(&row[3].trim_end_matches('%'))?, // Variação
-        parse_volume(&row[6])?, // Volume
+        parse(&row[2], "closing price")?, // Fechamento
+        parse(&row[1], "opening price")?, // Abertura
+        parse(&row[5], "high price")?,    // Máximo
+        parse(&row[4], "low price")?,     // Mínimo
+        parse(&row[3].trim_end_matches('%'), "variation")?, // Variação
+        parse_volume(&row[6])?,           // Volume
     ])
 }
 
@@ -123,14 +161,23 @@ fn normalize_row(row: Vec<f32>, means: &[f32], stds: &[f32]) -> Vec<f32> {
 fn calculate_stats(matrix: &[Vec<String>]) -> Result<(Vec<f32>, Vec<f32>), LSTMError> {
     let mut data = Vec::new();
     for row in matrix {
-        data.push(parse_row(row)?);
+        // Handle possible errors in parsing rows
+        match parse_row(row) {
+            Ok(parsed_row) => data.push(parsed_row),
+            Err(_) => continue, // Ignore rows with parsing errors
+        }
     }
-    let means = (0..5)
+    
+    if data.is_empty() {
+        return Err(LSTMError::InvalidData("No valid data found".into()));
+    }
+    
+    let means = (0..6) // Use 6 features
         .map(|i| {
             data.iter().map(|row| row[i]).sum::<f32>() / data.len() as f32
         })
         .collect::<Vec<_>>();
-    let stds = (0..5)
+    let stds = (0..6) // Use 6 features
         .map(|i| {
             let variance = data.iter().map(|row| (row[i] - means[i]).powi(2)).sum::<f32>()
                 / data.len() as f32;
@@ -139,4 +186,3 @@ fn calculate_stats(matrix: &[Vec<String>]) -> Result<(Vec<f32>, Vec<f32>), LSTME
         .collect::<Vec<_>>();
     Ok((means, stds))
 }
-//
