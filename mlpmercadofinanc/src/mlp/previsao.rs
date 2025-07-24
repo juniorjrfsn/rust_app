@@ -1,157 +1,160 @@
 // File : src/mlp/previsao.rs
-use crate::conexao::read_file::ler_csv;
-use crate::mlp::mlp_cotacao::rna; // Import the rna module
-use std::error::Error as StdError;
- 
+
+
+
+use burn::{
+    module::Module,
+    nn::{Linear, LinearConfig, Lstm, LstmConfig},
+    tensor::{backend::Backend, TensorData, Shape, Tensor},
+};
 use thiserror::Error;
 
-use crate::mlp::mlp_cotacao::LSTMModel;
-use burn::backend::NdArray;
-
-pub fn predict(matrix: Vec<Vec<String>>) -> Result<Vec<f32>, Box<dyn std::error::Error>> {
-    let model = LSTMModel::<NdArray>::new(64, &NdArray::Device::default());
-    Ok(model.predict(matrix)?)
-}
-
-#[derive(Debug, Error)]
+#[derive(Error, Debug)]
 pub enum PrevCotacaoError {
-    #[error("Model not found in database")]
-    ModelNotFoundError,
     #[error("Invalid data format: {0}")]
-    InvalidDataFormat(String),
-    #[error("Failed to parse float: {0}")]
-    ParseFloatError(#[from] std::num::ParseFloatError),
-    #[error("Empty input data")]
-    EmptyInputData,
+    InvalidData(String),
+    #[error("IO error: {0}")]
+    IoError(#[from] std::io::Error),
 }
 
-pub fn denormalize(value: f64, mean: f64, std: f64) -> f64 {
-    value * std + mean
+#[derive(Module, Debug)]
+pub struct LSTMModel<B: Backend> {
+    lstm: Lstm<B>,
+    linear: Linear<B>,
 }
 
-pub fn normalize(data: &[f64]) -> Result<(f64, f64), PrevCotacaoError> {
-    if data.is_empty() {
-        return Err(PrevCotacaoError::EmptyInputData);
+impl<B: Backend> LSTMModel<B> {
+    pub fn new(hidden_size: usize, device: &B::Device) -> Self {
+        let config_lstm = LstmConfig::new(5, hidden_size, true);
+        let lstm = config_lstm.init(device);
+        let config_linear = LinearConfig::new(hidden_size * 2, 1);
+        let linear = config_linear.init(device);
+        Self { lstm, linear }
     }
-    let mean = data.iter().sum::<f64>() / data.len() as f64;
-    let std = (data.iter().map(|x| (x - mean).powi(2)).sum::<f64>() / data.len() as f64).sqrt();
-    if std == 0.0 {
-        return Err(PrevCotacaoError::InvalidDataFormat("Standard deviation is zero".to_string()));
+
+    pub fn forward(&self, inputs: Tensor<B, 3>) -> Tensor<B, 2> {
+        let (outputs, _) = self.lstm.forward(inputs, None);
+        let outputs = outputs.clone(); // Fix move error
+        let last_output = outputs.slice([0..outputs.dims()[0], outputs.dims()[1] - 1..outputs.dims()[1]]);
+        let last_output = last_output.clone(); // Fix move error
+        let last_output_2d = last_output.reshape([last_output.dims()[0], last_output.dims()[2]]);
+        self.linear.forward(last_output_2d)
     }
-    Ok((mean, std))
 }
 
+pub fn predict<B: Backend>(
+    matrix: Vec<Vec<String>>,
+    device: &B::Device,
+    model_path: &str,
+) -> Result<Vec<(String, f32)>, PrevCotacaoError> {
+    let (x, dates, means, stds, target_mean, target_std) = preprocess::<B>(&matrix, device)?;
+    let mut model = LSTMModel::<B>::new(64, device);
+    // TODO: Load model weights
+    // model.load(model_path)?;
+    let output = model.forward(x);
+    let output_data = output.to_data().to_vec::<f32>();
+    let predictions: Vec<f32> = output_data.into_iter().map(|x| x * target_std + target_mean).collect();
+    let results: Vec<(String, f32)> = dates.into_iter().zip(predictions).collect();
 
-
-
-pub fn parse_row(row: &[String]) -> Result<Vec<f64>, PrevCotacaoError> {
-    if row.iter().any(|s| s == "n/d") {
-        return Err(PrevCotacaoError::InvalidDataFormat("Missing data in row".to_string()));
+    if let Some((last_date, last_pred)) = results.last() {
+        let last_row = matrix.last().ok_or_else(|| PrevCotacaoError::InvalidData("Empty matrix".to_string()))?;
+        let parsed_row = parse_row(last_row)?;
+        println!(
+            "Dados do último registro do CSV: Abertura: {:.2}, Variação: {:.2}%, Mínimo: {:.2}, Máximo: {:.2}, Volume: {:.2}",
+            parsed_row[0], parsed_row[1], parsed_row[2], parsed_row[3], parsed_row[4]
+        );
+        println!("Previsão de fechamento para {}: {:.2}", last_date, last_pred);
     }
-    let parse = |s: &str| s.replace(',', ".").replace('%', "").parse::<f64>().map_err(PrevCotacaoError::from);
+
+    Ok(results)
+}
+
+fn preprocess<B: Backend>(
+    matrix: &[Vec<String>],
+    device: &B::Device,
+) -> Result<(Tensor<B, 3>, Vec<String>, Vec<f32>, Vec<f32>, f32, f32), PrevCotacaoError> {
+    let seq_length = 30;
+    let (means, stds) = calculate_stats(matrix)?;
+    let mut sequences = Vec::new();
+    let mut targets = Vec::new();
+    let mut dates = Vec::new();
+
+    for i in 0..matrix.len().saturating_sub(seq_length) {
+        let seq: Result<Vec<Vec<f32>>, PrevCotacaoError> = matrix[i..i + seq_length]
+            .iter()
+            .map(|row| Ok(normalize_row(parse_row(row)?, &means, &stds)))
+            .collect();
+        let seq = seq?;
+        let target = parse_row(&matrix[i + seq_length])?[2]; // Closing price
+        sequences.push(seq);
+        targets.push(target);
+        dates.push(matrix[i + seq_length][0].clone());
+    }
+
+    if sequences.is_empty() {
+        return Err(PrevCotacaoError::InvalidData("No sequences generated".into()));
+    }
+
+    let target_mean = targets.iter().sum::<f32>() / targets.len() as f32;
+    let target_std = (targets.iter().map(|&x| (x - target_mean).powi(2)).sum::<f32>() / targets.len() as f32).sqrt();
+
+    let x = Tensor::from_floats(
+        TensorData::new(sequences.clone().into_iter().flatten().flatten().collect::<Vec<f32>>(), Shape::new([sequences.len(), seq_length, 5])),
+        device,
+    );
+
+    Ok((x, dates, means, stds, target_mean, target_std))
+}
+
+fn parse_row(row: &[String]) -> Result<Vec<f32>, PrevCotacaoError> {
+    if row.len() < 7 || row.iter().any(|s| s == "n/d") {
+        return Err(PrevCotacaoError::InvalidData(format!("Invalid row: {:?}", row)));
+    }
+    let parse = |s: &str, field: &str| s.replace(',', ".").parse::<f32>()
+        .map_err(|_| PrevCotacaoError::InvalidData(format!("Failed to parse {}: {}", field, s)));
     Ok(vec![
-        parse(&row[1])?,
-        parse(&row[3])?,
-        parse(&row[4])?,
-        parse(&row[5])?,
-        parse(&row[6].trim_end_matches(|c| c == 'M' || c == 'B'))? * if row[6].ends_with('B') { 1_000.0 } else { 1.0 },
+        parse(&row[1], "opening price")?, // Abertura
+        parse(&row[5], "high price")?,   // Máximo
+        parse(&row[4], "low price")?,    // Mínimo
+        parse(&row[3].trim_end_matches('%'), "variation")?, // Variação
+        parse_volume(&row[6])?,          // Volume
+        parse(&row[2], "closing price")?, // Fechamento (used as target)
     ])
 }
 
+fn parse_volume(s: &str) -> Result<f32, PrevCotacaoError> {
+    let s = s.trim();
+    let multiplier = if s.ends_with('B') { 1e9 } else if s.ends_with('M') { 1e6 } else if s.ends_with('K') { 1e3 } else { 1.0 };
+    s.trim_end_matches(|c| c == 'B' || c == 'M' || c == 'K')
+        .replace(',', ".")
+        .parse::<f32>()
+        .map(|v| v * multiplier)
+        .map_err(|_| PrevCotacaoError::InvalidData(format!("Invalid volume format: {}", s)))
+}
 
-// Function to make predictions
-pub fn prever(
-    matrix: Vec<Vec<String>>,
-    model: rna::MLP,
-    means: &[f64],
-    stds: &[f64],
-    label_mean: f64,
-    label_std: f64,
-    _cotac_fonte: &str,
-    ativo_financeiro: &str,
-) -> Result<(), PrevCotacaoError> {
-    let ultima_linha = &matrix[matrix.len() - 1];
-    let parsed_row = parse_row(ultima_linha)?;
+fn normalize_row(row: Vec<f32>, means: &[f32], stds: &[f32]) -> Vec<f32> {
+    row.iter().enumerate().map(|(i, &x)| (x - means[i]) / stds[i].max(1e-8)).collect()
+}
 
-    // Normalize input for prediction
-    let normalized_input: Vec<f64> = parsed_row
-        .iter()
-        .enumerate()
-        .map(|(i, &value)| (value - means[i]) / stds[i])
-        .collect();
-
-    // Predict and denormalize
-    let predicted_normalized = model.forward(&normalized_input, "tanh")[0];
-    let predicted_denormalized = denormalize(predicted_normalized, label_mean, label_std);
-
-    // Log results
-    println!(
-        "Dados do último registro do CSV: Abertura: {:.2}, Variação: {:.2}%, Mínimo: {:.2}, Máximo: {:.2}, Volume: {:.2}",
-        parsed_row[0], parsed_row[1], parsed_row[2], parsed_row[3], parsed_row[4]
-    );
-    println!(
-        "Ativo: {} - Previsão de fechamento para amanhã: {:.2}",
-        ativo_financeiro, predicted_denormalized
-    );
-
-    Ok(())
+fn calculate_stats(matrix: &[Vec<String>]) -> Result<(Vec<f32>, Vec<f32>), PrevCotacaoError> {
+    let mut data = Vec::new();
+    for row in matrix {
+        match parse_row(row) {
+            Ok(parsed) => data.push(parsed),
+            Err(_) => continue,
+        }
+    }
+    if data.is_empty() {
+        return Err(PrevCotacaoError::InvalidData("No valid data found".into()));
+    }
+    let means = (0..5).map(|i| data.iter().map(|row| row[i]).sum::<f32>() / data.len() as f32).collect::<Vec<_>>();
+    let stds = (0..5).map(|i| {
+        let variance = data.iter().map(|row| (row[i] - means[i]).powi(2)).sum::<f32>() / data.len() as f32;
+        variance.sqrt()
+    }).collect::<Vec<_>>();
+    Ok((means, stds))
 }
 
 
-    // Function to train the MLP model
-    pub fn treinar(matrix: Vec<Vec<String>>) -> Result<(rna::MLP, Vec<f64>, Vec<f64>, f64, f64), PrevCotacaoError> {
-        if matrix.is_empty() {
-            return Err(PrevCotacaoError::EmptyInputData);
-        }
 
-        // Parse input data
-        let mut inputs = Vec::new();
-        let mut labels = Vec::new();
-        for row in matrix.iter().skip(1) {
-            let parsed_row = parse_row(row)?;
-            inputs.push(parsed_row);
-            let label = row[2].replace(',', ".").parse::<f64>()?;
-            labels.push(label);
-        }
-
-        // Normalize inputs
-        let mut means = vec![0.0; 5];
-        let mut stds = vec![0.0; 5];
-        for feature in 0..5 {
-            let column: Vec<f64> = inputs.iter().map(|row| row[feature]).collect();
-            let (mean, std) = normalize(&column)?;
-            means[feature] = mean;
-            stds[feature] = std;
-            for (input, value) in inputs.iter_mut().zip(column) {
-                input[feature] = (value - mean) / std;
-            }
-        }
-
-        // Normalize labels
-        let label_mean = labels.iter().sum::<f64>() / labels.len() as f64;
-        let label_std = (labels.iter().map(|x| (x - label_mean).powi(2)).sum::<f64>() / labels.len() as f64).sqrt();
-
-        // Split data into training and testing sets
-        let split_idx = (inputs.len() as f64 * 0.8) as usize;
-        let (train_inputs, test_inputs) = inputs.split_at(split_idx);
-        let (train_labels, test_labels) = labels.split_at(split_idx);
-
-        // Create and train the MLP model
-        const ARCHITECTURE: &[usize] = &[5, 64, 32, 16, 8, 1];
-        const EPOCHS: usize = 100;
-        const LEARNING_RATE: f64 = 0.001;
-        const ACTIVATION: &str = "tanh";
-
-        let mut model = rna::MLP::new(ARCHITECTURE);
-        model.train(train_inputs, train_labels, EPOCHS, LEARNING_RATE, ACTIVATION);
-
-        // Evaluate the model on test data
-        let test_loss = test_inputs.iter().zip(test_labels).fold(0.0, |acc, (input, label)| {
-            let prediction = model.forward(input, ACTIVATION)[0];
-            acc + (prediction - label).powi(2)
-        });
-        println!("Test Loss: {:.4}", test_loss / test_inputs.len() as f64);
-
-        Ok((model, means, stds, label_mean, label_std))
-    }
 // mlp_cotacao.rs
