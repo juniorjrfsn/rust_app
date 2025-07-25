@@ -1,13 +1,11 @@
+// file : src/conexao/read_file.rs
+
 use csv::ReaderBuilder;
 use serde::Deserialize;
 use std::fs;
 use thiserror::Error;
 use serde::de::DeserializeOwned;
 
- 
- 
- 
- 
 
 #[derive(Error, Debug)]
 pub enum DataError {

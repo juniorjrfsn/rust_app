@@ -1,8 +1,12 @@
+// File : src/mlp/mlp_cotacao.rs
+
+
 pub mod rna { // módulo rna : machine learning MLP (Multi-Layer Perceptron)
     use rand::Rng;
     use serde::{Serialize, Deserialize};
     use bincode;
     use crate::mlp::mlp_cotacao::rna;
+    use HashMap::HashMap; 
     
     // Função para aplicar a ativação escolhida
     fn apply_activation(x: f64, activation: &str) -> f64 {

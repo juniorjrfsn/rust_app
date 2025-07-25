@@ -1,9 +1,4 @@
-// previsao.rs
-use crate::conexao::read_file::ler_csv;
-use crate::mlp::mlp_cotacao::rna; // Import the rna module
-use std::error::Error as StdError; // Import the Error trait
-use thiserror::Error; // Import the Error trait
-use std::collections::HashMap;
+// File : src/mlp/previsao.rs
  
 
 #[derive(Debug, Error)]

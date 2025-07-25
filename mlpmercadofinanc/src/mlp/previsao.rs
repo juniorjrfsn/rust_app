@@ -156,5 +156,4 @@ fn calculate_stats(matrix: &[Vec<String>]) -> Result<(Vec<f32>, Vec<f32>), PrevC
 }
 
 
-
-// mlp_cotacao.rs
+ 

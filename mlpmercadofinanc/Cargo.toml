@@ -30,3 +30,8 @@ burn-train = "0.18.0"
  
 log = "0.4"
 env_logger = "0.11.8"
+ 
+# Enable required features for Burn
+ 
+
+ 
