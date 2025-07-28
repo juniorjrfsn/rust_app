@@ -8,7 +8,8 @@ authors = ["Júnior NSF"]
 bincode = { version = "2.0.1", features = ["serde"] }
 clap = { version = "4.0", features = ["derive"] }
 ndarray = { version = "0.16.1", features = ["serde"] }
-chrono = "0.4"
+#chrono = "0.4"
+chrono = { version = "0.4", features = ["serde"] }
 rand = "0.9.2"
 rand_distr = "0.5.0"
 thiserror = "2.0.12"
@@ -28,6 +29,14 @@ rusqlite = "0.37.0"
 burn-train = "0.18.0"
 log = "0.4"
 env_logger = "0.11.8"
+
+  
+[[bin]]
+name = "lstm"
+path = "src/main.rs"
+ 
+ 
+
  
 
 

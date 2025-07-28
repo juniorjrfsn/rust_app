@@ -1,9 +1,10 @@
+
 use clap::Parser;
 use std::fs::{File, OpenOptions};
 use std::path::Path;
 use csv::ReaderBuilder;
 use serde::Serialize;
-use serde_json;
+use toml;
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -25,10 +26,15 @@ struct StockRecord {
     variation: f32,
 }
 
+#[derive(Serialize)]
+struct StockData {
+    records: Vec<StockRecord>,
+}
+
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = Args::parse();
     let input_file_path = format!("../dados/{}/{}.csv", args.source, args.asset);
-    let output_file_path = format!("../dados/{}_{}_output.json", args.asset, args.source);
+    let output_file_path = format!("../dados/{}_{}_output.toml", args.asset, args.source);
 
     let input_path = Path::new(&input_file_path);
     if !input_path.exists() {
@@ -45,26 +51,28 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut records = Vec::new();
     for result in rdr.records() {
         let record = result?;
-        if record.len() == 7 { // Match the number of fields
-            let date = record[0].to_string(); // "Data"
-            let closing = record[1].replace(',', ".").parse::<f32>()?; // "Último"
-            let opening = record[2].replace(',', ".").parse::<f32>()?; // "Abertura"
-            let high = record[3].replace(',', ".").parse::<f32>()?; // "Máxima"
-            let low = record[4].replace(',', ".").parse::<f32>()?; // "Mínima"
-            let volume = record[5].replace(',', ".").trim_end_matches('M').parse::<f32>()?.mul_add(1e6, 0.0); // "Vol."
-            let variation = record[6].replace(',', ".").trim_end_matches('%').parse::<f32>()? / 100.0; // "Var%"
+        if record.len() == 7 {
+            let date = record[0].to_string();
+            let closing = record[1].replace(',', ".").parse::<f32>()?;
+            let opening = record[2].replace(',', ".").parse::<f32>()?;
+            let high = record[3].replace(',', ".").parse::<f32>()?;
+            let low = record[4].replace(',', ".").parse::<f32>()?;
+            let volume = record[5].replace(',', ".").trim_end_matches('M').parse::<f32>()?.mul_add(1e6, 0.0);
+            let variation = record[6].replace(',', ".").trim_end_matches('%').parse::<f32>()? / 100.0;
             records.push(StockRecord { date, closing, opening, high, low, volume, variation });
         } else {
             println!("Skipping invalid record: {:?}", record);
         }
     }
 
+    let stock_data = StockData { records };
+    let toml_data = toml::to_string_pretty(&stock_data)?;
     let output_file = OpenOptions::new()
         .write(true)
         .create(true)
         .truncate(true)
         .open(&output_file_path)?;
-    serde_json::to_writer_pretty(&output_file, &records)?;
+    std::io::Write::write_all(&mut std::io::BufWriter::new(output_file), toml_data.as_bytes())?;
 
     println!("Data saved to: {}", output_file_path);
 
@@ -77,3 +85,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 
 // cd lstmfilextract
+
+// rm -rf target Cargo.lock
+// rm -rf ~/.cargo/registry/cache/*

@@ -29,6 +29,7 @@ font : Consolas, 'Courier New', monospace
     cargo new cotacaomlp --bin
     cargo new lstmfilextract --bin
     cargo new lstmfiletrain --bin
+    cargo new lstmfilepredict --bin
 
     
     
@@ -60,6 +61,7 @@ font : Consolas, 'Courier New', monospace
     cd cotacaomlp
     cd lstmfilextract
     cd lstmfiletrain
+    cd lstmfilepredict
 ```
 
 ### **Construir a aplicação**

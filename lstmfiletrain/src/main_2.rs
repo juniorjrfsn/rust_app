@@ -1,11 +1,9 @@
 
-
 use clap::Parser;
-use std::fs;
-use std::path::Path;
-use toml;
 use serde::{Deserialize, Serialize};
 use serde_json;
+use std::fs;
+use std::path::Path;
 use ndarray::{Array1, Array2, s};
 use log::{info, error};
 use env_logger;
@@ -33,25 +31,20 @@ struct StockRecord {
     variation: f32,
 }
 
-#[derive(Debug, Deserialize)]
-struct StockData {
-    records: Vec<StockRecord>,
-}
-
 #[derive(Serialize)]
 struct LSTMCell {
     input_size: usize,
     hidden_size: usize,
-    weight_ih: Vec<Vec<f32>>,
-    weight_hh: Vec<Vec<f32>>,
-    bias: Vec<f32>,
-    weight_out: Vec<f32>,
-    bias_out: f32,
+    weight_ih: Vec<Vec<f32>>, // Input to hidden weights
+    weight_hh: Vec<Vec<f32>>, // Hidden to hidden weights
+    bias: Vec<f32>,           // Bias terms
+    weight_out: Vec<f32>,     // Output linear layer weights
+    bias_out: f32,            // Output linear layer bias
 }
 
 impl LSTMCell {
     fn new(input_size: usize, hidden_size: usize) -> LSTMCell {
-        let mut rng = rand::thread_rng(); // Using thread_rng for compatibility
+        let mut rng = rand::thread_rng(); // Note: thread_rng is deprecated but kept for compatibility; see warnings
         let weight_ih = (0..4 * hidden_size)
             .map(|_| (0..input_size).map(|_| rng.gen_range(-0.1..0.1)).collect())
             .collect();
@@ -100,7 +93,9 @@ impl LSTMCell {
         let c = &f * c_prev + &i * &g;
         let h = &o * tanh(&c);
 
+        // Linear output layer
         let output = h.dot(&Array1::from_vec(self.weight_out.clone())) + self.bias_out;
+
         (h.to_owned(), c.to_owned(), output)
     }
 
@@ -115,16 +110,21 @@ impl LSTMCell {
         let (h, c, pred) = self.forward(x, h_prev, c_prev);
         let loss = (pred - target).powi(2);
 
+        // Gradient of loss w.r.t. prediction
         let d_loss_d_pred = 2.0 * (pred - target);
+
+        // Gradients for output layer
         let d_pred_d_wo = h.clone();
         let d_pred_d_bo = 1.0;
         let d_pred_d_h = Array1::from_vec(self.weight_out.clone());
 
+        // Update output weights and bias
         for (wo, &d_wo) in self.weight_out.iter_mut().zip(d_pred_d_wo.iter()) {
             *wo -= learning_rate * d_loss_d_pred * d_wo;
         }
         self.bias_out -= learning_rate * d_loss_d_pred * d_pred_d_bo;
 
+        // Simplified gradients for LSTM weights
         let ih = Array2::from_shape_vec(
             (4 * self.hidden_size, self.input_size),
             self.weight_ih.iter().flatten().cloned().collect(),
@@ -146,6 +146,7 @@ impl LSTMCell {
             .dot(&h_prev.to_shape((1, self.hidden_size)).unwrap());
         let d_bias = d_h.clone();
 
+        // Update LSTM weights
         for (wi, d_wi) in self.weight_ih.iter_mut().zip(d_weight_ih.rows()) {
             for (w, &d_w) in wi.iter_mut().zip(d_wi.iter()) {
                 *w -= learning_rate * d_w;
@@ -176,7 +177,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     env_logger::init();
 
     let args = Args::parse();
-    let input_file_path = format!("../dados/{}_{}_output.toml", args.asset, args.source);
+    let input_file_path = format!("../dados/{}_{}_output.json", args.asset, args.source);
     let output_model_path = format!("../dados/{}_{}_lstm_model.json", args.asset, args.source);
 
     let input_path = Path::new(&input_file_path);
@@ -185,25 +186,25 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         return Ok(());
     }
 
-    info!("Loading TOML data from {}", input_file_path);
-    println!("Loading TOML data from {}", input_file_path);
-    let toml_data = fs::read_to_string(&input_file_path)?;
-    let stock_data: StockData = toml::from_str(&toml_data)?;
-    let records = stock_data.records;
+    info!("Loading JSON data from {}", input_file_path);
+    let json_data = fs::read_to_string(&input_file_path)?;
+    let records: Vec<StockRecord> = serde_json::from_str(&json_data)?;
 
     if records.len() <= args.seq_length {
         error!("Not enough records ({}) for sequence length {}", records.len(), args.seq_length);
         return Ok(());
     }
 
+    // Extract closing prices
     let prices: Array1<f32> = Array1::from_vec(records.iter().map(|r| r.closing).collect());
     info!("Loaded {} price records", prices.len());
-    println!("Loaded {} price records", prices.len());
 
+    // Normalize data
     let mean = prices.mean().unwrap_or(0.0);
     let std = prices.std_axis(ndarray::Axis(0), 0.0).into_scalar();
     let normalized_prices = prices.mapv(|x| (x - mean) / std);
 
+    // Prepare sequences
     let mut sequences = Vec::new();
     let mut targets = Vec::new();
     for i in 0..(normalized_prices.len() - args.seq_length) {
@@ -213,69 +214,48 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         targets.push(target);
     }
 
-    let split_idx = (0.8 * sequences.len() as f32) as usize;
-    let (train_seqs, val_seqs) = sequences.split_at(split_idx);
-    let (train_targets, val_targets) = targets.split_at(split_idx);
-
     let hidden_size = 10;
     let mut lstm = LSTMCell::new(1, hidden_size);
 
+    // Training loop
     let learning_rate = 0.01;
-    let mut loss_history = Vec::new();
     for epoch in 0..50 {
         let mut total_loss = 0.0;
-        for i in 0..train_seqs.len() {
+        for i in 0..sequences.len() {
             let mut h_t = Array1::zeros(hidden_size);
             let mut c_t = Array1::zeros(hidden_size);
-            for &input_val in &train_seqs[i] {
+
+            // Process sequence
+            for &input_val in &sequences[i] {
                 let x = Array1::from_vec(vec![input_val]);
                 let (h_next, c_next, _output) = lstm.forward(&x, &h_t, &c_t);
                 h_t = h_next;
                 c_t = c_next;
             }
-            let last_x = Array1::from_vec(vec![train_seqs[i].last().unwrap().clone()]);
-            let loss = lstm.update_weights(&last_x, &h_t, &c_t, train_targets[i], learning_rate);
+
+            // Update weights using the last input and target
+            let last_x = Array1::from_vec(vec![sequences[i].last().unwrap().clone()]);
+            let loss = lstm.update_weights(&last_x, &h_t, &c_t, targets[i], learning_rate);
             total_loss += loss;
         }
-        let avg_train_loss = total_loss / train_seqs.len() as f32;
-
-        let mut val_loss = 0.0;
-        for i in 0..val_seqs.len() {
-            let mut h_t = Array1::zeros(hidden_size);
-            let mut c_t = Array1::zeros(hidden_size);
-            for &input_val in &val_seqs[i] {
-                let x = Array1::from_vec(vec![input_val]);
-                let (h_next, c_next, _output) = lstm.forward(&x, &h_t, &c_t);
-                h_t = h_next;
-                c_t = c_next;
-            }
-            let last_x = Array1::from_vec(vec![val_seqs[i].last().unwrap().clone()]);
-            let (_, _, pred) = lstm.forward(&last_x, &h_t, &c_t);
-            val_loss += (pred - val_targets[i]).powi(2);
-        }
-        let avg_val_loss = val_loss / val_seqs.len() as f32;
-
-        loss_history.push((avg_train_loss, avg_val_loss));
-        info!("Epoch: {}, Train Loss: {:.4}, Validation Loss: {:.4}", epoch, avg_train_loss, avg_val_loss);
-        println!("Epoch: {}, Train Loss: {:.4}, Validation Loss: {:.4}", epoch, avg_train_loss, avg_val_loss);
+        info!("Epoch: {}, Loss: {:.4}", epoch, total_loss / sequences.len() as f32);
+        println!("Epoch: {}, Loss: {:.4}", epoch, total_loss / sequences.len() as f32);
     }
 
-    fs::write("../dados/loss_history.json", serde_json::to_string_pretty(&loss_history)?)?;
-    info!("Loss history saved to: ../dados/loss_history.json");
-    println!("Loss history saved to: ../dados/loss_history.json");
-
+    // Save model
     let model_state = serde_json::to_value(&lstm)?;
     fs::write(&output_model_path, serde_json::to_string_pretty(&model_state)?)?;
     info!("Model saved to: {}", output_model_path);
-    println!("Model saved to: {}", output_model_path);
 
     Ok(())
 }
 
 
 
-
 // cargo run -- --asset WEGE3 --source investing
+
+
+
 
 // cd lstmfiletrain
 

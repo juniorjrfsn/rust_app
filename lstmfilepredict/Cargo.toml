@@ -1,5 +1,5 @@
 [package]
-name = "lstmfiletrain"
+name = "lstmfilepredict"
 version = "0.1.0"
 edition = "2024"
 
@@ -35,5 +35,3 @@ edition = "2024"
     #plotly = "0.13.4"
     #rusqlite = "0.37.0"
     #burn-train = "0.18.0"
- 
- 
