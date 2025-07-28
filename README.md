@@ -27,6 +27,11 @@ font : Consolas, 'Courier New', monospace
     cargo new reconhececor --bin
     cargo new cnn_reconhece_texto --bin
     cargo new cotacaomlp --bin
+    cargo new lstmfilextract --bin
+    cargo new lstmfiletrain --bin
+
+    
+    
 ```
 
 ### **Acessar a pasta da aplicação**
@@ -53,6 +58,8 @@ font : Consolas, 'Courier New', monospace
     cd reconhececor
     cd cnn_reconhece_texto
     cd cotacaomlp
+    cd lstmfilextract
+    cd lstmfiletrain
 ```
 
 ### **Construir a aplicação**

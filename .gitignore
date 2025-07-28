@@ -32,7 +32,9 @@ mlpcotacao2/target/
 mlpxor/target/
 reconhececor/target/
 cnn_reconhece_texto/target/
-
+lstmfilextract/target/
+lstmfiletrain/target/
+ 
 
 outros/chatbot/target/
 outros/perceptron/target/

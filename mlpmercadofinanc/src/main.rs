@@ -1,47 +1,71 @@
 // File : src/main.rs 
+ 
 
+
+use burn::backend::{Autodiff, Wgpu};
+use clap::Parser;
+use crate::conexao::read_file::{read_raw_data, ler_csv};
+use crate::mlp::train_lstm::train;
+use crate::mlp::predict_lstm::{predict_single, predict_batch};
+use crate::utils::AppError;
 
 mod conexao;
 mod mlp;
+mod utils;
 
-use std::error::Error as StdError;
-use clap::{Arg, Command};
-// Import the correct backend types from burn::backend
-use burn::backend::{NdArrayBackend, Autodiff};
-
-fn main() -> Result<(), Box<dyn StdError>> {
-    let matches = Command::new("mlpmercadofinanc")
-        .arg(Arg::new("phase")
-            .short('p')
-            .long("phase")
-            .value_name("PHASE")
-            .required(true))
-        .get_matches();
-
-    let phase = matches.get_one::<String>("phase").unwrap();
-    if phase != "treino" {
-        return Err("Only 'treino' phase is supported".into());
-    }
-
-    // Define the backend types correctly for Burn 0.18
-    // NdArrayBackend<f32> for basic operations, Autodiff<NdArrayBackend<f32>> for training
-    type Backend = NdArrayBackend<f32>;
-    type MyAutodiffBackend = Autodiff<Backend>;
-    
-    // Create the device instance correctly
-    let device = Backend::default(); // This creates the default device (CPU for NdArray)
-    let cotac_fonte = "investing";
-    let ativo = "WEGE3";
-    let file_path = format!("dados/{}/{}.csv", cotac_fonte, ativo);
-    let matrix = crate::conexao::read_file::ler_csv(&file_path, cotac_fonte, ativo)?;
-    
-    // Call the training function with the correct Autodiff backend type
-    crate::mlp::train_lstm::train::<MyAutodiffBackend>(matrix, &device)?; // Pass matrix by value
-    Ok(())
+#[derive(Parser, Debug)]
+#[command(author, version, about, long_about = None)]
+struct Args {
+    #[arg(long)]
+    phase: String,
+    #[arg(long)]
+    asset: String,
+    #[arg(long)]
+    source: String,
+    #[arg(long)]
+    model_path: String,
+    #[arg(long, default_value_t = 10)]
+    seq_length: usize,
 }
 
+fn main() -> Result<(), AppError> {
+    let args = Args::parse();
+    let file_path = format!("dados/{}/{}.csv", args.asset, args.source);
+ 
+    type MyBackend = Autodiff<Wgpu>;
+    type MyInferenceBackend = Wgpu;
+    let device = burn::backend::wgpu::WgpuDevice::default();
 
+    match args.phase.as_str() {
+        "train" => {
+            let (x, y, dates, target_mean, target_std, feature_means, feature_stds) = 
+                ler_csv::<MyBackend>(&file_path, args.seq_length, &device)?;
+            train::<MyBackend>(
+                x, y, dates, target_mean, target_std, feature_means, feature_stds, 
+                &device, &args.model_path
+            )?;
+            println!("Model trained and saved to {}", args.model_path);
+        }
+        "predict" => {
+            let records = read_raw_data(&file_path)?;
+            let (date, prediction) = predict_single::<MyInferenceBackend>(
+                &records, args.seq_length, &device, &args.model_path
+            )?;
+            println!("Prediction for {} on {}: {:.2}", args.asset, date, prediction);
 
+            let predictions = predict_batch::<MyInferenceBackend>(
+                &records, args.seq_length, &device, &args.model_path
+            )?;
+            println!("Batch predictions for {}:", args.asset);
+            for (date, pred) in predictions {
+                println!("  {}: {:.2}", date, pred);
+            }
+        }
+        _ => return Err(AppError::InvalidData(format!("Unknown phase: {}", args.phase))),
+    }
+
+    Ok(())
+}
 
 // cargo run --bin mlpmercadofinanc -- --phase treino --model-path lstm_model.burn
 
@@ -60,10 +84,26 @@ fn main() -> Result<(), Box<dyn StdError>> {
 
 // cargo run --bin mlpmercadofinanc -- --phase previsao --model-type lstm --model-path lstm_model.burn --ativo WEGE3 --fonte investing
 
-// cargo run --bin mlpmercadofinanc -- --phase treino --model-type lstm --model-path lstm_model.burn --ativo WEGE3 --fonte investing
+
 
 // cargo run -- --phase predict --asset WEGE3 --source investing
 
-// cargo run -- --phase train --asset WEGE3 --source investing --model-path model.burn
+ 
+
+// cargo run --bin mlpmercadofinanc -- --phase treino --model-type lstm --model-path lstm_model.burn --ativo WEGE3 --fonte investing
+
+// cargo run --bin mlpmercadofinanc -- --phase predict --model-type lstm --model-path lstm_model.burn --ativo WEGE3 --fonte investing
+
+ 
 
 // cargo run -- --phase train --asset WEGE3 --source investing --model-path model.burn
+
+// cargo run -- --phase predict --asset WEGE3 --source investing --model-path model.burn
+
+ 
+ 
+ 
+
+// cargo run -- --phase train --asset WEGE3 --source investing --model-path lstm_model.burn --seq-length 10
+
+// cargo run -- --phase predict --asset WEGE3 --source investing --model-path lstm_model.burn --seq-length 10
