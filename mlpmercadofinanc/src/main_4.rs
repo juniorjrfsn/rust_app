@@ -1,5 +1,3 @@
-
-
 use clap::{Parser, Subcommand};
 use std::fs::{File, OpenOptions};
 use std::path::Path;
@@ -12,7 +10,6 @@ use log::{info, warn, error};
 use env_logger;
 use rand::Rng;
 use thiserror::Error;
-use chrono::{Duration, NaiveDate};
 
 // ============================================================================
 // ERROR HANDLING
@@ -28,6 +25,8 @@ enum LSTMError {
     ParseError(String),
     #[error("Insufficient data: need at least {required} records, got {actual}")]
     InsufficientData { required: usize, actual: usize },
+    #[error("Model validation failed: {reason}")]
+    ModelValidationFailed { reason: String },
     #[error("IO error: {0}")]
     IoError(#[from] std::io::Error),
     #[error("Serialization error: {0}")]
@@ -109,7 +108,7 @@ struct StockRecord {
     variation: f32,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)] // Adicionado Serialize
 struct StockData {
     records: Vec<StockRecord>,
 }
@@ -152,12 +151,25 @@ struct LSTMCell {
 struct PredictionResults {
     metadata: ModelMetadata,
     predictions: Vec<PredictionPoint>,
+    metrics: PredictionMetrics,
 }
 
 #[derive(Debug, Serialize)]
 struct PredictionPoint {
     date: String,
+    actual_price: f32,
     predicted_price: f32,
+    prediction_error: f32,
+    direction_correct: bool,
+}
+
+#[derive(Debug, Serialize, Clone)] // Adicionado Clone
+struct PredictionMetrics {
+    mse: f32,
+    mae: f32,
+    mape: f32,
+    directional_accuracy: f32,
+    rmse: f32,
 }
 
 // ============================================================================
@@ -171,7 +183,7 @@ fn parse_float(s: &str) -> Result<f32, LSTMError> {
 }
 
 fn parse_volume(s: &str) -> Result<f32, LSTMError> {
-    let binding = s.replace(',', ".").replace(" ", "");
+    let binding = s.replace(',', ".").replace(" ", ""); // Corrigido
     let cleaned = binding.trim();
     let multiplier = if cleaned.ends_with('M') || cleaned.ends_with('m') {
         1e6
@@ -189,7 +201,7 @@ fn parse_volume(s: &str) -> Result<f32, LSTMError> {
 }
 
 fn parse_percentage(s: &str) -> Result<f32, LSTMError> {
-    let binding = s.replace(',', ".").replace(" ", "");
+    let binding = s.replace(',', ".").replace(" ", ""); // Corrigido
     let cleaned = binding.trim_end_matches('%');
     let value = cleaned.parse::<f32>()
         .map_err(|_| LSTMError::ParseError(format!("Invalid percentage: {}", s)))?;
@@ -198,7 +210,7 @@ fn parse_percentage(s: &str) -> Result<f32, LSTMError> {
 
 fn xavier_uniform(fan_in: usize, fan_out: usize, rng: &mut impl Rng) -> f32 {
     let limit = (6.0 / (fan_in + fan_out) as f32).sqrt();
-    rng.gen_range(-limit..limit)
+    rng.random_range(-limit..limit) // Corrigido para nova API
 }
 
 fn sigmoid(x: &Array1<f32>) -> Array1<f32> {
@@ -209,14 +221,29 @@ fn tanh(x: &Array1<f32>) -> Array1<f32> {
     x.mapv(|v| v.clamp(-500.0, 500.0).tanh())
 }
 
+fn sigmoid_derivative(x: &Array1<f32>) -> Array1<f32> {
+    x.mapv(|v| {
+        let s = 1.0 / (1.0 + (-v.clamp(-500.0, 500.0)).exp());
+        s * (1.0 - s)
+    })
+}
+
+fn tanh_derivative(x: &Array1<f32>) -> Array1<f32> {
+    x.mapv(|v| {
+        let t = v.clamp(-500.0, 500.0).tanh();
+        1.0 - t * t
+    })
+}
+
 // ============================================================================
 // LSTM IMPLEMENTATION
 // ============================================================================
 
 impl LSTMCell {
     fn new(input_size: usize, hidden_size: usize) -> LSTMCell {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng(); // Corrigido para nova API
         
+        // Xavier initialization for better gradient flow
         let weight_ih = (0..4 * hidden_size)
             .map(|_| (0..input_size)
                 .map(|_| xavier_uniform(input_size, 4 * hidden_size, &mut rng))
@@ -229,7 +256,7 @@ impl LSTMCell {
                 .collect())
             .collect();
         
-        let bias = (0..4 * hidden_size).map(|_| 0.0).collect();
+        let bias = (0..4 * hidden_size).map(|_| 0.0).collect(); // Initialize bias to 0
         let weight_out = (0..hidden_size)
             .map(|_| xavier_uniform(hidden_size, 1, &mut rng))
             .collect();
@@ -265,14 +292,17 @@ impl LSTMCell {
             &ih.dot(x) + &hh.dot(h_prev) + &bias
         };
 
+        // Split gates: input, forget, output, candidate
         let i = sigmoid(&gates.slice(s![..self.hidden_size]).to_owned());
         let f = sigmoid(&gates.slice(s![self.hidden_size..2 * self.hidden_size]).to_owned());
         let o = sigmoid(&gates.slice(s![2 * self.hidden_size..3 * self.hidden_size]).to_owned());
         let g = tanh(&gates.slice(s![3 * self.hidden_size..]).to_owned());
 
+        // Update cell state and hidden state
         let c = &f * c_prev + &i * &g;
         let h = &o * tanh(&c);
 
+        // Output layer
         let output = h.dot(&Array1::from_vec(self.weight_out.clone())) + self.bias_out;
         
         (h.to_owned(), c.to_owned(), output)
@@ -289,33 +319,38 @@ impl LSTMCell {
         let (h, _c, pred) = self.forward(x, h_prev, c_prev);
         let loss = (pred - target).powi(2);
 
+        // Simple gradient calculation (this would be improved with proper BPTT)
         let d_loss_d_pred = 2.0 * (pred - target);
         let d_pred_d_wo = h.clone();
         let d_pred_d_bo = 1.0;
 
+        // Update output weights and bias
         for (wo, &d_wo) in self.weight_out.iter_mut().zip(d_pred_d_wo.iter()) {
             *wo -= learning_rate * d_loss_d_pred * d_wo;
         }
         self.bias_out -= learning_rate * d_loss_d_pred * d_pred_d_bo;
 
+        // Simplified LSTM weight updates (would need proper BPTT for full correctness)
         let d_pred_d_h = Array1::from_vec(self.weight_out.clone());
         let d_h = d_loss_d_pred * &d_pred_d_h;
 
+        // Update input-hidden weights
         for (i, wi) in self.weight_ih.iter_mut().enumerate() {
             if i < self.hidden_size {
                 for (j, w) in wi.iter_mut().enumerate() {
                     if j < x.len() {
-                        *w -= learning_rate * d_h[i % self.hidden_size] * x[j] * 0.1;
+                        *w -= learning_rate * d_h[i % self.hidden_size] * x[j] * 0.1; // Scale down
                     }
                 }
             }
         }
 
+        // Update hidden-hidden weights
         for (i, wh) in self.weight_hh.iter_mut().enumerate() {
             if i < self.hidden_size {
                 for (j, w) in wh.iter_mut().enumerate() {
                     if j < h_prev.len() {
-                        *w -= learning_rate * d_h[i % self.hidden_size] * h_prev[j] * 0.1;
+                        *w -= learning_rate * d_h[i % self.hidden_size] * h_prev[j] * 0.1; // Scale down
                     }
                 }
             }
@@ -337,6 +372,7 @@ impl LSTMCell {
             output = pred;
         }
 
+        // Denormalize prediction
         output * std + mean
     }
 }
@@ -377,6 +413,7 @@ fn extract_command(asset: String, source: String, data_dir: String) -> Result<()
                         let volume = parse_volume(&record[5])?;
                         let variation = parse_percentage(&record[6])?;
 
+                        // Basic validation
                         if closing <= 0.0 || opening <= 0.0 || high <= 0.0 || low <= 0.0 {
                             return Err(LSTMError::ParseError("Prices must be positive".into()));
                         }
@@ -434,7 +471,7 @@ fn train_command(
     learning_rate: f32,
     epochs: usize,
     hidden_size: usize,
-    _dropout_rate: f32,
+    _dropout_rate: f32, // TODO: Implement dropout
     train_split: f32,
 ) -> Result<(), LSTMError> {
     info!("Starting LSTM training for {} from {}", asset, source);
@@ -460,6 +497,7 @@ fn train_command(
         });
     }
 
+    // Prepare data
     let prices: Array1<f32> = Array1::from_vec(records.iter().map(|r| r.closing).collect());
     let mean = prices.mean().unwrap_or(0.0);
     let std = prices.std_axis(ndarray::Axis(0), 0.0).into_scalar();
@@ -470,6 +508,7 @@ fn train_command(
 
     let normalized_prices = prices.mapv(|x| (x - mean) / std);
 
+    // Create sequences
     let mut sequences = Vec::new();
     let mut targets = Vec::new();
     for i in 0..(normalized_prices.len() - seq_length) {
@@ -479,6 +518,7 @@ fn train_command(
         targets.push(target);
     }
 
+    // Train/validation split
     let split_idx = (train_split * sequences.len() as f32) as usize;
     let (train_seqs, val_seqs) = sequences.split_at(split_idx);
     let (train_targets, val_targets) = targets.split_at(split_idx);
@@ -486,20 +526,23 @@ fn train_command(
     info!("Training samples: {}, Validation samples: {}", train_seqs.len(), val_seqs.len());
     println!("🧠 Training LSTM: {} train samples, {} validation samples", train_seqs.len(), val_seqs.len());
 
+    // Initialize model
     let mut lstm = LSTMCell::new(1, hidden_size);
     let mut loss_history = Vec::new();
     let mut best_val_loss = f32::INFINITY;
     let mut patience_counter = 0;
     let patience = 10;
-    let mut directional_accuracy = 0.0;
 
+    // Training loop
     for epoch in 0..epochs {
         let mut total_loss = 0.0;
         
+        // Training
         for i in 0..train_seqs.len() {
             let mut h_t = Array1::zeros(hidden_size);
             let mut c_t = Array1::zeros(hidden_size);
             
+            // Forward through sequence
             for &input_val in &train_seqs[i] {
                 let x = Array1::from_vec(vec![input_val]);
                 let (h_next, c_next, _output) = lstm.forward(&x, &h_t, &c_t);
@@ -507,12 +550,14 @@ fn train_command(
                 c_t = c_next;
             }
             
+            // Update weights based on final output
             let last_x = Array1::from_vec(vec![*train_seqs[i].last().unwrap()]);
             let loss = lstm.update_weights(&last_x, &h_t, &c_t, train_targets[i], learning_rate);
             total_loss += loss;
         }
         let avg_train_loss = total_loss / train_seqs.len() as f32;
 
+        // Validation
         let mut val_loss = 0.0;
         let mut correct_direction = 0;
         for i in 0..val_seqs.len() {
@@ -531,9 +576,10 @@ fn train_command(
             let loss = (pred - val_targets[i]).powi(2);
             val_loss += loss;
 
+            // Calculate directional accuracy
             if val_seqs[i].len() > 1 {
                 let last_actual = *val_seqs[i].last().unwrap();
-                let prev_actual = val_seqs[i][val_seqs[i].len() - 2];
+                let _prev_actual = val_seqs[i][val_seqs[i].len() - 2]; // Prefixed with underscore
                 let actual_direction = val_targets[i] > last_actual;
                 let pred_direction = pred > last_actual;
                 if actual_direction == pred_direction {
@@ -542,10 +588,11 @@ fn train_command(
             }
         }
         let avg_val_loss = val_loss / val_seqs.len() as f32;
-        directional_accuracy = correct_direction as f32 / val_seqs.len() as f32;
+        let directional_accuracy = correct_direction as f32 / val_seqs.len() as f32;
 
         loss_history.push((avg_train_loss, avg_val_loss));
 
+        // Early stopping
         if avg_val_loss < best_val_loss {
             best_val_loss = avg_val_loss;
             patience_counter = 0;
@@ -567,6 +614,7 @@ fn train_command(
         }
     }
 
+    // Create model metadata
     let metadata = ModelMetadata {
         asset: asset.clone(),
         source: source.clone(),
@@ -576,12 +624,13 @@ fn train_command(
         validation_samples: val_seqs.len(),
         final_train_loss: loss_history.last().map(|x| x.0).unwrap_or(0.0),
         final_val_loss: loss_history.last().map(|x| x.1).unwrap_or(0.0),
-        directional_accuracy,
+        directional_accuracy: 0.0, // Calculate properly in real implementation
         mean,
         std,
         timestamp: chrono::Utc::now().to_rfc3339(),
     };
 
+    // Save model
     let saved_model = SavedModel {
         metadata,
         lstm,
@@ -632,79 +681,84 @@ fn predict_command(
         .map_err(|e| LSTMError::SerializationError(e.to_string()))?;
     let records = stock_data.records;
 
-    if records.len() < seq_length {
+    if records.len() < seq_length + num_predictions {
         return Err(LSTMError::InsufficientData {
-            required: seq_length,
+            required: seq_length + num_predictions,
             actual: records.len(),
         });
     }
 
-    // Get the last sequence of data for initialization
-    let mut sequence: Vec<f32> = records
-        .iter()
-        .rev()
-        .take(seq_length)
-        .map(|r| (r.closing - saved_model.metadata.mean) / saved_model.metadata.std)
-        .collect();
-    sequence.reverse(); // Ensure correct temporal order (oldest to newest)
-
-    // Parse the last date in the dataset
-    let last_date_str = records.last().unwrap().date.clone();
-    let last_date = NaiveDate::parse_from_str(&last_date_str, "%d.%m.%Y")
-        .map_err(|e| LSTMError::ParseError(format!("Invalid date format: {}", e)))?;
-    
-    // Generate future predictions
+    // Generate predictions
     let mut predictions = Vec::new();
-    let mut h_t = Array1::zeros(saved_model.metadata.hidden_size);
-    let mut c_t = Array1::zeros(saved_model.metadata.hidden_size);
+    let start_idx = records.len() - num_predictions - seq_length;
     
-    println!("🔮 Generating {} future predictions starting from 29.07.2025...", num_predictions);
+    println!("🔮 Generating {} predictions...", num_predictions);
     
     for i in 0..num_predictions {
-        // Predict the next price
-        let pred_normalized = {
-            let mut temp_h_t = h_t.clone();
-            let mut temp_c_t = c_t.clone();
-            let mut output = 0.0;
-            for &val in &sequence {
-                let x = Array1::from_vec(vec![val]);
-                let (h_next, c_next, pred) = saved_model.lstm.forward(&x, &temp_h_t, &temp_c_t);
-                temp_h_t = h_next;
-                temp_c_t = c_next;
-                output = pred;
-            }
-            h_t = temp_h_t;
-            c_t = temp_c_t;
-            output
-        };
-        let pred = pred_normalized * saved_model.metadata.std + saved_model.metadata.mean; // Denormalize
+        let seq_start = start_idx + i;
+        let sequence: Vec<f32> = records.iter()
+            .skip(seq_start)
+            .take(seq_length)
+            .map(|r| (r.closing - saved_model.metadata.mean) / saved_model.metadata.std)
+            .collect();
         
-        // Generate the next date (add i+1 days to last date)
-        let next_date = last_date + Duration::days((i + 1) as i64);
-        let date_str = next_date.format("%d.%m.%Y").to_string();
+        let pred = saved_model.lstm.predict(&sequence, saved_model.metadata.mean, saved_model.metadata.std);
+        let actual = records[seq_start + seq_length].closing;
+        let error = (pred - actual).abs();
+        let direction_correct = (pred > sequence.last().unwrap() * saved_model.metadata.std + saved_model.metadata.mean) 
+                              == (actual > records[seq_start + seq_length - 1].closing);
         
         predictions.push(PredictionPoint {
-            date: date_str.clone(),
+            date: records[seq_start + seq_length].date.clone(),
+            actual_price: actual,
             predicted_price: pred,
+            prediction_error: error,
+            direction_correct,
         });
         
-        println!("📈 {}: Predicted = R$ {:.2}", date_str, pred);
-        
-        // Update sequence for the next prediction
-        sequence.remove(0); // Remove oldest value
-        sequence.push(pred_normalized); // Add new prediction (normalized)
+        println!("📈 {}: Actual = R$ {:.2}, Predicted = R$ {:.2}, Error = R$ {:.2}", 
+                 records[seq_start + seq_length].date, actual, pred, error);
     }
 
-    // Create and save results
+    // Calculate metrics
+    let mse = predictions.iter().map(|p| p.prediction_error.powi(2)).sum::<f32>() / predictions.len() as f32;
+    let mae = predictions.iter().map(|p| p.prediction_error).sum::<f32>() / predictions.len() as f32;
+    let mape = predictions.iter()
+        .map(|p| (p.prediction_error / p.actual_price.abs()).abs() * 100.0)
+        .sum::<f32>() / predictions.len() as f32;
+    let directional_accuracy = predictions.iter()
+        .map(|p| if p.direction_correct { 1.0 } else { 0.0 })
+        .sum::<f32>() / predictions.len() as f32;
+    let rmse = mse.sqrt();
+
+    let metrics = PredictionMetrics {
+        mse,
+        mae,
+        mape,
+        directional_accuracy,
+        rmse,
+    };
+
+    // Create results (clonamos metrics para evitar o erro de move)
     let results = PredictionResults {
         metadata: saved_model.metadata,
         predictions,
+        metrics: metrics.clone(), // Clone para poder usar depois
     };
 
+    // Save predictions
     let results_json = serde_json::to_string_pretty(&results)
         .map_err(|e| LSTMError::SerializationError(e.to_string()))?;
     std::fs::write(&output_path, results_json)?;
 
+    // Print summary
+    println!("\n📊 Prediction Summary:");
+    println!("   MSE: {:.4}", metrics.mse);
+    println!("   MAE: {:.4}", metrics.mae);  
+    println!("   MAPE: {:.2}%", metrics.mape);
+    println!("   RMSE: {:.4}", metrics.rmse);
+    println!("   Directional Accuracy: {:.2}%", metrics.directional_accuracy * 100.0);
+    
     info!("Predictions saved to: {}", output_path);
     println!("✅ Predictions saved to: {}", output_path);
 
@@ -716,6 +770,7 @@ fn predict_command(
 // ============================================================================
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // Initialize logger
     env_logger::Builder::from_default_env()
         .filter_level(log::LevelFilter::Info)
         .init();
@@ -767,10 +822,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 }
 
-
 // cd mlpmercadofinanc
 
  
+
+ 
+
 // # 1. Extrair dados do CSV
 // cargo run -- extract --asset WEGE3 --source investing
 
@@ -789,5 +846,30 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 // cargo run -- train --asset WEGE3 --source investing --seq-length 20 --hidden-size 50
 
 
+// ============================================================================
+// CARGO.TOML DEPENDENCIES
+// ============================================================================
 
-// cargo run -- train --asset WEGE3 --source investing --epochs 100 --learning-rate 0.01 --hidden-size 20 --seq-length 60
+/*
+[package]
+name = "lstm-stock-predictor"
+version = "1.0.0"
+edition = "2021"
+
+[dependencies]
+clap = { version = "4.0", features = ["derive"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+toml = "0.8"
+csv = "1.3"
+ndarray = "0.15"
+log = "0.4"
+env_logger = "0.10"
+rand = "0.8"
+thiserror = "1.0"
+chrono = { version = "0.4", features = ["serde"] }
+
+[[bin]]
+name = "lstm"
+path = "src/main.rs"
+*/

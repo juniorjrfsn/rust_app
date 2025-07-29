@@ -2,164 +2,37 @@
   "metadata": {
     "asset": "WEGE3",
     "source": "investing",
-    "seq_length": 10,
+    "seq_length": 60,
     "hidden_size": 20,
-    "train_samples": 2088,
-    "validation_samples": 523,
-    "final_train_loss": 0.002030717,
-    "final_val_loss": 0.00015670033,
-    "directional_accuracy": 0.0,
-    "mean": 22.678308,
-    "std": 15.767574,
-    "timestamp": "2025-07-28T19:10:46.962489356+00:00"
+    "train_samples": 1061,
+    "validation_samples": 266,
+    "final_train_loss": 0.008143206,
+    "final_val_loss": 0.12351996,
+    "directional_accuracy": 0.44360903,
+    "mean": 36.16411,
+    "std": 8.872389,
+    "timestamp": "2025-07-29T00:17:45.991564277+00:00"
   },
   "predictions": [
     {
-      "date": "29.01.2015",
-      "actual_price": 5.64,
-      "predicted_price": 5.678814,
-      "prediction_error": 0.038814068,
-      "direction_correct": true
+      "date": "03.01.2020",
+      "predicted_price": 22.833298
     },
     {
-      "date": "28.01.2015",
-      "actual_price": 5.52,
-      "predicted_price": 5.720196,
-      "prediction_error": 0.20019579,
-      "direction_correct": false
+      "date": "04.01.2020",
+      "predicted_price": 23.80215
     },
     {
-      "date": "27.01.2015",
-      "actual_price": 5.44,
-      "predicted_price": 5.7006435,
-      "prediction_error": 0.26064348,
-      "direction_correct": false
+      "date": "05.01.2020",
+      "predicted_price": 24.747395
     },
     {
-      "date": "26.01.2015",
-      "actual_price": 5.36,
-      "predicted_price": 5.659111,
-      "prediction_error": 0.2991109,
-      "direction_correct": false
+      "date": "06.01.2020",
+      "predicted_price": 25.491861
     },
     {
-      "date": "23.01.2015",
-      "actual_price": 5.44,
-      "predicted_price": 5.606579,
-      "prediction_error": 0.16657877,
-      "direction_correct": true
-    },
-    {
-      "date": "22.01.2015",
-      "actual_price": 5.37,
-      "predicted_price": 5.6070747,
-      "prediction_error": 0.23707485,
-      "direction_correct": false
-    },
-    {
-      "date": "21.01.2015",
-      "actual_price": 5.32,
-      "predicted_price": 5.5830154,
-      "prediction_error": 0.26301527,
-      "direction_correct": false
-    },
-    {
-      "date": "20.01.2015",
-      "actual_price": 5.37,
-      "predicted_price": 5.5510845,
-      "prediction_error": 0.18108463,
-      "direction_correct": true
-    },
-    {
-      "date": "19.01.2015",
-      "actual_price": 5.32,
-      "predicted_price": 5.551918,
-      "prediction_error": 0.23191786,
-      "direction_correct": false
-    },
-    {
-      "date": "16.01.2015",
-      "actual_price": 5.29,
-      "predicted_price": 5.534954,
-      "prediction_error": 0.24495411,
-      "direction_correct": false
-    },
-    {
-      "date": "15.01.2015",
-      "actual_price": 5.29,
-      "predicted_price": 5.5143967,
-      "prediction_error": 0.2243967,
-      "direction_correct": false
-    },
-    {
-      "date": "14.01.2015",
-      "actual_price": 5.29,
-      "predicted_price": 5.503124,
-      "prediction_error": 0.21312428,
-      "direction_correct": false
-    },
-    {
-      "date": "13.01.2015",
-      "actual_price": 5.22,
-      "predicted_price": 5.497305,
-      "prediction_error": 0.27730513,
-      "direction_correct": false
-    },
-    {
-      "date": "12.01.2015",
-      "actual_price": 5.19,
-      "predicted_price": 5.4687366,
-      "prediction_error": 0.2787366,
-      "direction_correct": false
-    },
-    {
-      "date": "09.01.2015",
-      "actual_price": 5.22,
-      "predicted_price": 5.4417267,
-      "prediction_error": 0.2217269,
-      "direction_correct": true
-    },
-    {
-      "date": "08.01.2015",
-      "actual_price": 5.25,
-      "predicted_price": 5.438036,
-      "prediction_error": 0.18803596,
-      "direction_correct": true
-    },
-    {
-      "date": "07.01.2015",
-      "actual_price": 5.18,
-      "predicted_price": 5.4476547,
-      "prediction_error": 0.2676549,
-      "direction_correct": false
-    },
-    {
-      "date": "06.01.2015",
-      "actual_price": 5.19,
-      "predicted_price": 5.427742,
-      "prediction_error": 0.23774195,
-      "direction_correct": true
-    },
-    {
-      "date": "05.01.2015",
-      "actual_price": 5.27,
-      "predicted_price": 5.419859,
-      "prediction_error": 0.14985895,
-      "direction_correct": true
-    },
-    {
-      "date": "02.01.2015",
-      "actual_price": 5.3,
-      "predicted_price": 5.445141,
-      "prediction_error": 0.14514065,
-      "direction_correct": true
+      "date": "07.01.2020",
+      "predicted_price": 26.10125
     }
-  ],
-  "metrics": {
-    "mse": 0.050263483,
-    "mae": 0.21635559,
-    "mape": 4.07912,
-    "directional_accuracy": 0.4,
-    "rmse": 0.22419518
-  }
+  ]
 }
