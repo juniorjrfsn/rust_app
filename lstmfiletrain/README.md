@@ -71,3 +71,39 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 rustc --version
 
 ```
+
+```
+  sudo -u postgres psql
+  postgres=# ALTER USER postgres WITH PASSWORD 'postgres';
+  ALTER ROLE
+  postgres=# create database lstm_db;
+
+  postgres=# grant all privileges on database lstm_db to postgres;
+
+```
+
+
+```
+SELECT * FROM lstm_models WHERE asset = 'WEGE3' AND source = 'investing';
+```
+
+
+```
+psql -U postgres -d lstm_db -c "SELECT asset, source, timestamp FROM lstm_models WHERE asset = 'WEGE3';"
+
+```
+
+
+junior@junior-MS-7C09:~$ sudo -u postgres psql
+[sudo] senha para junior: 
+Sinto muito, tente novamente.
+[sudo] senha para junior: 
+psql (16.9 (Ubuntu 16.9-0ubuntu0.24.04.1))
+Type "help" for help.
+
+postgres=# ALTER USER postgres WITH PASSWORD 'postgres
+postgres'# create database lstm_db;
+postgres'#  grant all privileges on database appphoenix_dev to postgres;
+postgres'# create database lstm_db;
+postgres'# grant all privileges on database lstm_db to postgres;
+postgres'# 
