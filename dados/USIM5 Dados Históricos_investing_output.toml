@@ -1,0 +1,12571 @@
+asset = "USIM5 Dados Históricos"
+source = "investing"
+total_records = 1396
+date_range = [
+    "02.01.2020",
+    "01.08.2025",
+]
+
+[[records]]
+date = "02.01.2020"
+closing = 9.61
+opening = 9.51
+high = 9.61
+low = 9.43
+volume = 16090000.0
+variation = 0.02
+
+[[records]]
+date = "03.01.2020"
+closing = 9.51
+opening = 9.42
+high = 9.61
+low = 9.41
+volume = 11560000.0
+variation = -0.010299999
+
+[[records]]
+date = "06.01.2020"
+closing = 9.33
+opening = 9.45
+high = 9.51
+low = 9.31
+volume = 17310000.0
+variation = -0.0188
+
+[[records]]
+date = "07.01.2020"
+closing = 9.42
+opening = 9.39
+high = 9.42
+low = 9.32
+volume = 9680000.0
+variation = 0.0095999995
+
+[[records]]
+date = "08.01.2020"
+closing = 9.3
+opening = 9.42
+high = 9.48
+low = 9.23
+volume = 13780000.0
+variation = -0.0126
+
+[[records]]
+date = "09.01.2020"
+closing = 9.24
+opening = 9.3
+high = 9.44
+low = 9.15
+volume = 9430000.0
+variation = -0.0064
+
+[[records]]
+date = "10.01.2020"
+closing = 9.06
+opening = 9.28
+high = 9.34
+low = 9.01
+volume = 12890000.0
+variation = -0.020399999
+
+[[records]]
+date = "13.01.2020"
+closing = 9.45
+opening = 9.16
+high = 9.45
+low = 9.13
+volume = 17010000.0
+variation = 0.0438
+
+[[records]]
+date = "14.01.2020"
+closing = 9.49
+opening = 9.48
+high = 9.56
+low = 9.4
+volume = 11800000.0
+variation = 0.0042
+
+[[records]]
+date = "15.01.2020"
+closing = 9.3
+opening = 9.45
+high = 9.53
+low = 9.2
+volume = 17440000.0
+variation = -0.0198
+
+[[records]]
+date = "16.01.2020"
+closing = 9.58
+opening = 9.39
+high = 9.8
+low = 9.34
+volume = 28300000.0
+variation = 0.0298
+
+[[records]]
+date = "17.01.2020"
+closing = 9.67
+opening = 9.7
+high = 9.76
+low = 9.53
+volume = 18480000.0
+variation = 0.0093
+
+[[records]]
+date = "20.01.2020"
+closing = 9.66
+opening = 9.66
+high = 9.66
+low = 9.51
+volume = 10090000.0
+variation = -0.001
+
+[[records]]
+date = "21.01.2020"
+closing = 9.46
+opening = 9.55
+high = 9.62
+low = 9.38
+volume = 8100000.5
+variation = -0.020499999
+
+[[records]]
+date = "22.01.2020"
+closing = 10.78
+opening = 9.81
+high = 10.78
+low = 9.81
+volume = 64890000.0
+variation = 0.1393
+
+[[records]]
+date = "23.01.2020"
+closing = 11.01
+opening = 10.65
+high = 11.42
+low = 10.45
+volume = 52790000.0
+variation = 0.0211
+
+[[records]]
+date = "24.01.2020"
+closing = 10.72
+opening = 11.29
+high = 11.32
+low = 10.58
+volume = 36860000.0
+variation = -0.026099999
+
+[[records]]
+date = "27.01.2020"
+closing = 9.96
+opening = 10.2
+high = 10.35
+low = 9.92
+volume = 32710000.0
+variation = -0.0712
+
+[[records]]
+date = "28.01.2020"
+closing = 9.95
+opening = 10.16
+high = 10.33
+low = 9.8
+volume = 28730000.0
+variation = -0.001
+
+[[records]]
+date = "29.01.2020"
+closing = 9.79
+opening = 10.06
+high = 10.16
+low = 9.74
+volume = 13670000.0
+variation = -0.0159
+
+[[records]]
+date = "30.01.2020"
+closing = 9.68
+opening = 9.6
+high = 9.73
+low = 9.24
+volume = 25290000.0
+variation = -0.0111
+
+[[records]]
+date = "31.01.2020"
+closing = 9.54
+opening = 9.48
+high = 9.62
+low = 9.32
+volume = 23220000.0
+variation = -0.0143
+
+[[records]]
+date = "03.02.2020"
+closing = 9.61
+opening = 9.56
+high = 9.8
+low = 9.37
+volume = 13480000.0
+variation = 0.0073
+
+[[records]]
+date = "04.02.2020"
+closing = 9.7
+opening = 9.86
+high = 9.9
+low = 9.68
+volume = 15200000.0
+variation = 0.0093
+
+[[records]]
+date = "05.02.2020"
+closing = 10.18
+opening = 9.81
+high = 10.37
+low = 9.8
+volume = 30650000.0
+variation = 0.049000002
+
+[[records]]
+date = "06.02.2020"
+closing = 9.95
+opening = 10.36
+high = 10.37
+low = 9.86
+volume = 19580000.0
+variation = -0.0224
+
+[[records]]
+date = "07.02.2020"
+closing = 9.53
+opening = 9.81
+high = 9.89
+low = 9.53
+volume = 14260000.0
+variation = -0.0418
+
+[[records]]
+date = "10.02.2020"
+closing = 9.2
+opening = 9.52
+high = 9.64
+low = 9.13
+volume = 18450000.0
+variation = -0.0343
+
+[[records]]
+date = "11.02.2020"
+closing = 9.83
+opening = 9.43
+high = 9.86
+low = 9.37
+volume = 15710000.0
+variation = 0.0678
+
+[[records]]
+date = "12.02.2020"
+closing = 9.77
+opening = 9.97
+high = 10.07
+low = 9.75
+volume = 18990000.0
+variation = -0.006
+
+[[records]]
+date = "13.02.2020"
+closing = 10.25
+opening = 9.58
+high = 10.3
+low = 9.49
+volume = 23000000.0
+variation = 0.0497
+
+[[records]]
+date = "14.02.2020"
+closing = 9.81
+opening = 10.02
+high = 10.08
+low = 9.74
+volume = 26550000.0
+variation = -0.0435
+
+[[records]]
+date = "17.02.2020"
+closing = 9.64
+opening = 9.91
+high = 10.0
+low = 9.56
+volume = 16650000.0
+variation = -0.0172
+
+[[records]]
+date = "18.02.2020"
+closing = 9.68
+opening = 9.56
+high = 9.69
+low = 9.41
+volume = 12320000.0
+variation = 0.0041
+
+[[records]]
+date = "19.02.2020"
+closing = 9.63
+opening = 9.67
+high = 9.79
+low = 9.51
+volume = 16230000.0
+variation = -0.0050999997
+
+[[records]]
+date = "20.02.2020"
+closing = 9.37
+opening = 9.66
+high = 9.71
+low = 9.29
+volume = 13190000.0
+variation = -0.026700001
+
+[[records]]
+date = "21.02.2020"
+closing = 9.09
+opening = 9.25
+high = 9.41
+low = 9.08
+volume = 16320000.0
+variation = -0.0307
+
+[[records]]
+date = "26.02.2020"
+closing = 8.14
+opening = 8.52
+high = 8.64
+low = 8.12
+volume = 17840000.0
+variation = -0.103599995
+
+[[records]]
+date = "27.02.2020"
+closing = 8.11
+opening = 7.98
+high = 8.44
+low = 7.82
+volume = 22190000.0
+variation = -0.0036000002
+
+[[records]]
+date = "28.02.2020"
+closing = 8.09
+opening = 8.06
+high = 8.14
+low = 7.75
+volume = 17290000.0
+variation = -0.0023999999
+
+[[records]]
+date = "02.03.2020"
+closing = 8.39
+opening = 8.31
+high = 8.5
+low = 8.1
+volume = 18330000.0
+variation = 0.0367
+
+[[records]]
+date = "03.03.2020"
+closing = 8.21
+opening = 8.39
+high = 8.7
+low = 8.21
+volume = 19030000.0
+variation = -0.021300001
+
+[[records]]
+date = "04.03.2020"
+closing = 8.79
+opening = 8.43
+high = 8.87
+low = 8.37
+volume = 14060000.0
+variation = 0.07
+
+[[records]]
+date = "05.03.2020"
+closing = 8.32
+opening = 8.64
+high = 8.65
+low = 8.13
+volume = 13040000.0
+variation = -0.053000003
+
+[[records]]
+date = "06.03.2020"
+closing = 7.8
+opening = 7.85
+high = 8.12
+low = 7.61
+volume = 16270000.0
+variation = -0.0631
+
+[[records]]
+date = "09.03.2020"
+closing = 6.54
+opening = 6.84
+high = 6.98
+low = 6.3
+volume = 20460000.0
+variation = -0.16139999
+
+[[records]]
+date = "10.03.2020"
+closing = 7.05
+opening = 7.19
+high = 7.41
+low = 6.62
+volume = 18490000.0
+variation = 0.0788
+
+[[records]]
+date = "11.03.2020"
+closing = 6.44
+opening = 6.81
+high = 6.94
+low = 6.02
+volume = 15140000.0
+variation = -0.0871
+
+[[records]]
+date = "12.03.2020"
+closing = 5.55
+opening = 5.45
+high = 5.73
+low = 4.68
+volume = 19670000.0
+variation = -0.1385
+
+[[records]]
+date = "13.03.2020"
+closing = 6.46
+opening = 6.44
+high = 6.49
+low = 5.57
+volume = 29510000.0
+variation = 0.16430001
+
+[[records]]
+date = "16.03.2020"
+closing = 5.83
+opening = 5.47
+high = 6.21
+low = 5.47
+volume = 16209999.0
+variation = -0.09819999
+
+[[records]]
+date = "17.03.2020"
+closing = 5.79
+opening = 6.0
+high = 6.12
+low = 5.58
+volume = 26140000.0
+variation = -0.0068
+
+[[records]]
+date = "18.03.2020"
+closing = 4.56
+opening = 5.33
+high = 5.37
+low = 4.32
+volume = 19790000.0
+variation = -0.2123
+
+[[records]]
+date = "19.03.2020"
+closing = 4.46
+opening = 4.35
+high = 4.86
+low = 4.1
+volume = 21610000.0
+variation = -0.0217
+
+[[records]]
+date = "20.03.2020"
+closing = 4.28
+opening = 4.76
+high = 5.03
+low = 4.26
+volume = 27080000.0
+variation = -0.04
+
+[[records]]
+date = "23.03.2020"
+closing = 3.76
+opening = 4.32
+high = 4.33
+low = 3.75
+volume = 24640000.0
+variation = -0.1204
+
+[[records]]
+date = "24.03.2020"
+closing = 3.98
+opening = 4.13
+high = 4.16
+low = 3.93
+volume = 20190000.0
+variation = 0.0579
+
+[[records]]
+date = "25.03.2020"
+closing = 4.83
+opening = 4.13
+high = 4.91
+low = 4.12
+volume = 28060000.0
+variation = 0.2139
+
+[[records]]
+date = "26.03.2020"
+closing = 5.09
+opening = 4.72
+high = 5.45
+low = 4.71
+volume = 25800000.0
+variation = 0.0533
+
+[[records]]
+date = "27.03.2020"
+closing = 4.84
+opening = 4.9
+high = 5.08
+low = 4.78
+volume = 15870000.0
+variation = -0.048600003
+
+[[records]]
+date = "30.03.2020"
+closing = 4.74
+opening = 4.96
+high = 5.07
+low = 4.68
+volume = 13430000.0
+variation = -0.0225
+
+[[records]]
+date = "31.03.2020"
+closing = 4.87
+opening = 4.79
+high = 5.12
+low = 4.76
+volume = 20490000.0
+variation = 0.0293
+
+[[records]]
+date = "01.04.2020"
+closing = 4.65
+opening = 4.66
+high = 4.72
+low = 4.54
+volume = 12590000.0
+variation = -0.0467
+
+[[records]]
+date = "02.04.2020"
+closing = 4.59
+opening = 4.81
+high = 4.9
+low = 4.56
+volume = 20070000.0
+variation = -0.0128
+
+[[records]]
+date = "03.04.2020"
+closing = 4.04
+opening = 4.47
+high = 4.49
+low = 3.99
+volume = 32240002.0
+variation = -0.1188
+
+[[records]]
+date = "06.04.2020"
+closing = 4.03
+opening = 4.29
+high = 4.3
+low = 3.97
+volume = 19660000.0
+variation = -0.0025
+
+[[records]]
+date = "07.04.2020"
+closing = 4.07
+opening = 4.28
+high = 4.31
+low = 4.05
+volume = 25130000.0
+variation = 0.0098
+
+[[records]]
+date = "08.04.2020"
+closing = 4.35
+opening = 4.05
+high = 4.4
+low = 4.05
+volume = 22750000.0
+variation = 0.0681
+
+[[records]]
+date = "09.04.2020"
+closing = 4.29
+opening = 4.42
+high = 4.6
+low = 4.22
+volume = 19470000.0
+variation = -0.0137
+
+[[records]]
+date = "13.04.2020"
+closing = 4.47
+opening = 4.25
+high = 4.51
+low = 4.17
+volume = 18590000.0
+variation = 0.0416
+
+[[records]]
+date = "14.04.2020"
+closing = 4.73
+opening = 4.62
+high = 4.78
+low = 4.58
+volume = 17980000.0
+variation = 0.057600003
+
+[[records]]
+date = "15.04.2020"
+closing = 4.66
+opening = 4.51
+high = 4.71
+low = 4.39
+volume = 17230000.0
+variation = -0.0147
+
+[[records]]
+date = "16.04.2020"
+closing = 4.51
+opening = 4.73
+high = 4.78
+low = 4.46
+volume = 19450000.0
+variation = -0.0319
+
+[[records]]
+date = "17.04.2020"
+closing = 4.59
+opening = 4.65
+high = 4.74
+low = 4.52
+volume = 17290000.0
+variation = 0.0176
+
+[[records]]
+date = "20.04.2020"
+closing = 4.63
+opening = 4.52
+high = 4.7
+low = 4.48
+volume = 17250000.0
+variation = 0.0086
+
+[[records]]
+date = "22.04.2020"
+closing = 4.78
+opening = 4.63
+high = 4.85
+low = 4.63
+volume = 19940000.0
+variation = 0.0321
+
+[[records]]
+date = "23.04.2020"
+closing = 4.72
+opening = 4.82
+high = 4.99
+low = 4.6
+volume = 30210000.0
+variation = -0.0124
+
+[[records]]
+date = "24.04.2020"
+closing = 4.3
+opening = 4.62
+high = 4.68
+low = 4.16
+volume = 28700000.0
+variation = -0.088199995
+
+[[records]]
+date = "27.04.2020"
+closing = 4.3
+opening = 4.44
+high = 4.47
+low = 4.22
+volume = 18810000.0
+variation = 0.0
+
+[[records]]
+date = "28.04.2020"
+closing = 4.67
+opening = 4.43
+high = 4.69
+low = 4.38
+volume = 24640000.0
+variation = 0.0853
+
+[[records]]
+date = "29.04.2020"
+closing = 5.06
+opening = 4.8
+high = 5.12
+low = 4.72
+volume = 30080000.0
+variation = 0.084300004
+
+[[records]]
+date = "30.04.2020"
+closing = 4.8
+opening = 4.91
+high = 5.01
+low = 4.77
+volume = 23780000.0
+variation = -0.0514
+
+[[records]]
+date = "04.05.2020"
+closing = 4.68
+opening = 4.66
+high = 4.7
+low = 4.57
+volume = 12890000.0
+variation = -0.025
+
+[[records]]
+date = "05.05.2020"
+closing = 4.61
+opening = 4.76
+high = 4.88
+low = 4.61
+volume = 15340000.0
+variation = -0.015
+
+[[records]]
+date = "06.05.2020"
+closing = 4.59
+opening = 4.65
+high = 4.67
+low = 4.51
+volume = 12640000.0
+variation = -0.0043
+
+[[records]]
+date = "07.05.2020"
+closing = 4.74
+opening = 4.66
+high = 4.88
+low = 4.54
+volume = 32599998.0
+variation = 0.0327
+
+[[records]]
+date = "08.05.2020"
+closing = 4.81
+opening = 4.84
+high = 4.9
+low = 4.7
+volume = 17090000.0
+variation = 0.0148
+
+[[records]]
+date = "11.05.2020"
+closing = 4.76
+opening = 4.76
+high = 4.88
+low = 4.67
+volume = 14010000.0
+variation = -0.0104
+
+[[records]]
+date = "12.05.2020"
+closing = 4.59
+opening = 4.8
+high = 4.86
+low = 4.53
+volume = 19600000.0
+variation = -0.0357
+
+[[records]]
+date = "13.05.2020"
+closing = 4.35
+opening = 4.64
+high = 4.68
+low = 4.32
+volume = 21700000.0
+variation = -0.0523
+
+[[records]]
+date = "14.05.2020"
+closing = 4.55
+opening = 4.3
+high = 4.55
+low = 4.13
+volume = 26860000.0
+variation = 0.046
+
+[[records]]
+date = "15.05.2020"
+closing = 4.51
+opening = 4.5
+high = 4.67
+low = 4.43
+volume = 19130000.0
+variation = -0.0088
+
+[[records]]
+date = "18.05.2020"
+closing = 4.9
+opening = 4.69
+high = 4.9
+low = 4.62
+volume = 27750000.0
+variation = 0.0865
+
+[[records]]
+date = "19.05.2020"
+closing = 4.83
+opening = 4.86
+high = 5.03
+low = 4.8
+volume = 25180000.0
+variation = -0.0143
+
+[[records]]
+date = "20.05.2020"
+closing = 5.05
+opening = 4.87
+high = 5.05
+low = 4.87
+volume = 21860000.0
+variation = 0.045500003
+
+[[records]]
+date = "21.05.2020"
+closing = 4.97
+opening = 5.07
+high = 5.19
+low = 4.93
+volume = 20460000.0
+variation = -0.015800001
+
+[[records]]
+date = "22.05.2020"
+closing = 4.72
+opening = 4.85
+high = 4.93
+low = 4.67
+volume = 19220000.0
+variation = -0.050300002
+
+[[records]]
+date = "25.05.2020"
+closing = 4.88
+opening = 4.88
+high = 4.92
+low = 4.84
+volume = 11430000.0
+variation = 0.0339
+
+[[records]]
+date = "26.05.2020"
+closing = 4.9
+opening = 4.99
+high = 5.04
+low = 4.83
+volume = 17380000.0
+variation = 0.0041
+
+[[records]]
+date = "27.05.2020"
+closing = 5.7
+opening = 4.97
+high = 5.79
+low = 4.93
+volume = 76540000.0
+variation = 0.1633
+
+[[records]]
+date = "28.05.2020"
+closing = 6.0
+opening = 5.69
+high = 6.29
+low = 5.59
+volume = 59650000.0
+variation = 0.052600004
+
+[[records]]
+date = "29.05.2020"
+closing = 6.15
+opening = 6.1
+high = 6.42
+low = 5.93
+volume = 77940000.0
+variation = 0.025
+
+[[records]]
+date = "01.06.2020"
+closing = 6.19
+opening = 6.22
+high = 6.33
+low = 6.15
+volume = 22430000.0
+variation = 0.0064999997
+
+[[records]]
+date = "02.06.2020"
+closing = 6.92
+opening = 6.29
+high = 6.92
+low = 6.26
+volume = 42300000.0
+variation = 0.1179
+
+[[records]]
+date = "03.06.2020"
+closing = 6.9
+opening = 7.15
+high = 7.32
+low = 6.77
+volume = 46400000.0
+variation = -0.0029
+
+[[records]]
+date = "04.06.2020"
+closing = 6.88
+opening = 6.74
+high = 7.07
+low = 6.63
+volume = 25720000.0
+variation = -0.0029
+
+[[records]]
+date = "05.06.2020"
+closing = 6.9
+opening = 7.15
+high = 7.23
+low = 6.87
+volume = 26910000.0
+variation = 0.0029
+
+[[records]]
+date = "08.06.2020"
+closing = 7.45
+opening = 7.1
+high = 7.45
+low = 7.07
+volume = 29670000.0
+variation = 0.0797
+
+[[records]]
+date = "09.06.2020"
+closing = 7.3
+opening = 7.2
+high = 7.35
+low = 7.12
+volume = 18890000.0
+variation = -0.0201
+
+[[records]]
+date = "10.06.2020"
+closing = 6.89
+opening = 7.4
+high = 7.41
+low = 6.89
+volume = 25960000.0
+variation = -0.056199998
+
+[[records]]
+date = "12.06.2020"
+closing = 6.41
+opening = 6.6
+high = 6.85
+low = 6.33
+volume = 29920000.0
+variation = -0.069699995
+
+[[records]]
+date = "15.06.2020"
+closing = 6.36
+opening = 6.1
+high = 6.41
+low = 6.03
+volume = 29470000.0
+variation = -0.0078
+
+[[records]]
+date = "16.06.2020"
+closing = 6.55
+opening = 6.75
+high = 6.79
+low = 6.5
+volume = 20660000.0
+variation = 0.0299
+
+[[records]]
+date = "17.06.2020"
+closing = 6.77
+opening = 6.6
+high = 6.83
+low = 6.46
+volume = 17950000.0
+variation = 0.0336
+
+[[records]]
+date = "18.06.2020"
+closing = 6.8
+opening = 6.68
+high = 6.88
+low = 6.59
+volume = 15980000.0
+variation = 0.0044
+
+[[records]]
+date = "19.06.2020"
+closing = 6.98
+opening = 6.95
+high = 7.24
+low = 6.86
+volume = 37730000.0
+variation = 0.026500002
+
+[[records]]
+date = "22.06.2020"
+closing = 6.96
+opening = 7.06
+high = 7.07
+low = 6.88
+volume = 17200000.0
+variation = -0.0029
+
+[[records]]
+date = "23.06.2020"
+closing = 7.68
+opening = 7.08
+high = 7.71
+low = 7.02
+volume = 55310000.0
+variation = 0.1034
+
+[[records]]
+date = "24.06.2020"
+closing = 7.33
+opening = 7.59
+high = 7.65
+low = 7.13
+volume = 27070000.0
+variation = -0.0456
+
+[[records]]
+date = "25.06.2020"
+closing = 7.29
+opening = 7.39
+high = 7.44
+low = 7.15
+volume = 17240000.0
+variation = -0.0055
+
+[[records]]
+date = "26.06.2020"
+closing = 7.1
+opening = 7.28
+high = 7.33
+low = 7.03
+volume = 12060000.0
+variation = -0.026099999
+
+[[records]]
+date = "29.06.2020"
+closing = 6.26
+opening = 6.31
+high = 6.45
+low = 6.19
+volume = 16960000.0
+variation = -0.1177
+
+[[records]]
+date = "30.06.2020"
+closing = 6.37
+opening = 6.24
+high = 6.51
+low = 6.22
+volume = 19730000.0
+variation = 0.0168
+
+[[records]]
+date = "01.07.2020"
+closing = 6.43
+opening = 6.38
+high = 6.49
+low = 6.24
+volume = 26260000.0
+variation = 0.0095999995
+
+[[records]]
+date = "02.07.2020"
+closing = 6.44
+opening = 6.54
+high = 6.69
+low = 6.44
+volume = 13160000.0
+variation = 0.0014
+
+[[records]]
+date = "03.07.2020"
+closing = 6.54
+opening = 6.42
+high = 6.59
+low = 6.34
+volume = 8570000.0
+variation = 0.015
+
+[[records]]
+date = "06.07.2020"
+closing = 6.67
+opening = 6.67
+high = 6.87
+low = 6.61
+volume = 18510000.0
+variation = 0.0201
+
+[[records]]
+date = "07.07.2020"
+closing = 6.53
+opening = 6.61
+high = 6.62
+low = 6.5
+volume = 12910000.0
+variation = -0.021
+
+[[records]]
+date = "08.07.2020"
+closing = 6.75
+opening = 6.61
+high = 6.82
+low = 6.58
+volume = 17590000.0
+variation = 0.0336
+
+[[records]]
+date = "09.07.2020"
+closing = 6.54
+opening = 6.82
+high = 6.82
+low = 6.53
+volume = 17980000.0
+variation = -0.0299
+
+[[records]]
+date = "10.07.2020"
+closing = 6.51
+opening = 6.58
+high = 6.62
+low = 6.46
+volume = 13940000.0
+variation = -0.0054
+
+[[records]]
+date = "13.07.2020"
+closing = 6.47
+opening = 6.57
+high = 6.79
+low = 6.47
+volume = 25390000.0
+variation = -0.0054
+
+[[records]]
+date = "14.07.2020"
+closing = 6.59
+opening = 6.47
+high = 6.63
+low = 6.36
+volume = 22030000.0
+variation = 0.0176
+
+[[records]]
+date = "15.07.2020"
+closing = 6.58
+opening = 6.69
+high = 6.72
+low = 6.5
+volume = 16700001.0
+variation = -0.0013
+
+[[records]]
+date = "16.07.2020"
+closing = 6.47
+opening = 6.53
+high = 6.61
+low = 6.4
+volume = 14240000.0
+variation = -0.016
+
+[[records]]
+date = "17.07.2020"
+closing = 6.56
+opening = 6.49
+high = 6.57
+low = 6.48
+volume = 9260000.0
+variation = 0.0135
+
+[[records]]
+date = "20.07.2020"
+closing = 6.54
+opening = 6.54
+high = 6.61
+low = 6.51
+volume = 9820000.0
+variation = -0.004
+
+[[records]]
+date = "21.07.2020"
+closing = 6.47
+opening = 6.61
+high = 6.65
+low = 6.45
+volume = 12480000.0
+variation = -0.0094
+
+[[records]]
+date = "22.07.2020"
+closing = 6.58
+opening = 6.5
+high = 6.76
+low = 6.48
+volume = 23160000.0
+variation = 0.0162
+
+[[records]]
+date = "23.07.2020"
+closing = 6.4
+opening = 6.57
+high = 6.73
+low = 6.4
+volume = 17180000.0
+variation = -0.026600001
+
+[[records]]
+date = "24.07.2020"
+closing = 6.61
+opening = 6.4
+high = 6.64
+low = 6.28
+volume = 19620000.0
+variation = 0.0328
+
+[[records]]
+date = "27.07.2020"
+closing = 7.09
+opening = 6.61
+high = 7.26
+low = 6.57
+volume = 46320000.0
+variation = 0.0715
+
+[[records]]
+date = "28.07.2020"
+closing = 7.0
+opening = 7.07
+high = 7.11
+low = 6.85
+volume = 18450000.0
+variation = -0.0124
+
+[[records]]
+date = "29.07.2020"
+closing = 7.14
+opening = 7.14
+high = 7.25
+low = 7.07
+volume = 19110000.0
+variation = 0.02
+
+[[records]]
+date = "30.07.2020"
+closing = 7.19
+opening = 6.99
+high = 7.66
+low = 6.94
+volume = 36110000.0
+variation = 0.0074
+
+[[records]]
+date = "31.07.2020"
+closing = 7.12
+opening = 7.2
+high = 7.33
+low = 7.02
+volume = 16440001.0
+variation = -0.0097
+
+[[records]]
+date = "03.08.2020"
+closing = 7.36
+opening = 7.32
+high = 7.51
+low = 7.18
+volume = 27600000.0
+variation = 0.0332
+
+[[records]]
+date = "04.08.2020"
+closing = 7.17
+opening = 7.29
+high = 7.37
+low = 6.99
+volume = 16629999.0
+variation = -0.026199998
+
+[[records]]
+date = "05.08.2020"
+closing = 7.45
+opening = 7.27
+high = 7.63
+low = 7.27
+volume = 26580000.0
+variation = 0.039100002
+
+[[records]]
+date = "06.08.2020"
+closing = 7.3
+opening = 7.49
+high = 7.53
+low = 7.25
+volume = 15850000.0
+variation = -0.02
+
+[[records]]
+date = "07.08.2020"
+closing = 7.27
+opening = 7.23
+high = 7.39
+low = 7.16
+volume = 13690000.0
+variation = -0.0036000002
+
+[[records]]
+date = "10.08.2020"
+closing = 7.6
+opening = 7.3
+high = 7.68
+low = 7.3
+volume = 28250000.0
+variation = 0.0458
+
+[[records]]
+date = "11.08.2020"
+closing = 7.43
+opening = 7.68
+high = 7.72
+low = 7.43
+volume = 17260000.0
+variation = -0.023
+
+[[records]]
+date = "12.08.2020"
+closing = 7.57
+opening = 7.46
+high = 7.64
+low = 7.4
+volume = 19710000.0
+variation = 0.0189
+
+[[records]]
+date = "13.08.2020"
+closing = 7.61
+opening = 7.55
+high = 7.81
+low = 7.51
+volume = 21040000.0
+variation = 0.0058
+
+[[records]]
+date = "14.08.2020"
+closing = 7.69
+opening = 7.58
+high = 7.74
+low = 7.52
+volume = 18020000.0
+variation = 0.0104
+
+[[records]]
+date = "17.08.2020"
+closing = 7.75
+opening = 7.67
+high = 7.97
+low = 7.67
+volume = 27030000.0
+variation = 0.008
+
+[[records]]
+date = "18.08.2020"
+closing = 8.28
+opening = 7.93
+high = 8.38
+low = 7.89
+volume = 42550000.0
+variation = 0.0678
+
+[[records]]
+date = "19.08.2020"
+closing = 8.45
+opening = 8.3
+high = 8.77
+low = 8.22
+volume = 37510000.0
+variation = 0.0212
+
+[[records]]
+date = "20.08.2020"
+closing = 8.54
+opening = 8.28
+high = 8.69
+low = 8.25
+volume = 23410000.0
+variation = 0.0104
+
+[[records]]
+date = "21.08.2020"
+closing = 8.38
+opening = 8.54
+high = 8.58
+low = 8.3
+volume = 18050000.0
+variation = -0.0185
+
+[[records]]
+date = "24.08.2020"
+closing = 8.49
+opening = 8.5
+high = 8.63
+low = 8.42
+volume = 9490000.0
+variation = 0.0125
+
+[[records]]
+date = "25.08.2020"
+closing = 8.66
+opening = 8.43
+high = 8.66
+low = 8.26
+volume = 17910000.0
+variation = 0.0196
+
+[[records]]
+date = "26.08.2020"
+closing = 8.53
+opening = 8.66
+high = 8.84
+low = 8.41
+volume = 20020000.0
+variation = -0.014199999
+
+[[records]]
+date = "27.08.2020"
+closing = 8.55
+opening = 8.56
+high = 8.69
+low = 8.5
+volume = 10580000.0
+variation = 0.0021
+
+[[records]]
+date = "28.08.2020"
+closing = 8.8
+opening = 8.62
+high = 8.87
+low = 8.48
+volume = 18690000.0
+variation = 0.0297
+
+[[records]]
+date = "31.08.2020"
+closing = 8.89
+opening = 8.7
+high = 8.93
+low = 8.65
+volume = 22160000.0
+variation = 0.01
+
+[[records]]
+date = "01.09.2020"
+closing = 9.34
+opening = 8.94
+high = 9.42
+low = 8.88
+volume = 23350000.0
+variation = 0.0502
+
+[[records]]
+date = "02.09.2020"
+closing = 9.37
+opening = 9.57
+high = 10.02
+low = 9.3
+volume = 48560000.0
+variation = 0.0038
+
+[[records]]
+date = "03.09.2020"
+closing = 9.1
+opening = 9.34
+high = 9.51
+low = 9.07
+volume = 20580000.0
+variation = -0.029000001
+
+[[records]]
+date = "04.09.2020"
+closing = 9.33
+opening = 9.17
+high = 9.39
+low = 8.93
+volume = 17850000.0
+variation = 0.025
+
+[[records]]
+date = "08.09.2020"
+closing = 9.23
+opening = 9.19
+high = 9.37
+low = 9.01
+volume = 12000000.0
+variation = -0.010299999
+
+[[records]]
+date = "09.09.2020"
+closing = 9.82
+opening = 9.3
+high = 9.85
+low = 9.3
+volume = 31040000.0
+variation = 0.0636
+
+[[records]]
+date = "10.09.2020"
+closing = 9.45
+opening = 9.84
+high = 9.88
+low = 9.45
+volume = 15660000.0
+variation = -0.0375
+
+[[records]]
+date = "11.09.2020"
+closing = 9.3
+opening = 9.54
+high = 9.79
+low = 9.3
+volume = 22970000.0
+variation = -0.015800001
+
+[[records]]
+date = "14.09.2020"
+closing = 9.51
+opening = 9.45
+high = 9.57
+low = 9.31
+volume = 11700000.0
+variation = 0.0217
+
+[[records]]
+date = "15.09.2020"
+closing = 9.84
+opening = 9.62
+high = 9.91
+low = 9.43
+volume = 18650000.0
+variation = 0.035
+
+[[records]]
+date = "16.09.2020"
+closing = 9.53
+opening = 9.81
+high = 9.86
+low = 9.44
+volume = 18470000.0
+variation = -0.0312
+
+[[records]]
+date = "17.09.2020"
+closing = 10.02
+opening = 9.41
+high = 10.13
+low = 9.38
+volume = 36660000.0
+variation = 0.0515
+
+[[records]]
+date = "18.09.2020"
+closing = 9.6
+opening = 9.98
+high = 10.2
+low = 9.51
+volume = 37240000.0
+variation = -0.042
+
+[[records]]
+date = "21.09.2020"
+closing = 9.55
+opening = 9.44
+high = 9.72
+low = 9.27
+volume = 21640000.0
+variation = -0.0055
+
+[[records]]
+date = "22.09.2020"
+closing = 9.43
+opening = 9.64
+high = 9.69
+low = 9.39
+volume = 18910000.0
+variation = -0.0128
+
+[[records]]
+date = "23.09.2020"
+closing = 9.21
+opening = 9.46
+high = 9.5
+low = 9.19
+volume = 19980000.0
+variation = -0.0232
+
+[[records]]
+date = "24.09.2020"
+closing = 9.11
+opening = 9.27
+high = 9.27
+low = 9.05
+volume = 20400000.0
+variation = -0.0105
+
+[[records]]
+date = "25.09.2020"
+closing = 9.0
+opening = 9.01
+high = 9.19
+low = 8.91
+volume = 20000000.0
+variation = -0.0125
+
+[[records]]
+date = "28.09.2020"
+closing = 8.88
+opening = 9.08
+high = 9.26
+low = 8.87
+volume = 18320000.0
+variation = -0.0127
+
+[[records]]
+date = "29.09.2020"
+closing = 8.63
+opening = 8.85
+high = 9.01
+low = 8.57
+volume = 17080000.0
+variation = -0.0286
+
+[[records]]
+date = "30.09.2020"
+closing = 8.79
+opening = 8.78
+high = 9.16
+low = 8.66
+volume = 25900000.0
+variation = 0.0183
+
+[[records]]
+date = "01.10.2020"
+closing = 8.82
+opening = 8.8
+high = 8.98
+low = 8.63
+volume = 14140000.0
+variation = 0.004
+
+[[records]]
+date = "02.10.2020"
+closing = 8.78
+opening = 8.73
+high = 8.93
+low = 8.6
+volume = 12720000.0
+variation = -0.005
+
+[[records]]
+date = "05.10.2020"
+closing = 9.26
+opening = 8.87
+high = 9.32
+low = 8.82
+volume = 18550000.0
+variation = 0.054899998
+
+[[records]]
+date = "06.10.2020"
+closing = 9.04
+opening = 9.39
+high = 9.46
+low = 9.0
+volume = 18250000.0
+variation = -0.023699999
+
+[[records]]
+date = "07.10.2020"
+closing = 9.28
+opening = 9.1
+high = 9.45
+low = 9.08
+volume = 16420000.0
+variation = 0.026199998
+
+[[records]]
+date = "08.10.2020"
+closing = 9.04
+opening = 9.31
+high = 9.4
+low = 8.94
+volume = 22470000.0
+variation = -0.0255
+
+[[records]]
+date = "09.10.2020"
+closing = 8.87
+opening = 9.1
+high = 9.16
+low = 8.76
+volume = 19130000.0
+variation = -0.0194
+
+[[records]]
+date = "13.10.2020"
+closing = 8.89
+opening = 8.88
+high = 8.98
+low = 8.76
+volume = 14500000.0
+variation = 0.003
+
+[[records]]
+date = "14.10.2020"
+closing = 8.96
+opening = 8.91
+high = 8.97
+low = 8.83
+volume = 10820000.0
+variation = 0.007900001
+
+[[records]]
+date = "15.10.2020"
+closing = 9.51
+opening = 8.79
+high = 9.51
+low = 8.77
+volume = 22410000.0
+variation = 0.060599998
+
+[[records]]
+date = "16.10.2020"
+closing = 9.92
+opening = 9.61
+high = 10.04
+low = 9.59
+volume = 37230000.0
+variation = 0.0433
+
+[[records]]
+date = "19.10.2020"
+closing = 9.84
+opening = 9.99
+high = 10.19
+low = 9.71
+volume = 21430000.0
+variation = -0.008
+
+[[records]]
+date = "20.10.2020"
+closing = 10.09
+opening = 9.91
+high = 10.16
+low = 9.77
+volume = 17940000.0
+variation = 0.025799999
+
+[[records]]
+date = "21.10.2020"
+closing = 10.29
+opening = 10.07
+high = 10.4
+low = 10.04
+volume = 17200000.0
+variation = 0.0191
+
+[[records]]
+date = "22.10.2020"
+closing = 10.28
+opening = 10.29
+high = 10.39
+low = 10.19
+volume = 11240000.0
+variation = -0.00090000004
+
+[[records]]
+date = "23.10.2020"
+closing = 10.26
+opening = 10.26
+high = 10.41
+low = 10.12
+volume = 8710000.0
+variation = -0.0017
+
+[[records]]
+date = "26.10.2020"
+closing = 10.19
+opening = 10.22
+high = 10.29
+low = 10.06
+volume = 8260000.0
+variation = -0.0068
+
+[[records]]
+date = "27.10.2020"
+closing = 10.29
+opening = 10.22
+high = 10.67
+low = 10.2
+volume = 21160000.0
+variation = 0.010299999
+
+[[records]]
+date = "28.10.2020"
+closing = 9.5
+opening = 10.07
+high = 10.1
+low = 9.41
+volume = 26620000.0
+variation = -0.0774
+
+[[records]]
+date = "29.10.2020"
+closing = 9.85
+opening = 9.65
+high = 10.01
+low = 9.37
+volume = 24700000.0
+variation = 0.0369
+
+[[records]]
+date = "30.10.2020"
+closing = 9.55
+opening = 9.81
+high = 9.9
+low = 9.4
+volume = 18570000.0
+variation = -0.030199999
+
+[[records]]
+date = "03.11.2020"
+closing = 10.15
+opening = 9.76
+high = 10.27
+low = 9.64
+volume = 19380000.0
+variation = 0.0624
+
+[[records]]
+date = "04.11.2020"
+closing = 9.79
+opening = 10.18
+high = 10.32
+low = 9.65
+volume = 14390000.0
+variation = -0.0345
+
+[[records]]
+date = "05.11.2020"
+closing = 9.97
+opening = 9.9
+high = 10.01
+low = 9.53
+volume = 18310000.0
+variation = 0.0179
+
+[[records]]
+date = "06.11.2020"
+closing = 10.06
+opening = 9.93
+high = 10.17
+low = 9.86
+volume = 14780000.0
+variation = 0.0088
+
+[[records]]
+date = "09.11.2020"
+closing = 9.97
+opening = 10.31
+high = 10.37
+low = 9.69
+volume = 21780000.0
+variation = -0.0087
+
+[[records]]
+date = "10.11.2020"
+closing = 9.58
+opening = 10.0
+high = 10.06
+low = 9.51
+volume = 21520000.0
+variation = -0.0387
+
+[[records]]
+date = "11.11.2020"
+closing = 9.47
+opening = 9.61
+high = 9.78
+low = 9.42
+volume = 14530000.0
+variation = -0.0119
+
+[[records]]
+date = "12.11.2020"
+closing = 9.46
+opening = 9.47
+high = 9.65
+low = 9.33
+volume = 12300000.0
+variation = -0.00090000004
+
+[[records]]
+date = "13.11.2020"
+closing = 9.57
+opening = 9.47
+high = 9.72
+low = 9.46
+volume = 14950000.0
+variation = 0.0111
+
+[[records]]
+date = "16.11.2020"
+closing = 9.72
+opening = 9.68
+high = 9.77
+low = 9.56
+volume = 11040000.0
+variation = 0.0165
+
+[[records]]
+date = "17.11.2020"
+closing = 9.88
+opening = 9.69
+high = 10.09
+low = 9.67
+volume = 15040000.0
+variation = 0.0162
+
+[[records]]
+date = "18.11.2020"
+closing = 9.82
+opening = 9.92
+high = 10.03
+low = 9.79
+volume = 9020000.0
+variation = -0.0062
+
+[[records]]
+date = "19.11.2020"
+closing = 9.96
+opening = 9.82
+high = 9.98
+low = 9.71
+volume = 8820000.0
+variation = 0.0143
+
+[[records]]
+date = "20.11.2020"
+closing = 9.85
+opening = 10.01
+high = 10.03
+low = 9.84
+volume = 6050000.0
+variation = -0.0114
+
+[[records]]
+date = "23.11.2020"
+closing = 10.3
+opening = 9.9
+high = 10.44
+low = 9.9
+volume = 17210000.0
+variation = 0.0463
+
+[[records]]
+date = "24.11.2020"
+closing = 10.93
+opening = 10.36
+high = 11.06
+low = 10.15
+volume = 22120000.0
+variation = 0.0612
+
+[[records]]
+date = "25.11.2020"
+closing = 11.7
+opening = 10.92
+high = 11.78
+low = 10.78
+volume = 24850000.0
+variation = 0.0705
+
+[[records]]
+date = "26.11.2020"
+closing = 12.18
+opening = 11.63
+high = 12.27
+low = 11.62
+volume = 21110000.0
+variation = 0.0404
+
+[[records]]
+date = "27.11.2020"
+closing = 12.05
+opening = 12.27
+high = 12.47
+low = 11.91
+volume = 19040000.0
+variation = -0.0101
+
+[[records]]
+date = "30.11.2020"
+closing = 11.96
+opening = 11.99
+high = 12.47
+low = 11.93
+volume = 14610000.0
+variation = -0.008
+
+[[records]]
+date = "01.12.2020"
+closing = 12.18
+opening = 12.08
+high = 12.6
+low = 12.0
+volume = 22330000.0
+variation = 0.0183
+
+[[records]]
+date = "02.12.2020"
+closing = 12.11
+opening = 12.17
+high = 12.47
+low = 12.03
+volume = 16940000.0
+variation = -0.0058
+
+[[records]]
+date = "03.12.2020"
+closing = 11.49
+opening = 12.25
+high = 12.27
+low = 11.49
+volume = 19480000.0
+variation = -0.0514
+
+[[records]]
+date = "04.12.2020"
+closing = 12.28
+opening = 11.63
+high = 12.38
+low = 11.63
+volume = 24370000.0
+variation = 0.0694
+
+[[records]]
+date = "07.12.2020"
+closing = 12.67
+opening = 12.28
+high = 12.79
+low = 12.06
+volume = 17810000.0
+variation = 0.031400003
+
+[[records]]
+date = "08.12.2020"
+closing = 12.13
+opening = 12.64
+high = 12.83
+low = 12.05
+volume = 18200000.0
+variation = -0.0429
+
+[[records]]
+date = "09.12.2020"
+closing = 11.62
+opening = 12.2
+high = 12.25
+low = 11.49
+volume = 21230000.0
+variation = -0.0419
+
+[[records]]
+date = "10.12.2020"
+closing = 11.98
+opening = 11.77
+high = 12.11
+low = 11.62
+volume = 20350000.0
+variation = 0.0309
+
+[[records]]
+date = "11.12.2020"
+closing = 11.97
+opening = 11.83
+high = 12.07
+low = 11.74
+volume = 9090000.0
+variation = -0.0007
+
+[[records]]
+date = "14.12.2020"
+closing = 11.65
+opening = 11.98
+high = 11.98
+low = 11.57
+volume = 11000000.0
+variation = -0.026400002
+
+[[records]]
+date = "15.12.2020"
+closing = 12.11
+opening = 11.79
+high = 12.48
+low = 11.77
+volume = 21640000.0
+variation = 0.039100002
+
+[[records]]
+date = "16.12.2020"
+closing = 12.11
+opening = 12.18
+high = 12.32
+low = 11.87
+volume = 13200000.0
+variation = 0.0
+
+[[records]]
+date = "17.12.2020"
+closing = 12.01
+opening = 12.27
+high = 12.74
+low = 11.94
+volume = 28890000.0
+variation = -0.008
+
+[[records]]
+date = "18.12.2020"
+closing = 12.61
+opening = 12.2
+high = 12.85
+low = 12.19
+volume = 42370000.0
+variation = 0.0496
+
+[[records]]
+date = "21.12.2020"
+closing = 12.48
+opening = 12.32
+high = 12.72
+low = 11.79
+volume = 27240000.0
+variation = -0.0104
+
+[[records]]
+date = "22.12.2020"
+closing = 12.24
+opening = 12.56
+high = 12.65
+low = 12.13
+volume = 13070000.0
+variation = -0.019
+
+[[records]]
+date = "23.12.2020"
+closing = 12.81
+opening = 12.2
+high = 12.96
+low = 12.15
+volume = 21400000.0
+variation = 0.0465
+
+[[records]]
+date = "28.12.2020"
+closing = 12.67
+opening = 12.9
+high = 13.04
+low = 12.5
+volume = 13270000.0
+variation = -0.0109
+
+[[records]]
+date = "29.12.2020"
+closing = 13.21
+opening = 12.75
+high = 13.32
+low = 12.63
+volume = 18000000.0
+variation = 0.0429
+
+[[records]]
+date = "30.12.2020"
+closing = 12.8
+opening = 13.24
+high = 13.27
+low = 12.69
+volume = 19630000.0
+variation = -0.0312
+
+[[records]]
+date = "04.01.2021"
+closing = 13.09
+opening = 13.06
+high = 13.53
+low = 13.04
+volume = 20690000.0
+variation = 0.0226
+
+[[records]]
+date = "05.01.2021"
+closing = 13.23
+opening = 13.11
+high = 13.34
+low = 12.76
+volume = 18300000.0
+variation = 0.0107
+
+[[records]]
+date = "06.01.2021"
+closing = 13.77
+opening = 13.33
+high = 14.15
+low = 13.23
+volume = 23590000.0
+variation = 0.041100003
+
+[[records]]
+date = "07.01.2021"
+closing = 14.53
+opening = 13.94
+high = 14.53
+low = 13.94
+volume = 22300000.0
+variation = 0.0553
+
+[[records]]
+date = "08.01.2021"
+closing = 14.46
+opening = 14.7
+high = 14.96
+low = 14.1
+volume = 23240000.0
+variation = -0.0047999998
+
+[[records]]
+date = "11.01.2021"
+closing = 14.64
+opening = 14.29
+high = 15.17
+low = 14.1
+volume = 38580000.0
+variation = 0.0121
+
+[[records]]
+date = "12.01.2021"
+closing = 14.44
+opening = 14.81
+high = 14.98
+low = 14.25
+volume = 21970000.0
+variation = -0.0138
+
+[[records]]
+date = "13.01.2021"
+closing = 13.56
+opening = 14.4
+high = 14.4
+low = 13.5
+volume = 31890000.0
+variation = -0.060700003
+
+[[records]]
+date = "14.01.2021"
+closing = 13.81
+opening = 13.7
+high = 13.9
+low = 13.52
+volume = 20880000.0
+variation = 0.018099999
+
+[[records]]
+date = "15.01.2021"
+closing = 13.16
+opening = 13.61
+high = 13.73
+low = 12.97
+volume = 17730000.0
+variation = -0.047
+
+[[records]]
+date = "18.01.2021"
+closing = 13.19
+opening = 13.32
+high = 13.44
+low = 13.14
+volume = 11840000.0
+variation = 0.0027
+
+[[records]]
+date = "19.01.2021"
+closing = 12.57
+opening = 13.27
+high = 13.3
+low = 12.41
+volume = 22480000.0
+variation = -0.0471
+
+[[records]]
+date = "20.01.2021"
+closing = 12.36
+opening = 12.64
+high = 12.75
+low = 12.13
+volume = 17680000.0
+variation = -0.0167
+
+[[records]]
+date = "21.01.2021"
+closing = 12.41
+opening = 12.4
+high = 12.81
+low = 12.22
+volume = 16670000.0
+variation = 0.0034999999
+
+[[records]]
+date = "22.01.2021"
+closing = 12.41
+opening = 12.15
+high = 12.48
+low = 11.94
+volume = 10840000.0
+variation = 0.0
+
+[[records]]
+date = "26.01.2021"
+closing = 11.84
+opening = 12.41
+high = 12.51
+low = 11.77
+volume = 14920000.0
+variation = -0.0452
+
+[[records]]
+date = "27.01.2021"
+closing = 11.53
+opening = 11.68
+high = 11.84
+low = 11.22
+volume = 27750000.0
+variation = -0.026600001
+
+[[records]]
+date = "28.01.2021"
+closing = 12.19
+opening = 11.31
+high = 12.24
+low = 11.31
+volume = 18340000.0
+variation = 0.056999996
+
+[[records]]
+date = "29.01.2021"
+closing = 11.56
+opening = 12.02
+high = 12.12
+low = 11.52
+volume = 14030000.0
+variation = -0.051
+
+[[records]]
+date = "01.02.2021"
+closing = 11.7
+opening = 11.78
+high = 11.91
+low = 11.55
+volume = 13290000.0
+variation = 0.0114
+
+[[records]]
+date = "02.02.2021"
+closing = 11.45
+opening = 11.76
+high = 11.83
+low = 11.35
+volume = 20400000.0
+variation = -0.021
+
+[[records]]
+date = "03.02.2021"
+closing = 11.41
+opening = 11.56
+high = 11.63
+low = 11.39
+volume = 20430000.0
+variation = -0.0038
+
+[[records]]
+date = "04.02.2021"
+closing = 11.52
+opening = 11.47
+high = 11.99
+low = 11.47
+volume = 20660000.0
+variation = 0.01
+
+[[records]]
+date = "05.02.2021"
+closing = 12.03
+opening = 11.63
+high = 12.22
+low = 11.49
+volume = 21750000.0
+variation = 0.044099998
+
+[[records]]
+date = "08.02.2021"
+closing = 12.16
+opening = 12.26
+high = 12.56
+low = 12.05
+volume = 23630000.0
+variation = 0.0109
+
+[[records]]
+date = "09.02.2021"
+closing = 12.32
+opening = 12.22
+high = 12.35
+low = 12.02
+volume = 14590000.0
+variation = 0.012999999
+
+[[records]]
+date = "10.02.2021"
+closing = 12.1
+opening = 12.35
+high = 12.46
+low = 11.87
+volume = 20850000.0
+variation = -0.0178
+
+[[records]]
+date = "11.02.2021"
+closing = 12.39
+opening = 12.22
+high = 12.43
+low = 12.13
+volume = 18140000.0
+variation = 0.0239
+
+[[records]]
+date = "12.02.2021"
+closing = 12.43
+opening = 12.83
+high = 13.01
+low = 12.38
+volume = 38200000.0
+variation = 0.0034999999
+
+[[records]]
+date = "17.02.2021"
+closing = 13.15
+opening = 12.56
+high = 13.21
+low = 12.56
+volume = 25530000.0
+variation = 0.057800002
+
+[[records]]
+date = "18.02.2021"
+closing = 12.99
+opening = 13.31
+high = 13.52
+low = 12.92
+volume = 24490000.0
+variation = -0.012
+
+[[records]]
+date = "19.02.2021"
+closing = 13.11
+opening = 12.91
+high = 13.16
+low = 12.76
+volume = 14980000.0
+variation = 0.0094
+
+[[records]]
+date = "22.02.2021"
+closing = 13.13
+opening = 12.62
+high = 13.58
+low = 12.48
+volume = 25730000.0
+variation = 0.0013
+
+[[records]]
+date = "23.02.2021"
+closing = 13.79
+opening = 13.33
+high = 13.82
+low = 13.11
+volume = 36510000.0
+variation = 0.05
+
+[[records]]
+date = "24.02.2021"
+closing = 15.1
+opening = 13.85
+high = 15.15
+low = 13.85
+volume = 50110000.0
+variation = 0.0953
+
+[[records]]
+date = "25.02.2021"
+closing = 14.38
+opening = 15.1
+high = 15.42
+low = 14.25
+volume = 25030000.0
+variation = -0.0481
+
+[[records]]
+date = "26.02.2021"
+closing = 14.23
+opening = 14.41
+high = 14.81
+low = 13.98
+volume = 19890000.0
+variation = -0.0104
+
+[[records]]
+date = "01.03.2021"
+closing = 14.76
+opening = 14.45
+high = 15.09
+low = 14.23
+volume = 21800000.0
+variation = 0.0376
+
+[[records]]
+date = "02.03.2021"
+closing = 15.09
+opening = 14.55
+high = 15.26
+low = 14.32
+volume = 20230000.0
+variation = 0.0226
+
+[[records]]
+date = "03.03.2021"
+closing = 15.17
+opening = 15.16
+high = 15.62
+low = 14.69
+volume = 27770000.0
+variation = 0.0052
+
+[[records]]
+date = "04.03.2021"
+closing = 14.73
+opening = 15.16
+high = 15.41
+low = 14.53
+volume = 25980000.0
+variation = -0.0294
+
+[[records]]
+date = "05.03.2021"
+closing = 15.59
+opening = 14.72
+high = 15.72
+low = 14.57
+volume = 22990000.0
+variation = 0.0583
+
+[[records]]
+date = "08.03.2021"
+closing = 14.88
+opening = 15.33
+high = 15.81
+low = 14.8
+volume = 19550000.0
+variation = -0.045
+
+[[records]]
+date = "09.03.2021"
+closing = 14.97
+opening = 14.63
+high = 15.11
+low = 14.32
+volume = 19040000.0
+variation = 0.0058999998
+
+[[records]]
+date = "10.03.2021"
+closing = 14.49
+opening = 14.94
+high = 15.07
+low = 14.26
+volume = 19440000.0
+variation = -0.0322
+
+[[records]]
+date = "11.03.2021"
+closing = 15.14
+opening = 14.74
+high = 15.39
+low = 14.68
+volume = 21810000.0
+variation = 0.044699997
+
+[[records]]
+date = "12.03.2021"
+closing = 14.79
+opening = 15.07
+high = 15.61
+low = 14.77
+volume = 23150000.0
+variation = -0.0231
+
+[[records]]
+date = "15.03.2021"
+closing = 14.96
+opening = 14.8
+high = 15.08
+low = 14.65
+volume = 14240000.0
+variation = 0.0117999995
+
+[[records]]
+date = "16.03.2021"
+closing = 16.24
+opening = 15.17
+high = 16.51
+low = 15.15
+volume = 52460000.0
+variation = 0.0855
+
+[[records]]
+date = "17.03.2021"
+closing = 16.09
+opening = 16.26
+high = 16.41
+low = 15.94
+volume = 19850000.0
+variation = -0.0092
+
+[[records]]
+date = "18.03.2021"
+closing = 15.73
+opening = 16.09
+high = 16.56
+low = 15.57
+volume = 18550000.0
+variation = -0.0223
+
+[[records]]
+date = "19.03.2021"
+closing = 15.58
+opening = 15.77
+high = 15.93
+low = 15.43
+volume = 17980000.0
+variation = -0.01
+
+[[records]]
+date = "22.03.2021"
+closing = 15.09
+opening = 15.31
+high = 15.46
+low = 14.9
+volume = 15050000.0
+variation = -0.0309
+
+[[records]]
+date = "23.03.2021"
+closing = 14.59
+opening = 15.29
+high = 15.62
+low = 14.51
+volume = 24620000.0
+variation = -0.0337
+
+[[records]]
+date = "24.03.2021"
+closing = 14.39
+opening = 14.82
+high = 15.05
+low = 14.32
+volume = 20220000.0
+variation = -0.0138
+
+[[records]]
+date = "25.03.2021"
+closing = 14.33
+opening = 14.41
+high = 14.5
+low = 13.89
+volume = 18810000.0
+variation = -0.0037
+
+[[records]]
+date = "26.03.2021"
+closing = 14.53
+opening = 14.54
+high = 14.86
+low = 14.22
+volume = 18170000.0
+variation = 0.0134000005
+
+[[records]]
+date = "29.03.2021"
+closing = 14.6
+opening = 14.6
+high = 14.93
+low = 14.42
+volume = 18110000.0
+variation = 0.0054
+
+[[records]]
+date = "30.03.2021"
+closing = 14.78
+opening = 14.53
+high = 14.84
+low = 14.32
+volume = 15370000.0
+variation = 0.012
+
+[[records]]
+date = "31.03.2021"
+closing = 14.98
+opening = 14.78
+high = 15.09
+low = 14.66
+volume = 18170000.0
+variation = 0.0136
+
+[[records]]
+date = "01.04.2021"
+closing = 14.55
+opening = 15.12
+high = 15.24
+low = 14.51
+volume = 14920000.0
+variation = -0.0287
+
+[[records]]
+date = "05.04.2021"
+closing = 14.95
+opening = 14.75
+high = 15.11
+low = 14.65
+volume = 14210000.0
+variation = 0.0271
+
+[[records]]
+date = "06.04.2021"
+closing = 15.46
+opening = 15.02
+high = 15.63
+low = 15.01
+volume = 20240000.0
+variation = 0.0346
+
+[[records]]
+date = "07.04.2021"
+closing = 15.68
+opening = 15.56
+high = 15.77
+low = 15.36
+volume = 13810000.0
+variation = 0.014199999
+
+[[records]]
+date = "08.04.2021"
+closing = 16.27
+opening = 15.8
+high = 16.3
+low = 15.8
+volume = 21380000.0
+variation = 0.0374
+
+[[records]]
+date = "09.04.2021"
+closing = 16.82
+opening = 16.05
+high = 17.09
+low = 15.99
+volume = 26970000.0
+variation = 0.0339
+
+[[records]]
+date = "12.04.2021"
+closing = 17.0
+opening = 17.07
+high = 17.26
+low = 16.74
+volume = 17500000.0
+variation = 0.0109
+
+[[records]]
+date = "13.04.2021"
+closing = 17.5
+opening = 17.09
+high = 17.69
+low = 16.82
+volume = 18640000.0
+variation = 0.028900001
+
+[[records]]
+date = "14.04.2021"
+closing = 18.23
+opening = 17.59
+high = 18.43
+low = 17.55
+volume = 22930000.0
+variation = 0.0421
+
+[[records]]
+date = "15.04.2021"
+closing = 18.4
+opening = 18.65
+high = 19.12
+low = 18.1
+volume = 22350000.0
+variation = 0.0091
+
+[[records]]
+date = "16.04.2021"
+closing = 18.9
+opening = 18.49
+high = 18.94
+low = 18.27
+volume = 13900000.0
+variation = 0.0271
+
+[[records]]
+date = "19.04.2021"
+closing = 18.77
+opening = 19.05
+high = 19.17
+low = 18.61
+volume = 16639999.0
+variation = -0.0064999997
+
+[[records]]
+date = "20.04.2021"
+closing = 18.47
+opening = 18.95
+high = 19.22
+low = 18.18
+volume = 15900000.0
+variation = -0.0163
+
+[[records]]
+date = "22.04.2021"
+closing = 19.46
+opening = 18.77
+high = 19.79
+low = 18.69
+volume = 31300000.0
+variation = 0.053600002
+
+[[records]]
+date = "23.04.2021"
+closing = 19.41
+opening = 19.98
+high = 20.26
+low = 18.98
+volume = 33630000.0
+variation = -0.0027
+
+[[records]]
+date = "26.04.2021"
+closing = 20.1
+opening = 19.71
+high = 20.23
+low = 19.24
+volume = 25410000.0
+variation = 0.0357
+
+[[records]]
+date = "27.04.2021"
+closing = 20.23
+opening = 20.12
+high = 20.62
+low = 19.7
+volume = 24320000.0
+variation = 0.0064999997
+
+[[records]]
+date = "28.04.2021"
+closing = 20.08
+opening = 20.28
+high = 20.65
+low = 19.9
+volume = 18680000.0
+variation = -0.0074
+
+[[records]]
+date = "29.04.2021"
+closing = 20.08
+opening = 20.15
+high = 20.33
+low = 19.35
+volume = 19650000.0
+variation = 0.0
+
+[[records]]
+date = "30.04.2021"
+closing = 19.78
+opening = 19.63
+high = 20.17
+low = 19.52
+volume = 21450000.0
+variation = -0.0148
+
+[[records]]
+date = "03.05.2021"
+closing = 19.15
+opening = 19.84
+high = 19.85
+low = 18.79
+volume = 17810000.0
+variation = -0.0321
+
+[[records]]
+date = "04.05.2021"
+closing = 19.31
+opening = 19.04
+high = 19.45
+low = 18.9
+volume = 12500000.0
+variation = 0.0087
+
+[[records]]
+date = "05.05.2021"
+closing = 20.18
+opening = 19.54
+high = 20.68
+low = 19.54
+volume = 34470000.0
+variation = 0.044699997
+
+[[records]]
+date = "06.05.2021"
+closing = 20.77
+opening = 20.33
+high = 20.99
+low = 20.06
+volume = 18900000.0
+variation = 0.0293
+
+[[records]]
+date = "07.05.2021"
+closing = 20.39
+opening = 20.37
+high = 20.54
+low = 19.99
+volume = 84120000.0
+variation = -0.0182
+
+[[records]]
+date = "10.05.2021"
+closing = 20.6
+opening = 20.95
+high = 21.46
+low = 20.47
+volume = 26930000.0
+variation = 0.0104
+
+[[records]]
+date = "11.05.2021"
+closing = 20.77
+opening = 20.27
+high = 20.85
+low = 20.1
+volume = 19390000.0
+variation = 0.0081
+
+[[records]]
+date = "12.05.2021"
+closing = 19.7
+opening = 20.42
+high = 20.61
+low = 19.52
+volume = 25700000.0
+variation = -0.0513
+
+[[records]]
+date = "13.05.2021"
+closing = 18.82
+opening = 19.29
+high = 19.73
+low = 18.72
+volume = 24640000.0
+variation = -0.044699997
+
+[[records]]
+date = "14.05.2021"
+closing = 17.89
+opening = 18.65
+high = 18.74
+low = 17.83
+volume = 28850000.0
+variation = -0.0496
+
+[[records]]
+date = "17.05.2021"
+closing = 18.17
+opening = 18.15
+high = 18.57
+low = 17.91
+volume = 21520000.0
+variation = 0.015800001
+
+[[records]]
+date = "18.05.2021"
+closing = 18.31
+opening = 18.45
+high = 18.5
+low = 18.06
+volume = 16190001.0
+variation = 0.0078
+
+[[records]]
+date = "19.05.2021"
+closing = 18.1
+opening = 17.91
+high = 18.18
+low = 17.65
+volume = 17740000.0
+variation = -0.0115
+
+[[records]]
+date = "20.05.2021"
+closing = 17.87
+opening = 18.06
+high = 18.26
+low = 17.74
+volume = 11020000.0
+variation = -0.0127
+
+[[records]]
+date = "21.05.2021"
+closing = 17.52
+opening = 17.78
+high = 17.93
+low = 17.37
+volume = 13160000.0
+variation = -0.0197
+
+[[records]]
+date = "24.05.2021"
+closing = 17.68
+opening = 17.31
+high = 17.71
+low = 16.98
+volume = 14030000.0
+variation = 0.0091
+
+[[records]]
+date = "25.05.2021"
+closing = 17.13
+opening = 17.76
+high = 17.9
+low = 17.01
+volume = 16209999.0
+variation = -0.0309
+
+[[records]]
+date = "26.05.2021"
+closing = 17.33
+opening = 16.85
+high = 17.33
+low = 16.77
+volume = 16350000.0
+variation = 0.0116
+
+[[records]]
+date = "27.05.2021"
+closing = 17.27
+opening = 17.6
+high = 17.75
+low = 17.27
+volume = 25570000.0
+variation = -0.0036000002
+
+[[records]]
+date = "28.05.2021"
+closing = 17.28
+opening = 17.52
+high = 17.67
+low = 17.04
+volume = 19740000.0
+variation = 0.0005
+
+[[records]]
+date = "31.05.2021"
+closing = 17.5
+opening = 17.57
+high = 18.09
+low = 17.46
+volume = 20650000.0
+variation = 0.013300001
+
+[[records]]
+date = "01.06.2021"
+closing = 17.76
+opening = 17.9
+high = 18.09
+low = 17.58
+volume = 22280000.0
+variation = 0.0146
+
+[[records]]
+date = "02.06.2021"
+closing = 17.27
+opening = 17.88
+high = 17.88
+low = 17.11
+volume = 25170000.0
+variation = -0.0278
+
+[[records]]
+date = "04.06.2021"
+closing = 16.79
+opening = 17.22
+high = 17.23
+low = 16.67
+volume = 22800000.0
+variation = -0.0276
+
+[[records]]
+date = "07.06.2021"
+closing = 16.59
+opening = 16.67
+high = 16.73
+low = 16.32
+volume = 19630000.0
+variation = -0.0121
+
+[[records]]
+date = "08.06.2021"
+closing = 16.2
+opening = 16.64
+high = 16.78
+low = 16.14
+volume = 14000000.0
+variation = -0.0234
+
+[[records]]
+date = "09.06.2021"
+closing = 16.61
+opening = 16.3
+high = 16.9
+low = 16.01
+volume = 18410000.0
+variation = 0.0256
+
+[[records]]
+date = "10.06.2021"
+closing = 16.58
+opening = 16.74
+high = 16.76
+low = 16.26
+volume = 15310000.0
+variation = -0.0021
+
+[[records]]
+date = "11.06.2021"
+closing = 16.68
+opening = 16.67
+high = 16.83
+low = 16.58
+volume = 13670000.0
+variation = 0.0058
+
+[[records]]
+date = "14.06.2021"
+closing = 16.48
+opening = 16.88
+high = 16.97
+low = 16.41
+volume = 10820000.0
+variation = -0.0116
+
+[[records]]
+date = "15.06.2021"
+closing = 16.4
+opening = 16.58
+high = 16.61
+low = 16.19
+volume = 11390000.0
+variation = -0.0047999998
+
+[[records]]
+date = "16.06.2021"
+closing = 15.98
+opening = 16.27
+high = 16.31
+low = 15.85
+volume = 23450000.0
+variation = -0.025799999
+
+[[records]]
+date = "17.06.2021"
+closing = 15.61
+opening = 15.78
+high = 16.01
+low = 15.44
+volume = 14490000.0
+variation = -0.0232
+
+[[records]]
+date = "18.06.2021"
+closing = 15.95
+opening = 15.56
+high = 16.0
+low = 15.54
+volume = 16980000.0
+variation = 0.022
+
+[[records]]
+date = "21.06.2021"
+closing = 16.01
+opening = 15.7
+high = 16.06
+low = 15.57
+volume = 11350000.0
+variation = 0.0033000002
+
+[[records]]
+date = "22.06.2021"
+closing = 16.07
+opening = 15.94
+high = 16.3
+low = 15.86
+volume = 11140000.0
+variation = 0.0039
+
+[[records]]
+date = "23.06.2021"
+closing = 16.41
+opening = 16.12
+high = 16.6
+low = 16.08
+volume = 14880000.0
+variation = 0.0214
+
+[[records]]
+date = "24.06.2021"
+closing = 16.83
+opening = 16.59
+high = 17.01
+low = 16.21
+volume = 20080000.0
+variation = 0.025799999
+
+[[records]]
+date = "25.06.2021"
+closing = 16.61
+opening = 16.95
+high = 17.05
+low = 16.52
+volume = 13570000.0
+variation = -0.0136
+
+[[records]]
+date = "28.06.2021"
+closing = 16.68
+opening = 16.69
+high = 16.99
+low = 16.37
+volume = 13280000.0
+variation = 0.0047999998
+
+[[records]]
+date = "29.06.2021"
+closing = 16.88
+opening = 16.57
+high = 17.25
+low = 16.53
+volume = 24060000.0
+variation = 0.0116
+
+[[records]]
+date = "30.06.2021"
+closing = 16.83
+opening = 16.83
+high = 17.04
+low = 16.6
+volume = 16280001.0
+variation = -0.0026
+
+[[records]]
+date = "01.07.2021"
+closing = 17.0
+opening = 17.19
+high = 17.79
+low = 16.87
+volume = 25420000.0
+variation = 0.0099
+
+[[records]]
+date = "02.07.2021"
+closing = 17.21
+opening = 17.1
+high = 17.36
+low = 16.97
+volume = 10870000.0
+variation = 0.0124
+
+[[records]]
+date = "05.07.2021"
+closing = 17.24
+opening = 17.36
+high = 17.58
+low = 17.23
+volume = 11000000.0
+variation = 0.0015
+
+[[records]]
+date = "06.07.2021"
+closing = 17.17
+opening = 17.19
+high = 17.35
+low = 16.83
+volume = 12660000.0
+variation = -0.0041
+
+[[records]]
+date = "07.07.2021"
+closing = 17.42
+opening = 17.33
+high = 17.69
+low = 17.2
+volume = 18050000.0
+variation = 0.0149
+
+[[records]]
+date = "08.07.2021"
+closing = 17.25
+opening = 17.05
+high = 17.41
+low = 16.69
+volume = 18020000.0
+variation = -0.0101
+
+[[records]]
+date = "12.07.2021"
+closing = 17.83
+opening = 17.5
+high = 17.84
+low = 17.43
+volume = 17630000.0
+variation = 0.0337
+
+[[records]]
+date = "13.07.2021"
+closing = 18.07
+opening = 17.83
+high = 18.17
+low = 17.74
+volume = 15140000.0
+variation = 0.013300001
+
+[[records]]
+date = "14.07.2021"
+closing = 17.44
+opening = 18.24
+high = 18.38
+low = 17.1
+volume = 32970002.0
+variation = -0.0346
+
+[[records]]
+date = "15.07.2021"
+closing = 17.42
+opening = 17.53
+high = 17.89
+low = 17.26
+volume = 18730000.0
+variation = -0.0015
+
+[[records]]
+date = "16.07.2021"
+closing = 17.04
+opening = 17.55
+high = 17.62
+low = 16.87
+volume = 18880000.0
+variation = -0.0218
+
+[[records]]
+date = "19.07.2021"
+closing = 16.83
+opening = 16.65
+high = 16.83
+low = 16.32
+volume = 14470000.0
+variation = -0.0119
+
+[[records]]
+date = "20.07.2021"
+closing = 16.92
+opening = 16.81
+high = 17.04
+low = 16.44
+volume = 14430000.0
+variation = 0.0052
+
+[[records]]
+date = "21.07.2021"
+closing = 17.35
+opening = 16.83
+high = 17.41
+low = 16.76
+volume = 14180000.0
+variation = 0.025
+
+[[records]]
+date = "22.07.2021"
+closing = 17.56
+opening = 17.26
+high = 17.67
+low = 17.2
+volume = 12170000.0
+variation = 0.012200001
+
+[[records]]
+date = "23.07.2021"
+closing = 17.8
+opening = 17.56
+high = 18.02
+low = 17.56
+volume = 17700000.0
+variation = 0.014099999
+
+[[records]]
+date = "26.07.2021"
+closing = 18.44
+opening = 17.92
+high = 18.61
+low = 17.92
+volume = 19020000.0
+variation = 0.0356
+
+[[records]]
+date = "27.07.2021"
+closing = 17.83
+opening = 18.34
+high = 18.36
+low = 17.72
+volume = 15960000.0
+variation = -0.033
+
+[[records]]
+date = "28.07.2021"
+closing = 17.8
+opening = 18.14
+high = 18.3
+low = 17.57
+volume = 18590000.0
+variation = -0.002
+
+[[records]]
+date = "29.07.2021"
+closing = 18.37
+opening = 17.87
+high = 18.49
+low = 17.75
+volume = 22060000.0
+variation = 0.0322
+
+[[records]]
+date = "30.07.2021"
+closing = 18.13
+opening = 18.08
+high = 18.66
+low = 17.99
+volume = 29450000.0
+variation = -0.012999999
+
+[[records]]
+date = "02.08.2021"
+closing = 18.01
+opening = 18.44
+high = 18.53
+low = 17.9
+volume = 15050000.0
+variation = -0.0068
+
+[[records]]
+date = "03.08.2021"
+closing = 18.02
+opening = 18.0
+high = 18.17
+low = 17.72
+volume = 10770000.0
+variation = 0.001
+
+[[records]]
+date = "04.08.2021"
+closing = 18.85
+opening = 17.95
+high = 18.95
+low = 17.95
+volume = 42240000.0
+variation = 0.046
+
+[[records]]
+date = "05.08.2021"
+closing = 18.53
+opening = 18.69
+high = 18.91
+low = 18.34
+volume = 27630000.0
+variation = -0.0173
+
+[[records]]
+date = "06.08.2021"
+closing = 19.03
+opening = 18.69
+high = 19.15
+low = 18.54
+volume = 12060000.0
+variation = 0.0271
+
+[[records]]
+date = "09.08.2021"
+closing = 18.97
+opening = 18.69
+high = 18.97
+low = 18.5
+volume = 18320000.0
+variation = -0.0032
+
+[[records]]
+date = "10.08.2021"
+closing = 19.48
+opening = 18.89
+high = 19.5
+low = 18.88
+volume = 15990000.0
+variation = 0.027
+
+[[records]]
+date = "11.08.2021"
+closing = 19.42
+opening = 19.57
+high = 19.77
+low = 19.39
+volume = 12420000.0
+variation = -0.0032
+
+[[records]]
+date = "12.08.2021"
+closing = 19.14
+opening = 19.36
+high = 19.57
+low = 19.14
+volume = 9940000.0
+variation = -0.014099999
+
+[[records]]
+date = "13.08.2021"
+closing = 18.64
+opening = 19.21
+high = 19.36
+low = 18.53
+volume = 10800000.0
+variation = -0.026199998
+
+[[records]]
+date = "16.08.2021"
+closing = 17.65
+opening = 18.39
+high = 18.39
+low = 17.63
+volume = 25380000.0
+variation = -0.053000003
+
+[[records]]
+date = "17.08.2021"
+closing = 16.76
+opening = 17.58
+high = 17.58
+low = 16.49
+volume = 24720000.0
+variation = -0.0509
+
+[[records]]
+date = "18.08.2021"
+closing = 15.96
+opening = 16.44
+high = 16.64
+low = 15.9
+volume = 29760000.0
+variation = -0.0473
+
+[[records]]
+date = "19.08.2021"
+closing = 15.05
+opening = 15.2
+high = 15.51
+low = 14.94
+volume = 28460000.0
+variation = -0.056900002
+
+[[records]]
+date = "20.08.2021"
+closing = 15.07
+opening = 15.03
+high = 15.71
+low = 14.85
+volume = 25960000.0
+variation = 0.0011999999
+
+[[records]]
+date = "23.08.2021"
+closing = 14.76
+opening = 15.15
+high = 15.5
+low = 14.76
+volume = 26640000.0
+variation = -0.020499999
+
+[[records]]
+date = "24.08.2021"
+closing = 15.81
+opening = 15.42
+high = 15.89
+low = 15.35
+volume = 28330000.0
+variation = 0.071
+
+[[records]]
+date = "25.08.2021"
+closing = 15.81
+opening = 15.78
+high = 15.98
+low = 15.64
+volume = 13600000.0
+variation = 0.0
+
+[[records]]
+date = "26.08.2021"
+closing = 15.27
+opening = 15.8
+high = 15.8
+low = 15.25
+volume = 14260000.0
+variation = -0.0346
+
+[[records]]
+date = "27.08.2021"
+closing = 16.31
+opening = 15.72
+high = 16.37
+low = 15.65
+volume = 26450000.0
+variation = 0.0681
+
+[[records]]
+date = "30.08.2021"
+closing = 16.43
+opening = 16.58
+high = 16.61
+low = 16.31
+volume = 19200000.0
+variation = 0.0076
+
+[[records]]
+date = "31.08.2021"
+closing = 16.3
+opening = 16.38
+high = 16.38
+low = 16.01
+volume = 23450000.0
+variation = -0.008
+
+[[records]]
+date = "01.09.2021"
+closing = 15.93
+opening = 16.04
+high = 16.19
+low = 15.61
+volume = 28070000.0
+variation = -0.0227
+
+[[records]]
+date = "02.09.2021"
+closing = 15.21
+opening = 15.94
+high = 16.22
+low = 15.16
+volume = 33860000.0
+variation = -0.045300003
+
+[[records]]
+date = "03.09.2021"
+closing = 15.25
+opening = 15.61
+high = 15.74
+low = 15.11
+volume = 21800000.0
+variation = 0.0031
+
+[[records]]
+date = "06.09.2021"
+closing = 15.5
+opening = 14.91
+high = 15.63
+low = 14.83
+volume = 11250000.0
+variation = 0.016
+
+[[records]]
+date = "08.09.2021"
+closing = 14.61
+opening = 15.32
+high = 15.37
+low = 14.38
+volume = 29210000.0
+variation = -0.0574
+
+[[records]]
+date = "09.09.2021"
+closing = 14.68
+opening = 14.63
+high = 15.08
+low = 14.18
+volume = 26770000.0
+variation = 0.0050999997
+
+[[records]]
+date = "10.09.2021"
+closing = 14.34
+opening = 14.97
+high = 15.22
+low = 14.34
+volume = 22250000.0
+variation = -0.023
+
+[[records]]
+date = "13.09.2021"
+closing = 14.92
+opening = 14.48
+high = 15.0
+low = 14.43
+volume = 22310000.0
+variation = 0.0405
+
+[[records]]
+date = "14.09.2021"
+closing = 14.69
+opening = 14.89
+high = 15.07
+low = 14.54
+volume = 20630000.0
+variation = -0.015700001
+
+[[records]]
+date = "15.09.2021"
+closing = 14.56
+opening = 14.52
+high = 14.92
+low = 14.45
+volume = 40590000.0
+variation = -0.0089
+
+[[records]]
+date = "16.09.2021"
+closing = 13.77
+opening = 14.39
+high = 14.39
+low = 13.72
+volume = 21250000.0
+variation = -0.0541
+
+[[records]]
+date = "17.09.2021"
+closing = 13.04
+opening = 13.44
+high = 13.59
+low = 12.95
+volume = 31810000.0
+variation = -0.0531
+
+[[records]]
+date = "20.09.2021"
+closing = 12.85
+opening = 12.28
+high = 12.88
+low = 12.27
+volume = 31560000.0
+variation = -0.014400001
+
+[[records]]
+date = "21.09.2021"
+closing = 13.14
+opening = 13.19
+high = 13.21
+low = 12.38
+volume = 29900000.0
+variation = 0.0219
+
+[[records]]
+date = "22.09.2021"
+closing = 14.28
+opening = 14.07
+high = 14.59
+low = 13.93
+volume = 45670000.0
+variation = 0.087
+
+[[records]]
+date = "23.09.2021"
+closing = 15.6
+opening = 14.33
+high = 15.67
+low = 14.18
+volume = 59790000.0
+variation = 0.0925
+
+[[records]]
+date = "24.09.2021"
+closing = 15.26
+opening = 15.33
+high = 15.54
+low = 15.05
+volume = 23200000.0
+variation = -0.0216
+
+[[records]]
+date = "27.09.2021"
+closing = 14.94
+opening = 15.12
+high = 15.27
+low = 14.7
+volume = 25680000.0
+variation = -0.0209
+
+[[records]]
+date = "28.09.2021"
+closing = 13.86
+opening = 14.57
+high = 14.9
+low = 13.7
+volume = 26630000.0
+variation = -0.0727
+
+[[records]]
+date = "29.09.2021"
+closing = 14.71
+opening = 14.1
+high = 14.76
+low = 14.05
+volume = 28450000.0
+variation = 0.0615
+
+[[records]]
+date = "30.09.2021"
+closing = 15.1
+opening = 15.04
+high = 15.5
+low = 15.02
+volume = 31310000.0
+variation = 0.026800001
+
+[[records]]
+date = "01.10.2021"
+closing = 15.81
+opening = 15.14
+high = 15.93
+low = 15.02
+volume = 29270000.0
+variation = 0.0465
+
+[[records]]
+date = "04.10.2021"
+closing = 14.98
+opening = 15.82
+high = 15.85
+low = 14.96
+volume = 32290000.0
+variation = -0.052199997
+
+[[records]]
+date = "05.10.2021"
+closing = 14.92
+opening = 15.07
+high = 15.36
+low = 14.76
+volume = 16700001.0
+variation = -0.0038
+
+[[records]]
+date = "06.10.2021"
+closing = 14.78
+opening = 14.59
+high = 14.9
+low = 14.2
+volume = 30250000.0
+variation = -0.0094
+
+[[records]]
+date = "07.10.2021"
+closing = 14.78
+opening = 15.0
+high = 15.34
+low = 14.71
+volume = 24640000.0
+variation = -0.00059999997
+
+[[records]]
+date = "08.10.2021"
+closing = 15.51
+opening = 15.08
+high = 15.87
+low = 15.06
+volume = 26990000.0
+variation = 0.0495
+
+[[records]]
+date = "11.10.2021"
+closing = 15.49
+opening = 15.89
+high = 16.27
+low = 15.45
+volume = 21320000.0
+variation = -0.0011999999
+
+[[records]]
+date = "13.10.2021"
+closing = 15.28
+opening = 15.22
+high = 15.66
+low = 15.01
+volume = 18220000.0
+variation = -0.013300001
+
+[[records]]
+date = "14.10.2021"
+closing = 15.26
+opening = 15.53
+high = 15.8
+low = 15.22
+volume = 17820000.0
+variation = -0.0011999999
+
+[[records]]
+date = "15.10.2021"
+closing = 15.53
+opening = 15.3
+high = 15.7
+low = 15.2
+volume = 12200000.0
+variation = 0.0178
+
+[[records]]
+date = "18.10.2021"
+closing = 15.07
+opening = 15.31
+high = 15.32
+low = 14.84
+volume = 24530000.0
+variation = -0.030199999
+
+[[records]]
+date = "19.10.2021"
+closing = 14.61
+opening = 14.97
+high = 15.25
+low = 14.33
+volume = 23530000.0
+variation = -0.0305
+
+[[records]]
+date = "20.10.2021"
+closing = 14.03
+opening = 14.69
+high = 14.69
+low = 13.91
+volume = 35990000.0
+variation = -0.0398
+
+[[records]]
+date = "21.10.2021"
+closing = 13.27
+opening = 13.58
+high = 13.69
+low = 12.9
+volume = 33760000.0
+variation = -0.0541
+
+[[records]]
+date = "22.10.2021"
+closing = 13.44
+opening = 13.16
+high = 13.68
+low = 12.9
+volume = 36400000.0
+variation = 0.0134000005
+
+[[records]]
+date = "25.10.2021"
+closing = 13.75
+opening = 13.59
+high = 13.89
+low = 13.59
+volume = 15660000.0
+variation = 0.023
+
+[[records]]
+date = "26.10.2021"
+closing = 13.32
+opening = 13.66
+high = 13.86
+low = 13.23
+volume = 23680000.0
+variation = -0.0313
+
+[[records]]
+date = "27.10.2021"
+closing = 13.29
+opening = 13.46
+high = 13.85
+low = 13.15
+volume = 23390000.0
+variation = -0.0021
+
+[[records]]
+date = "28.10.2021"
+closing = 13.43
+opening = 13.23
+high = 13.6
+low = 13.09
+volume = 18550000.0
+variation = 0.0099
+
+[[records]]
+date = "29.10.2021"
+closing = 12.41
+opening = 13.15
+high = 13.15
+low = 12.3
+volume = 34660000.0
+variation = -0.0754
+
+[[records]]
+date = "01.11.2021"
+closing = 12.27
+opening = 12.54
+high = 12.6
+low = 12.1
+volume = 20590000.0
+variation = -0.0113
+
+[[records]]
+date = "03.11.2021"
+closing = 11.59
+opening = 12.1
+high = 12.19
+low = 11.54
+volume = 34960000.0
+variation = -0.0557
+
+[[records]]
+date = "04.11.2021"
+closing = 11.52
+opening = 11.52
+high = 11.95
+low = 11.46
+volume = 18750000.0
+variation = -0.0057
+
+[[records]]
+date = "05.11.2021"
+closing = 11.29
+opening = 11.71
+high = 11.77
+low = 11.1
+volume = 22550000.0
+variation = -0.020299999
+
+[[records]]
+date = "08.11.2021"
+closing = 11.81
+opening = 11.32
+high = 11.92
+low = 11.15
+volume = 24410000.0
+variation = 0.0456
+
+[[records]]
+date = "09.11.2021"
+closing = 11.95
+opening = 11.66
+high = 12.17
+low = 11.53
+volume = 21040000.0
+variation = 0.0127
+
+[[records]]
+date = "10.11.2021"
+closing = 11.87
+opening = 11.7
+high = 12.07
+low = 11.63
+volume = 21050000.0
+variation = -0.0070999996
+
+[[records]]
+date = "11.11.2021"
+closing = 12.61
+opening = 12.36
+high = 12.86
+low = 12.33
+volume = 26860000.0
+variation = 0.0624
+
+[[records]]
+date = "12.11.2021"
+closing = 12.65
+opening = 12.49
+high = 13.17
+low = 12.49
+volume = 24350000.0
+variation = 0.003
+
+[[records]]
+date = "16.11.2021"
+closing = 12.28
+opening = 12.75
+high = 12.75
+low = 11.96
+volume = 18760000.0
+variation = -0.028900001
+
+[[records]]
+date = "17.11.2021"
+closing = 12.0
+opening = 12.46
+high = 12.64
+low = 11.92
+volume = 18260000.0
+variation = -0.0229
+
+[[records]]
+date = "18.11.2021"
+closing = 11.32
+opening = 11.8
+high = 11.9
+low = 11.21
+volume = 27990000.0
+variation = -0.056999996
+
+[[records]]
+date = "19.11.2021"
+closing = 11.48
+opening = 11.52
+high = 11.8
+low = 11.38
+volume = 25710000.0
+variation = 0.014099999
+
+[[records]]
+date = "22.11.2021"
+closing = 11.81
+opening = 11.86
+high = 12.07
+low = 11.56
+volume = 30120000.0
+variation = 0.0294
+
+[[records]]
+date = "23.11.2021"
+closing = 12.38
+opening = 12.37
+high = 12.91
+low = 12.15
+volume = 30980000.0
+variation = 0.0476
+
+[[records]]
+date = "24.11.2021"
+closing = 12.81
+opening = 12.52
+high = 13.14
+low = 12.41
+volume = 33810000.0
+variation = 0.0348
+
+[[records]]
+date = "25.11.2021"
+closing = 12.95
+opening = 12.82
+high = 13.0
+low = 12.61
+volume = 14010000.0
+variation = 0.011
+
+[[records]]
+date = "26.11.2021"
+closing = 12.1
+opening = 12.53
+high = 12.6
+low = 11.9
+volume = 26110000.0
+variation = -0.065799996
+
+[[records]]
+date = "29.11.2021"
+closing = 12.84
+opening = 12.65
+high = 12.98
+low = 12.52
+volume = 29750000.0
+variation = 0.0612
+
+[[records]]
+date = "30.11.2021"
+closing = 12.73
+opening = 12.77
+high = 13.24
+low = 12.44
+volume = 29580000.0
+variation = -0.008
+
+[[records]]
+date = "01.12.2021"
+closing = 12.58
+opening = 13.08
+high = 13.44
+low = 12.51
+volume = 22820000.0
+variation = -0.0117999995
+
+[[records]]
+date = "02.12.2021"
+closing = 13.52
+opening = 12.66
+high = 13.52
+low = 12.6
+volume = 31640000.0
+variation = 0.074499995
+
+[[records]]
+date = "03.12.2021"
+closing = 13.33
+opening = 13.43
+high = 13.8
+low = 13.0
+volume = 23540000.0
+variation = -0.0139
+
+[[records]]
+date = "06.12.2021"
+closing = 13.85
+opening = 13.61
+high = 13.89
+low = 13.26
+volume = 20380000.0
+variation = 0.0387
+
+[[records]]
+date = "07.12.2021"
+closing = 13.98
+opening = 14.39
+high = 14.53
+low = 13.91
+volume = 25110000.0
+variation = 0.0095
+
+[[records]]
+date = "08.12.2021"
+closing = 14.1
+opening = 14.1
+high = 14.36
+low = 13.87
+volume = 12410000.0
+variation = 0.0087
+
+[[records]]
+date = "09.12.2021"
+closing = 14.0
+opening = 13.87
+high = 14.03
+low = 13.51
+volume = 14500000.0
+variation = -0.0073
+
+[[records]]
+date = "10.12.2021"
+closing = 14.25
+opening = 14.13
+high = 14.68
+low = 14.1
+volume = 15350000.0
+variation = 0.018099999
+
+[[records]]
+date = "13.12.2021"
+closing = 14.42
+opening = 14.5
+high = 14.82
+low = 14.27
+volume = 16270000.0
+variation = 0.0117999995
+
+[[records]]
+date = "14.12.2021"
+closing = 14.34
+opening = 14.54
+high = 14.79
+low = 14.13
+volume = 17600000.0
+variation = -0.0052
+
+[[records]]
+date = "15.12.2021"
+closing = 14.47
+opening = 14.38
+high = 14.56
+low = 14.03
+volume = 15820000.0
+variation = 0.0085
+
+[[records]]
+date = "16.12.2021"
+closing = 14.94
+opening = 14.84
+high = 15.08
+low = 14.54
+volume = 21530000.0
+variation = 0.033
+
+[[records]]
+date = "17.12.2021"
+closing = 14.74
+opening = 14.83
+high = 14.96
+low = 14.57
+volume = 13960000.0
+variation = -0.013300001
+
+[[records]]
+date = "20.12.2021"
+closing = 13.92
+opening = 14.44
+high = 14.48
+low = 13.81
+volume = 19970000.0
+variation = -0.055999998
+
+[[records]]
+date = "21.12.2021"
+closing = 14.35
+opening = 14.14
+high = 14.45
+low = 14.09
+volume = 12060000.0
+variation = 0.0307
+
+[[records]]
+date = "22.12.2021"
+closing = 14.14
+opening = 14.25
+high = 14.43
+low = 13.81
+volume = 15640000.0
+variation = -0.0146
+
+[[records]]
+date = "23.12.2021"
+closing = 14.1
+opening = 14.14
+high = 14.14
+low = 13.89
+volume = 10680000.0
+variation = -0.0027
+
+[[records]]
+date = "27.12.2021"
+closing = 14.27
+opening = 13.97
+high = 14.33
+low = 13.96
+volume = 10500000.0
+variation = 0.0121
+
+[[records]]
+date = "28.12.2021"
+closing = 13.99
+opening = 14.24
+high = 14.24
+low = 13.83
+volume = 13200000.0
+variation = -0.019299999
+
+[[records]]
+date = "29.12.2021"
+closing = 14.04
+opening = 13.99
+high = 14.19
+low = 13.9
+volume = 10530000.0
+variation = 0.0034
+
+[[records]]
+date = "30.12.2021"
+closing = 14.38
+opening = 14.21
+high = 14.52
+low = 14.12
+volume = 12800000.0
+variation = 0.024300002
+
+[[records]]
+date = "03.01.2022"
+closing = 14.2
+opening = 14.48
+high = 14.92
+low = 14.18
+volume = 15350000.0
+variation = -0.0125
+
+[[records]]
+date = "04.01.2022"
+closing = 14.09
+opening = 14.34
+high = 14.37
+low = 13.91
+volume = 17990000.0
+variation = -0.008
+
+[[records]]
+date = "05.01.2022"
+closing = 13.27
+opening = 14.12
+high = 14.16
+low = 13.24
+volume = 25370000.0
+variation = -0.0579
+
+[[records]]
+date = "06.01.2022"
+closing = 13.29
+opening = 13.43
+high = 13.7
+low = 13.14
+volume = 25990000.0
+variation = 0.0014
+
+[[records]]
+date = "07.01.2022"
+closing = 13.93
+opening = 13.33
+high = 13.94
+low = 13.23
+volume = 18600000.0
+variation = 0.0478
+
+[[records]]
+date = "10.01.2022"
+closing = 14.59
+opening = 13.59
+high = 14.61
+low = 13.48
+volume = 31970000.0
+variation = 0.0477
+
+[[records]]
+date = "11.01.2022"
+closing = 15.47
+opening = 15.12
+high = 15.5
+low = 15.0
+volume = 40810000.0
+variation = 0.060500003
+
+[[records]]
+date = "12.01.2022"
+closing = 15.6
+opening = 15.66
+high = 16.04
+low = 15.5
+volume = 29650000.0
+variation = 0.008
+
+[[records]]
+date = "13.01.2022"
+closing = 15.53
+opening = 15.37
+high = 15.7
+low = 15.23
+volume = 16059999.0
+variation = -0.0043
+
+[[records]]
+date = "14.01.2022"
+closing = 15.61
+opening = 15.42
+high = 15.74
+low = 15.31
+volume = 12860000.0
+variation = 0.0049
+
+[[records]]
+date = "17.01.2022"
+closing = 15.4
+opening = 15.46
+high = 15.55
+low = 15.13
+volume = 10540000.0
+variation = -0.0134000005
+
+[[records]]
+date = "18.01.2022"
+closing = 15.69
+opening = 15.35
+high = 15.73
+low = 15.29
+volume = 16790000.0
+variation = 0.0191
+
+[[records]]
+date = "19.01.2022"
+closing = 15.89
+opening = 16.03
+high = 16.23
+low = 15.78
+volume = 19210000.0
+variation = 0.0127
+
+[[records]]
+date = "20.01.2022"
+closing = 15.72
+opening = 15.97
+high = 16.1
+low = 15.67
+volume = 13820000.0
+variation = -0.0107
+
+[[records]]
+date = "21.01.2022"
+closing = 15.05
+opening = 15.59
+high = 15.69
+low = 14.96
+volume = 21140000.0
+variation = -0.0428
+
+[[records]]
+date = "24.01.2022"
+closing = 15.41
+opening = 14.91
+high = 15.49
+low = 14.55
+volume = 26740000.0
+variation = 0.024
+
+[[records]]
+date = "25.01.2022"
+closing = 15.33
+opening = 15.35
+high = 15.64
+low = 15.02
+volume = 19570000.0
+variation = -0.0049
+
+[[records]]
+date = "26.01.2022"
+closing = 15.5
+opening = 15.49
+high = 15.85
+low = 14.96
+volume = 35740000.0
+variation = 0.0111
+
+[[records]]
+date = "27.01.2022"
+closing = 15.43
+opening = 15.7
+high = 15.78
+low = 15.23
+volume = 21140000.0
+variation = -0.0049
+
+[[records]]
+date = "28.01.2022"
+closing = 14.49
+opening = 14.93
+high = 15.05
+low = 14.31
+volume = 22540000.0
+variation = -0.0608
+
+[[records]]
+date = "31.01.2022"
+closing = 14.45
+opening = 14.44
+high = 14.67
+low = 14.21
+volume = 20070000.0
+variation = -0.0025
+
+[[records]]
+date = "01.02.2022"
+closing = 15.01
+opening = 14.5
+high = 15.09
+low = 14.34
+volume = 22620000.0
+variation = 0.0388
+
+[[records]]
+date = "02.02.2022"
+closing = 15.05
+opening = 15.01
+high = 15.18
+low = 14.86
+volume = 13510000.0
+variation = 0.0023999999
+
+[[records]]
+date = "03.02.2022"
+closing = 14.66
+opening = 15.12
+high = 15.22
+low = 14.56
+volume = 20580000.0
+variation = -0.025899999
+
+[[records]]
+date = "04.02.2022"
+closing = 14.77
+opening = 14.62
+high = 14.82
+low = 14.44
+volume = 14150000.0
+variation = 0.0074
+
+[[records]]
+date = "07.02.2022"
+closing = 15.25
+opening = 14.98
+high = 15.38
+low = 14.93
+volume = 21630000.0
+variation = 0.0325
+
+[[records]]
+date = "08.02.2022"
+closing = 15.21
+opening = 15.26
+high = 15.32
+low = 15.0
+volume = 14040000.0
+variation = -0.0023999999
+
+[[records]]
+date = "09.02.2022"
+closing = 15.34
+opening = 15.01
+high = 15.45
+low = 14.93
+volume = 14780000.0
+variation = 0.0083
+
+[[records]]
+date = "10.02.2022"
+closing = 15.19
+opening = 15.47
+high = 15.89
+low = 15.09
+volume = 25220000.0
+variation = -0.01
+
+[[records]]
+date = "11.02.2022"
+closing = 14.05
+opening = 15.17
+high = 15.21
+low = 14.03
+volume = 66199996.0
+variation = -0.074499995
+
+[[records]]
+date = "14.02.2022"
+closing = 14.19
+opening = 13.98
+high = 14.39
+low = 13.85
+volume = 23690000.0
+variation = 0.0097
+
+[[records]]
+date = "15.02.2022"
+closing = 14.11
+opening = 13.85
+high = 14.11
+low = 13.69
+volume = 28730000.0
+variation = -0.0057
+
+[[records]]
+date = "16.02.2022"
+closing = 14.02
+opening = 14.11
+high = 14.38
+low = 13.9
+volume = 20380000.0
+variation = -0.0064
+
+[[records]]
+date = "17.02.2022"
+closing = 13.45
+opening = 13.94
+high = 14.0
+low = 13.37
+volume = 29080000.0
+variation = -0.040700004
+
+[[records]]
+date = "18.02.2022"
+closing = 13.35
+opening = 13.6
+high = 13.66
+low = 13.3
+volume = 15060000.0
+variation = -0.0074
+
+[[records]]
+date = "21.02.2022"
+closing = 13.1
+opening = 13.51
+high = 13.57
+low = 13.09
+volume = 15900000.0
+variation = -0.0183
+
+[[records]]
+date = "22.02.2022"
+closing = 13.32
+opening = 13.23
+high = 13.4
+low = 13.14
+volume = 13330000.0
+variation = 0.0166
+
+[[records]]
+date = "23.02.2022"
+closing = 12.9
+opening = 13.39
+high = 13.45
+low = 12.81
+volume = 17840000.0
+variation = -0.0312
+
+[[records]]
+date = "24.02.2022"
+closing = 12.9
+opening = 12.17
+high = 12.97
+low = 12.17
+volume = 17880000.0
+variation = -0.0007
+
+[[records]]
+date = "25.02.2022"
+closing = 13.31
+opening = 12.73
+high = 13.31
+low = 12.66
+volume = 18570000.0
+variation = 0.0323
+
+[[records]]
+date = "02.03.2022"
+closing = 13.91
+opening = 14.03
+high = 14.11
+low = 13.56
+volume = 22950000.0
+variation = 0.044899996
+
+[[records]]
+date = "03.03.2022"
+closing = 14.42
+opening = 14.04
+high = 14.58
+low = 14.04
+volume = 26220000.0
+variation = 0.0364
+
+[[records]]
+date = "04.03.2022"
+closing = 14.33
+opening = 14.24
+high = 14.42
+low = 13.95
+volume = 25220000.0
+variation = -0.0063
+
+[[records]]
+date = "07.03.2022"
+closing = 13.85
+opening = 14.52
+high = 14.64
+low = 13.8
+volume = 19410000.0
+variation = -0.0328
+
+[[records]]
+date = "08.03.2022"
+closing = 13.71
+opening = 13.99
+high = 14.14
+low = 13.58
+volume = 13210000.0
+variation = -0.0105
+
+[[records]]
+date = "09.03.2022"
+closing = 13.76
+opening = 13.56
+high = 13.81
+low = 13.34
+volume = 15330000.0
+variation = 0.004
+
+[[records]]
+date = "10.03.2022"
+closing = 13.94
+opening = 13.72
+high = 13.95
+low = 13.59
+volume = 10770000.0
+variation = 0.0125
+
+[[records]]
+date = "11.03.2022"
+closing = 13.34
+opening = 14.04
+high = 14.09
+low = 13.33
+volume = 12830000.0
+variation = -0.0429
+
+[[records]]
+date = "14.03.2022"
+closing = 12.64
+opening = 13.02
+high = 13.28
+low = 12.6
+volume = 19610000.0
+variation = -0.052199997
+
+[[records]]
+date = "15.03.2022"
+closing = 12.1
+opening = 12.34
+high = 12.46
+low = 11.93
+volume = 28440000.0
+variation = -0.0429
+
+[[records]]
+date = "16.03.2022"
+closing = 12.36
+opening = 12.54
+high = 12.66
+low = 12.14
+volume = 21960000.0
+variation = 0.0217
+
+[[records]]
+date = "17.03.2022"
+closing = 12.93
+opening = 12.49
+high = 13.07
+low = 12.49
+volume = 18980000.0
+variation = 0.0461
+
+[[records]]
+date = "18.03.2022"
+closing = 13.21
+opening = 12.9
+high = 13.28
+low = 12.84
+volume = 19880000.0
+variation = 0.0217
+
+[[records]]
+date = "21.03.2022"
+closing = 13.26
+opening = 13.32
+high = 13.55
+low = 13.24
+volume = 10230000.0
+variation = 0.0034
+
+[[records]]
+date = "22.03.2022"
+closing = 13.13
+opening = 13.29
+high = 13.4
+low = 12.9
+volume = 15910000.0
+variation = -0.0095999995
+
+[[records]]
+date = "23.03.2022"
+closing = 12.93
+opening = 13.19
+high = 13.38
+low = 12.87
+volume = 19300000.0
+variation = -0.0152
+
+[[records]]
+date = "24.03.2022"
+closing = 13.01
+opening = 12.99
+high = 13.09
+low = 12.76
+volume = 15680000.0
+variation = 0.0063
+
+[[records]]
+date = "25.03.2022"
+closing = 12.61
+opening = 13.09
+high = 13.15
+low = 12.57
+volume = 18350000.0
+variation = -0.0313
+
+[[records]]
+date = "28.03.2022"
+closing = 12.68
+opening = 12.82
+high = 12.92
+low = 12.54
+volume = 14460000.0
+variation = 0.0057
+
+[[records]]
+date = "29.03.2022"
+closing = 12.89
+opening = 12.76
+high = 13.01
+low = 12.62
+volume = 21360000.0
+variation = 0.0164
+
+[[records]]
+date = "30.03.2022"
+closing = 12.99
+opening = 13.0
+high = 13.12
+low = 12.8
+volume = 11810000.0
+variation = 0.0077
+
+[[records]]
+date = "31.03.2022"
+closing = 12.22
+opening = 12.58
+high = 12.62
+low = 12.19
+volume = 17640000.0
+variation = -0.0589
+
+[[records]]
+date = "01.04.2022"
+closing = 12.05
+opening = 12.3
+high = 12.38
+low = 11.98
+volume = 19920000.0
+variation = -0.0143
+
+[[records]]
+date = "04.04.2022"
+closing = 12.28
+opening = 12.09
+high = 12.42
+low = 12.03
+volume = 19190000.0
+variation = 0.0196
+
+[[records]]
+date = "05.04.2022"
+closing = 11.98
+opening = 12.28
+high = 12.37
+low = 11.92
+volume = 16100000.0
+variation = -0.0242
+
+[[records]]
+date = "06.04.2022"
+closing = 11.86
+opening = 11.94
+high = 11.95
+low = 11.6
+volume = 15730000.0
+variation = -0.010199999
+
+[[records]]
+date = "07.04.2022"
+closing = 11.84
+opening = 11.68
+high = 11.91
+low = 11.62
+volume = 12640000.0
+variation = -0.0015
+
+[[records]]
+date = "08.04.2022"
+closing = 11.42
+opening = 11.8
+high = 11.83
+low = 11.39
+volume = 24300000.0
+variation = -0.036199998
+
+[[records]]
+date = "11.04.2022"
+closing = 11.33
+opening = 11.32
+high = 11.48
+low = 11.16
+volume = 24420000.0
+variation = -0.0077
+
+[[records]]
+date = "12.04.2022"
+closing = 11.4
+opening = 11.45
+high = 11.62
+low = 11.31
+volume = 13900000.0
+variation = 0.0062
+
+[[records]]
+date = "13.04.2022"
+closing = 11.35
+opening = 11.4
+high = 11.52
+low = 11.33
+volume = 16170000.0
+variation = -0.0038
+
+[[records]]
+date = "14.04.2022"
+closing = 11.3
+opening = 11.31
+high = 11.54
+low = 11.24
+volume = 14490000.0
+variation = -0.0046
+
+[[records]]
+date = "18.04.2022"
+closing = 11.24
+opening = 11.26
+high = 11.32
+low = 11.12
+volume = 11270000.0
+variation = -0.0054
+
+[[records]]
+date = "19.04.2022"
+closing = 11.46
+opening = 11.16
+high = 11.53
+low = 11.04
+volume = 17030000.0
+variation = 0.0195
+
+[[records]]
+date = "20.04.2022"
+closing = 10.73
+opening = 11.35
+high = 11.37
+low = 10.6
+volume = 49700000.0
+variation = -0.0634
+
+[[records]]
+date = "22.04.2022"
+closing = 10.44
+opening = 10.49
+high = 10.65
+low = 10.34
+volume = 13490000.0
+variation = -0.0269
+
+[[records]]
+date = "25.04.2022"
+closing = 10.65
+opening = 10.11
+high = 10.77
+low = 10.1
+volume = 16920000.0
+variation = 0.019299999
+
+[[records]]
+date = "26.04.2022"
+closing = 10.21
+opening = 10.61
+high = 10.64
+low = 10.16
+volume = 14320000.0
+variation = -0.041100003
+
+[[records]]
+date = "27.04.2022"
+closing = 10.32
+opening = 10.49
+high = 10.65
+low = 10.3
+volume = 21140000.0
+variation = 0.0111
+
+[[records]]
+date = "28.04.2022"
+closing = 10.74
+opening = 10.44
+high = 10.85
+low = 10.37
+volume = 19610000.0
+variation = 0.040700004
+
+[[records]]
+date = "29.04.2022"
+closing = 10.43
+opening = 11.07
+high = 11.1
+low = 10.42
+volume = 17760000.0
+variation = -0.0293
+
+[[records]]
+date = "02.05.2022"
+closing = 10.33
+opening = 10.37
+high = 10.63
+low = 10.15
+volume = 15170000.0
+variation = -0.0097
+
+[[records]]
+date = "03.05.2022"
+closing = 10.43
+opening = 10.29
+high = 10.58
+low = 10.28
+volume = 10850000.0
+variation = 0.0098
+
+[[records]]
+date = "04.05.2022"
+closing = 10.61
+opening = 10.38
+high = 10.67
+low = 10.15
+volume = 13760000.0
+variation = 0.0177
+
+[[records]]
+date = "05.05.2022"
+closing = 10.23
+opening = 10.59
+high = 10.61
+low = 10.01
+volume = 13810000.0
+variation = -0.0365
+
+[[records]]
+date = "06.05.2022"
+closing = 10.11
+opening = 10.15
+high = 10.28
+low = 9.87
+volume = 12090000.0
+variation = -0.0108
+
+[[records]]
+date = "09.05.2022"
+closing = 9.93
+opening = 9.95
+high = 10.1
+low = 9.76
+volume = 12480000.0
+variation = -0.0182
+
+[[records]]
+date = "10.05.2022"
+closing = 9.26
+opening = 10.0
+high = 10.02
+low = 8.93
+volume = 61000000.0
+variation = -0.0678
+
+[[records]]
+date = "11.05.2022"
+closing = 9.55
+opening = 9.47
+high = 9.88
+low = 9.41
+volume = 33130002.0
+variation = 0.0319
+
+[[records]]
+date = "12.05.2022"
+closing = 9.39
+opening = 9.39
+high = 9.52
+low = 9.16
+volume = 19000000.0
+variation = -0.0174
+
+[[records]]
+date = "13.05.2022"
+closing = 9.71
+opening = 9.5
+high = 9.84
+low = 9.5
+volume = 16940000.0
+variation = 0.0344
+
+[[records]]
+date = "16.05.2022"
+closing = 10.08
+opening = 9.76
+high = 10.19
+low = 9.75
+volume = 14910000.0
+variation = 0.038
+
+[[records]]
+date = "17.05.2022"
+closing = 9.97
+opening = 10.31
+high = 10.41
+low = 9.97
+volume = 16680000.0
+variation = -0.011
+
+[[records]]
+date = "18.05.2022"
+closing = 9.57
+opening = 9.83
+high = 9.92
+low = 9.53
+volume = 13420000.0
+variation = -0.0398
+
+[[records]]
+date = "19.05.2022"
+closing = 10.06
+opening = 9.52
+high = 10.15
+low = 9.51
+volume = 18460000.0
+variation = 0.0511
+
+[[records]]
+date = "20.05.2022"
+closing = 10.19
+opening = 10.3
+high = 10.4
+low = 10.11
+volume = 13210000.0
+variation = 0.0128
+
+[[records]]
+date = "23.05.2022"
+closing = 10.56
+opening = 10.33
+high = 10.6
+low = 10.33
+volume = 14500000.0
+variation = 0.036199998
+
+[[records]]
+date = "24.05.2022"
+closing = 10.55
+opening = 10.38
+high = 10.58
+low = 10.27
+volume = 17800000.0
+variation = -0.00090000004
+
+[[records]]
+date = "25.05.2022"
+closing = 10.71
+opening = 10.53
+high = 10.81
+low = 10.41
+volume = 16000000.0
+variation = 0.015700001
+
+[[records]]
+date = "26.05.2022"
+closing = 10.54
+opening = 10.73
+high = 10.98
+low = 10.4
+volume = 24920000.0
+variation = -0.0164
+
+[[records]]
+date = "27.05.2022"
+closing = 10.39
+opening = 10.59
+high = 10.72
+low = 10.36
+volume = 15030000.0
+variation = -0.0139999995
+
+[[records]]
+date = "30.05.2022"
+closing = 10.1
+opening = 10.51
+high = 10.54
+low = 9.99
+volume = 16330000.0
+variation = -0.028399998
+
+[[records]]
+date = "31.05.2022"
+closing = 10.11
+opening = 10.14
+high = 10.26
+low = 10.05
+volume = 11070000.0
+variation = 0.00090000004
+
+[[records]]
+date = "01.06.2022"
+closing = 10.38
+opening = 10.12
+high = 10.46
+low = 10.11
+volume = 12510000.0
+variation = 0.0274
+
+[[records]]
+date = "02.06.2022"
+closing = 10.93
+opening = 10.51
+high = 11.01
+low = 10.47
+volume = 21620000.0
+variation = 0.052399997
+
+[[records]]
+date = "03.06.2022"
+closing = 10.76
+opening = 10.93
+high = 10.95
+low = 10.64
+volume = 13180000.0
+variation = -0.0152
+
+[[records]]
+date = "06.06.2022"
+closing = 10.53
+opening = 10.81
+high = 10.88
+low = 10.36
+volume = 14270000.0
+variation = -0.0214
+
+[[records]]
+date = "07.06.2022"
+closing = 10.24
+opening = 10.4
+high = 10.54
+low = 10.21
+volume = 19580000.0
+variation = -0.0271
+
+[[records]]
+date = "08.06.2022"
+closing = 9.8
+opening = 10.04
+high = 10.19
+low = 9.76
+volume = 17180000.0
+variation = -0.0432
+
+[[records]]
+date = "09.06.2022"
+closing = 9.33
+opening = 9.72
+high = 9.73
+low = 9.28
+volume = 26750000.0
+variation = -0.048
+
+[[records]]
+date = "10.06.2022"
+closing = 9.32
+opening = 9.13
+high = 9.42
+low = 9.02
+volume = 25510000.0
+variation = -0.001
+
+[[records]]
+date = "13.06.2022"
+closing = 8.87
+opening = 8.96
+high = 9.03
+low = 8.6
+volume = 21010000.0
+variation = -0.048499998
+
+[[records]]
+date = "14.06.2022"
+closing = 8.64
+opening = 8.94
+high = 8.96
+low = 8.55
+volume = 18800000.0
+variation = -0.025999999
+
+[[records]]
+date = "15.06.2022"
+closing = 8.6
+opening = 8.74
+high = 8.92
+low = 8.56
+volume = 20110000.0
+variation = -0.0043
+
+[[records]]
+date = "17.06.2022"
+closing = 8.09
+opening = 8.38
+high = 8.38
+low = 7.91
+volume = 25750000.0
+variation = -0.06
+
+[[records]]
+date = "20.06.2022"
+closing = 8.31
+opening = 7.8
+high = 8.33
+low = 7.76
+volume = 19180000.0
+variation = 0.0274
+
+[[records]]
+date = "21.06.2022"
+closing = 8.35
+opening = 8.42
+high = 8.5
+low = 8.19
+volume = 17480000.0
+variation = 0.0055
+
+[[records]]
+date = "22.06.2022"
+closing = 8.34
+opening = 8.12
+high = 8.45
+low = 7.91
+volume = 19980000.0
+variation = -0.0022
+
+[[records]]
+date = "23.06.2022"
+closing = 8.03
+opening = 8.45
+high = 8.51
+low = 7.94
+volume = 25560000.0
+variation = -0.0365
+
+[[records]]
+date = "24.06.2022"
+closing = 8.27
+opening = 8.14
+high = 8.34
+low = 7.99
+volume = 14150000.0
+variation = 0.0299
+
+[[records]]
+date = "27.06.2022"
+closing = 8.53
+opening = 8.45
+high = 8.68
+low = 8.32
+volume = 14280000.0
+variation = 0.0312
+
+[[records]]
+date = "28.06.2022"
+closing = 8.41
+opening = 8.7
+high = 8.74
+low = 8.34
+volume = 16350000.0
+variation = -0.014099999
+
+[[records]]
+date = "29.06.2022"
+closing = 8.31
+opening = 8.41
+high = 8.45
+low = 8.19
+volume = 15750000.0
+variation = -0.0121
+
+[[records]]
+date = "30.06.2022"
+closing = 7.98
+opening = 8.12
+high = 8.17
+low = 7.92
+volume = 15420000.0
+variation = -0.04
+
+[[records]]
+date = "01.07.2022"
+closing = 7.88
+opening = 7.86
+high = 7.97
+low = 7.68
+volume = 18600000.0
+variation = -0.0116
+
+[[records]]
+date = "04.07.2022"
+closing = 7.85
+opening = 7.8
+high = 7.94
+low = 7.72
+volume = 9660000.0
+variation = -0.0047
+
+[[records]]
+date = "05.07.2022"
+closing = 7.88
+opening = 7.77
+high = 7.95
+low = 7.59
+volume = 20010000.0
+variation = 0.0047
+
+[[records]]
+date = "06.07.2022"
+closing = 7.99
+opening = 7.93
+high = 8.03
+low = 7.77
+volume = 15810000.0
+variation = 0.0139999995
+
+[[records]]
+date = "07.07.2022"
+closing = 8.18
+opening = 8.22
+high = 8.48
+low = 8.17
+volume = 17170000.0
+variation = 0.0231
+
+[[records]]
+date = "08.07.2022"
+closing = 7.94
+opening = 8.18
+high = 8.31
+low = 7.94
+volume = 14340000.0
+variation = -0.0293
+
+[[records]]
+date = "11.07.2022"
+closing = 7.74
+opening = 7.73
+high = 7.89
+low = 7.63
+volume = 14950000.0
+variation = -0.0256
+
+[[records]]
+date = "12.07.2022"
+closing = 7.68
+opening = 7.65
+high = 7.83
+low = 7.57
+volume = 22180000.0
+variation = -0.0072000003
+
+[[records]]
+date = "13.07.2022"
+closing = 7.7
+opening = 7.63
+high = 7.84
+low = 7.59
+volume = 15530000.0
+variation = 0.0023999999
+
+[[records]]
+date = "14.07.2022"
+closing = 7.42
+opening = 7.55
+high = 7.57
+low = 7.41
+volume = 18850000.0
+variation = -0.0359
+
+[[records]]
+date = "15.07.2022"
+closing = 7.73
+opening = 7.44
+high = 7.79
+low = 7.31
+volume = 27580000.0
+variation = 0.040999997
+
+[[records]]
+date = "18.07.2022"
+closing = 7.81
+opening = 7.88
+high = 7.92
+low = 7.7
+volume = 19600000.0
+variation = 0.0107
+
+[[records]]
+date = "19.07.2022"
+closing = 8.07
+opening = 7.81
+high = 8.11
+low = 7.78
+volume = 17760000.0
+variation = 0.033099998
+
+[[records]]
+date = "20.07.2022"
+closing = 8.29
+opening = 7.99
+high = 8.29
+low = 7.91
+volume = 14890000.0
+variation = 0.0274
+
+[[records]]
+date = "21.07.2022"
+closing = 8.34
+opening = 8.18
+high = 8.42
+low = 8.16
+volume = 11120000.0
+variation = 0.0067000003
+
+[[records]]
+date = "22.07.2022"
+closing = 8.22
+opening = 8.43
+high = 8.57
+low = 8.2
+volume = 16270000.0
+variation = -0.0155
+
+[[records]]
+date = "25.07.2022"
+closing = 8.28
+opening = 8.39
+high = 8.41
+low = 8.24
+volume = 10800000.0
+variation = 0.007900001
+
+[[records]]
+date = "26.07.2022"
+closing = 8.1
+opening = 8.33
+high = 8.34
+low = 8.05
+volume = 10800000.0
+variation = -0.0212
+
+[[records]]
+date = "27.07.2022"
+closing = 8.19
+opening = 8.12
+high = 8.23
+low = 8.03
+volume = 11590000.0
+variation = 0.010199999
+
+[[records]]
+date = "28.07.2022"
+closing = 8.34
+opening = 8.23
+high = 8.48
+low = 8.22
+volume = 16629999.0
+variation = 0.018
+
+[[records]]
+date = "29.07.2022"
+closing = 7.94
+opening = 8.39
+high = 8.45
+low = 7.9
+volume = 24760000.0
+variation = -0.0476
+
+[[records]]
+date = "01.08.2022"
+closing = 7.56
+opening = 7.96
+high = 7.96
+low = 7.53
+volume = 23320000.0
+variation = -0.0476
+
+[[records]]
+date = "02.08.2022"
+closing = 7.78
+opening = 7.57
+high = 7.84
+low = 7.44
+volume = 19530000.0
+variation = 0.0293
+
+[[records]]
+date = "03.08.2022"
+closing = 7.78
+opening = 7.78
+high = 7.8
+low = 7.57
+volume = 19160000.0
+variation = 0.0
+
+[[records]]
+date = "04.08.2022"
+closing = 8.22
+opening = 7.77
+high = 8.29
+low = 7.65
+volume = 22910000.0
+variation = 0.056900002
+
+[[records]]
+date = "05.08.2022"
+closing = 8.08
+opening = 8.21
+high = 8.35
+low = 8.03
+volume = 13170000.0
+variation = -0.0179
+
+[[records]]
+date = "08.08.2022"
+closing = 8.1
+opening = 8.16
+high = 8.24
+low = 8.01
+volume = 12760000.0
+variation = 0.0034
+
+[[records]]
+date = "09.08.2022"
+closing = 8.27
+opening = 8.1
+high = 8.28
+low = 8.03
+volume = 10240000.0
+variation = 0.020499999
+
+[[records]]
+date = "10.08.2022"
+closing = 8.4
+opening = 8.35
+high = 8.45
+low = 8.21
+volume = 13500000.0
+variation = 0.0156
+
+[[records]]
+date = "11.08.2022"
+closing = 8.62
+opening = 8.49
+high = 8.82
+low = 8.42
+volume = 22090000.0
+variation = 0.026300002
+
+[[records]]
+date = "12.08.2022"
+closing = 8.77
+opening = 8.61
+high = 8.78
+low = 8.57
+volume = 10320000.0
+variation = 0.0171
+
+[[records]]
+date = "15.08.2022"
+closing = 8.56
+opening = 8.6
+high = 8.69
+low = 8.37
+volume = 20700000.0
+variation = -0.0242
+
+[[records]]
+date = "16.08.2022"
+closing = 8.53
+opening = 8.54
+high = 8.78
+low = 8.45
+volume = 13860000.0
+variation = -0.0032
+
+[[records]]
+date = "17.08.2022"
+closing = 8.64
+opening = 8.45
+high = 8.68
+low = 8.37
+volume = 14490000.0
+variation = 0.012999999
+
+[[records]]
+date = "18.08.2022"
+closing = 8.47
+opening = 8.66
+high = 8.78
+low = 8.43
+volume = 15740000.0
+variation = -0.019199999
+
+[[records]]
+date = "19.08.2022"
+closing = 8.34
+opening = 8.37
+high = 8.37
+low = 8.17
+volume = 18990000.0
+variation = -0.0152
+
+[[records]]
+date = "22.08.2022"
+closing = 8.16
+opening = 8.22
+high = 8.36
+low = 8.15
+volume = 13930000.0
+variation = -0.0221
+
+[[records]]
+date = "23.08.2022"
+closing = 8.95
+opening = 8.22
+high = 8.95
+low = 8.19
+volume = 26230000.0
+variation = 0.097200006
+
+[[records]]
+date = "24.08.2022"
+closing = 8.63
+opening = 8.91
+high = 9.01
+low = 8.54
+volume = 23330000.0
+variation = -0.036
+
+[[records]]
+date = "25.08.2022"
+closing = 8.57
+opening = 8.72
+high = 8.79
+low = 8.51
+volume = 15980000.0
+variation = -0.0075
+
+[[records]]
+date = "26.08.2022"
+closing = 7.99
+opening = 8.11
+high = 8.28
+low = 7.98
+volume = 54080000.0
+variation = -0.066700004
+
+[[records]]
+date = "29.08.2022"
+closing = 7.58
+opening = 7.86
+high = 7.96
+low = 7.58
+volume = 33189998.0
+variation = -0.0519
+
+[[records]]
+date = "30.08.2022"
+closing = 7.42
+opening = 7.55
+high = 7.76
+low = 7.42
+volume = 23170000.0
+variation = -0.0207
+
+[[records]]
+date = "31.08.2022"
+closing = 7.39
+opening = 7.48
+high = 7.56
+low = 7.39
+volume = 18000000.0
+variation = -0.0037
+
+[[records]]
+date = "01.09.2022"
+closing = 7.52
+opening = 7.37
+high = 7.54
+low = 7.27
+volume = 23220000.0
+variation = 0.0175
+
+[[records]]
+date = "02.09.2022"
+closing = 7.63
+opening = 7.57
+high = 7.81
+low = 7.5
+volume = 32279998.0
+variation = 0.0135
+
+[[records]]
+date = "05.09.2022"
+closing = 7.68
+opening = 7.73
+high = 7.91
+low = 7.65
+volume = 13650000.0
+variation = 0.0073
+
+[[records]]
+date = "06.09.2022"
+closing = 7.49
+opening = 7.62
+high = 7.69
+low = 7.44
+volume = 11580000.0
+variation = -0.0252
+
+[[records]]
+date = "08.09.2022"
+closing = 7.46
+opening = 7.56
+high = 7.58
+low = 7.38
+volume = 25940000.0
+variation = -0.0037
+
+[[records]]
+date = "09.09.2022"
+closing = 7.75
+opening = 7.56
+high = 7.81
+low = 7.56
+volume = 24420000.0
+variation = 0.0383
+
+[[records]]
+date = "12.09.2022"
+closing = 7.87
+opening = 7.84
+high = 8.05
+low = 7.76
+volume = 18520000.0
+variation = 0.0167
+
+[[records]]
+date = "13.09.2022"
+closing = 7.55
+opening = 7.75
+high = 7.84
+low = 7.51
+volume = 19780000.0
+variation = -0.040999997
+
+[[records]]
+date = "14.09.2022"
+closing = 7.31
+opening = 7.51
+high = 7.62
+low = 7.31
+volume = 29540000.0
+variation = -0.0317
+
+[[records]]
+date = "15.09.2022"
+closing = 7.17
+opening = 7.36
+high = 7.39
+low = 7.15
+volume = 24380000.0
+variation = -0.0189
+
+[[records]]
+date = "16.09.2022"
+closing = 7.05
+opening = 7.1
+high = 7.15
+low = 6.99
+volume = 35230000.0
+variation = -0.0167
+
+[[records]]
+date = "19.09.2022"
+closing = 7.42
+opening = 7.02
+high = 7.46
+low = 6.98
+volume = 36510000.0
+variation = 0.0523
+
+[[records]]
+date = "20.09.2022"
+closing = 7.22
+opening = 7.35
+high = 7.42
+low = 7.19
+volume = 18390000.0
+variation = -0.0273
+
+[[records]]
+date = "21.09.2022"
+closing = 7.13
+opening = 7.22
+high = 7.29
+low = 7.12
+volume = 22310000.0
+variation = -0.0128
+
+[[records]]
+date = "22.09.2022"
+closing = 7.18
+opening = 7.29
+high = 7.39
+low = 7.14
+volume = 33000000.0
+variation = 0.0078
+
+[[records]]
+date = "23.09.2022"
+closing = 7.02
+opening = 7.06
+high = 7.07
+low = 6.94
+volume = 19690000.0
+variation = -0.0231
+
+[[records]]
+date = "26.09.2022"
+closing = 6.69
+opening = 6.96
+high = 6.97
+low = 6.69
+volume = 20860000.0
+variation = -0.046
+
+[[records]]
+date = "27.09.2022"
+closing = 6.64
+opening = 6.78
+high = 6.84
+low = 6.62
+volume = 15360000.0
+variation = -0.0083
+
+[[records]]
+date = "28.09.2022"
+closing = 6.63
+opening = 6.65
+high = 6.72
+low = 6.57
+volume = 13730000.0
+variation = -0.0014
+
+[[records]]
+date = "29.09.2022"
+closing = 6.45
+opening = 6.55
+high = 6.62
+low = 6.35
+volume = 24910000.0
+variation = -0.026400002
+
+[[records]]
+date = "30.09.2022"
+closing = 6.93
+opening = 6.47
+high = 7.04
+low = 6.4
+volume = 27800000.0
+variation = 0.0743
+
+[[records]]
+date = "03.10.2022"
+closing = 7.12
+opening = 7.17
+high = 7.19
+low = 7.04
+volume = 16209999.0
+variation = 0.026600001
+
+[[records]]
+date = "04.10.2022"
+closing = 7.28
+opening = 7.24
+high = 7.48
+low = 7.14
+volume = 30600000.0
+variation = 0.0233
+
+[[records]]
+date = "05.10.2022"
+closing = 7.27
+opening = 7.28
+high = 7.36
+low = 7.02
+volume = 18840000.0
+variation = -0.0013
+
+[[records]]
+date = "06.10.2022"
+closing = 7.27
+opening = 7.27
+high = 7.3
+low = 7.09
+volume = 19830000.0
+variation = -0.0013
+
+[[records]]
+date = "07.10.2022"
+closing = 7.08
+opening = 7.23
+high = 7.32
+low = 7.05
+volume = 22800000.0
+variation = -0.0254
+
+[[records]]
+date = "10.10.2022"
+closing = 7.05
+opening = 7.16
+high = 7.21
+low = 7.02
+volume = 11580000.0
+variation = -0.0039
+
+[[records]]
+date = "11.10.2022"
+closing = 7.14
+opening = 7.01
+high = 7.19
+low = 6.95
+volume = 14780000.0
+variation = 0.0117999995
+
+[[records]]
+date = "13.10.2022"
+closing = 7.08
+opening = 7.03
+high = 7.15
+low = 6.95
+volume = 11800000.0
+variation = -0.0078
+
+[[records]]
+date = "14.10.2022"
+closing = 6.81
+opening = 7.1
+high = 7.15
+low = 6.79
+volume = 11190000.0
+variation = -0.0378
+
+[[records]]
+date = "17.10.2022"
+closing = 6.73
+opening = 6.87
+high = 6.88
+low = 6.66
+volume = 15050000.0
+variation = -0.012200001
+
+[[records]]
+date = "18.10.2022"
+closing = 6.92
+opening = 6.82
+high = 6.94
+low = 6.77
+volume = 13790000.0
+variation = 0.0274
+
+[[records]]
+date = "19.10.2022"
+closing = 6.78
+opening = 6.92
+high = 6.93
+low = 6.69
+volume = 13420000.0
+variation = -0.02
+
+[[records]]
+date = "20.10.2022"
+closing = 6.98
+opening = 6.73
+high = 7.13
+low = 6.73
+volume = 21090000.0
+variation = 0.0299
+
+[[records]]
+date = "21.10.2022"
+closing = 7.2
+opening = 6.94
+high = 7.22
+low = 6.85
+volume = 21760000.0
+variation = 0.0317
+
+[[records]]
+date = "24.10.2022"
+closing = 7.0
+opening = 7.11
+high = 7.15
+low = 6.94
+volume = 10650000.0
+variation = -0.028199999
+
+[[records]]
+date = "25.10.2022"
+closing = 7.04
+opening = 6.99
+high = 7.17
+low = 6.93
+volume = 9800000.0
+variation = 0.0053
+
+[[records]]
+date = "26.10.2022"
+closing = 6.87
+opening = 7.04
+high = 7.06
+low = 6.83
+volume = 17480000.0
+variation = -0.023599999
+
+[[records]]
+date = "27.10.2022"
+closing = 7.07
+opening = 6.84
+high = 7.16
+low = 6.74
+volume = 18750000.0
+variation = 0.0295
+
+[[records]]
+date = "28.10.2022"
+closing = 6.78
+opening = 7.01
+high = 7.35
+low = 6.56
+volume = 44330000.0
+variation = -0.0417
+
+[[records]]
+date = "31.10.2022"
+closing = 6.67
+opening = 6.61
+high = 6.95
+low = 6.55
+volume = 22170000.0
+variation = -0.0163
+
+[[records]]
+date = "01.11.2022"
+closing = 6.92
+opening = 6.83
+high = 7.04
+low = 6.63
+volume = 23360000.0
+variation = 0.0387
+
+[[records]]
+date = "03.11.2022"
+closing = 6.87
+opening = 6.85
+high = 6.98
+low = 6.71
+volume = 12510000.0
+variation = -0.008
+
+[[records]]
+date = "04.11.2022"
+closing = 7.39
+opening = 7.11
+high = 7.51
+low = 7.04
+volume = 37970000.0
+variation = 0.0765
+
+[[records]]
+date = "07.11.2022"
+closing = 7.03
+opening = 7.4
+high = 7.45
+low = 7.0
+volume = 24040000.0
+variation = -0.0499
+
+[[records]]
+date = "08.11.2022"
+closing = 7.14
+opening = 7.0
+high = 7.25
+low = 6.94
+volume = 17180000.0
+variation = 0.015700001
+
+[[records]]
+date = "09.11.2022"
+closing = 7.01
+opening = 7.15
+high = 7.36
+low = 6.97
+volume = 16450001.0
+variation = -0.018099999
+
+[[records]]
+date = "10.11.2022"
+closing = 6.71
+opening = 6.92
+high = 7.04
+low = 6.62
+volume = 29190000.0
+variation = -0.0421
+
+[[records]]
+date = "11.11.2022"
+closing = 7.42
+opening = 6.87
+high = 7.45
+low = 6.85
+volume = 31990000.0
+variation = 0.1058
+
+[[records]]
+date = "14.11.2022"
+closing = 7.22
+opening = 7.47
+high = 7.51
+low = 7.12
+volume = 16170000.0
+variation = -0.0273
+
+[[records]]
+date = "16.11.2022"
+closing = 7.25
+opening = 7.33
+high = 7.33
+low = 7.04
+volume = 20000000.0
+variation = 0.0038
+
+[[records]]
+date = "17.11.2022"
+closing = 7.29
+opening = 7.12
+high = 7.29
+low = 6.89
+volume = 20550000.0
+variation = 0.0064
+
+[[records]]
+date = "18.11.2022"
+closing = 6.99
+opening = 7.44
+high = 7.47
+low = 6.96
+volume = 17890000.0
+variation = -0.0417
+
+[[records]]
+date = "21.11.2022"
+closing = 6.82
+opening = 7.01
+high = 7.05
+low = 6.68
+volume = 16700001.0
+variation = -0.023699999
+
+[[records]]
+date = "22.11.2022"
+closing = 7.09
+opening = 6.84
+high = 7.11
+low = 6.81
+volume = 17440000.0
+variation = 0.0392
+
+[[records]]
+date = "23.11.2022"
+closing = 7.07
+opening = 7.04
+high = 7.1
+low = 6.87
+volume = 13290000.0
+variation = -0.0026
+
+[[records]]
+date = "24.11.2022"
+closing = 7.19
+opening = 7.1
+high = 7.26
+low = 7.05
+volume = 10660000.0
+variation = 0.016900001
+
+[[records]]
+date = "25.11.2022"
+closing = 7.02
+opening = 7.21
+high = 7.3
+low = 6.95
+volume = 10240000.0
+variation = -0.024400001
+
+[[records]]
+date = "28.11.2022"
+closing = 6.71
+opening = 6.9
+high = 6.9
+low = 6.65
+volume = 18920000.0
+variation = -0.0434
+
+[[records]]
+date = "29.11.2022"
+closing = 7.12
+opening = 6.82
+high = 7.27
+low = 6.82
+volume = 26090000.0
+variation = 0.060399998
+
+[[records]]
+date = "30.11.2022"
+closing = 7.21
+opening = 7.13
+high = 7.28
+low = 7.04
+volume = 25250000.0
+variation = 0.012999999
+
+[[records]]
+date = "01.12.2022"
+closing = 6.89
+opening = 7.15
+high = 7.15
+low = 6.88
+volume = 21930000.0
+variation = -0.0448
+
+[[records]]
+date = "02.12.2022"
+closing = 6.92
+opening = 6.97
+high = 7.02
+low = 6.77
+volume = 18820000.0
+variation = 0.0054
+
+[[records]]
+date = "05.12.2022"
+closing = 7.0
+opening = 6.98
+high = 7.17
+low = 6.92
+volume = 13510000.0
+variation = 0.0107
+
+[[records]]
+date = "06.12.2022"
+closing = 7.24
+opening = 7.04
+high = 7.33
+low = 7.0
+volume = 23600000.0
+variation = 0.0343
+
+[[records]]
+date = "07.12.2022"
+closing = 7.25
+opening = 7.15
+high = 7.34
+low = 7.11
+volume = 13920000.0
+variation = 0.0013
+
+[[records]]
+date = "08.12.2022"
+closing = 6.98
+opening = 7.28
+high = 7.39
+low = 6.96
+volume = 21210000.0
+variation = -0.0369
+
+[[records]]
+date = "09.12.2022"
+closing = 7.21
+opening = 7.14
+high = 7.3
+low = 7.06
+volume = 18000000.0
+variation = 0.033
+
+[[records]]
+date = "12.12.2022"
+closing = 7.11
+opening = 7.15
+high = 7.19
+low = 6.82
+volume = 18900000.0
+variation = -0.014099999
+
+[[records]]
+date = "13.12.2022"
+closing = 6.87
+opening = 7.15
+high = 7.31
+low = 6.86
+volume = 24240000.0
+variation = -0.0337
+
+[[records]]
+date = "14.12.2022"
+closing = 7.25
+opening = 6.8
+high = 7.31
+low = 6.75
+volume = 34230000.0
+variation = 0.055
+
+[[records]]
+date = "15.12.2022"
+closing = 6.94
+opening = 7.31
+high = 7.39
+low = 6.92
+volume = 26560000.0
+variation = -0.042
+
+[[records]]
+date = "16.12.2022"
+closing = 6.78
+opening = 6.93
+high = 6.99
+low = 6.78
+volume = 24320000.0
+variation = -0.0239
+
+[[records]]
+date = "19.12.2022"
+closing = 6.36
+opening = 6.68
+high = 6.68
+low = 6.33
+volume = 56880000.0
+variation = -0.0612
+
+[[records]]
+date = "20.12.2022"
+closing = 6.5
+opening = 6.36
+high = 6.65
+low = 6.33
+volume = 31220000.0
+variation = 0.0217
+
+[[records]]
+date = "21.12.2022"
+closing = 6.48
+opening = 6.63
+high = 6.67
+low = 6.46
+volume = 16059999.0
+variation = -0.0028
+
+[[records]]
+date = "22.12.2022"
+closing = 6.45
+opening = 6.49
+high = 6.54
+low = 6.34
+volume = 20040000.0
+variation = -0.0043
+
+[[records]]
+date = "23.12.2022"
+closing = 6.38
+opening = 6.49
+high = 6.52
+low = 6.36
+volume = 18110000.0
+variation = -0.0114
+
+[[records]]
+date = "26.12.2022"
+closing = 6.42
+opening = 6.42
+high = 6.44
+low = 6.37
+volume = 6880000.0
+variation = 0.0058
+
+[[records]]
+date = "27.12.2022"
+closing = 6.47
+opening = 6.47
+high = 6.57
+low = 6.39
+volume = 16800000.0
+variation = 0.0086
+
+[[records]]
+date = "28.12.2022"
+closing = 6.6
+opening = 6.49
+high = 6.64
+low = 6.45
+volume = 12380000.0
+variation = 0.0199
+
+[[records]]
+date = "29.12.2022"
+closing = 6.6
+opening = 6.64
+high = 6.67
+low = 6.57
+volume = 12900000.0
+variation = 0.0
+
+[[records]]
+date = "02.01.2023"
+closing = 6.48
+opening = 6.59
+high = 6.62
+low = 6.44
+volume = 8279999.5
+variation = -0.0182
+
+[[records]]
+date = "03.01.2023"
+closing = 6.41
+opening = 6.51
+high = 6.61
+low = 6.38
+volume = 13380000.0
+variation = -0.0114
+
+[[records]]
+date = "04.01.2023"
+closing = 6.54
+opening = 6.45
+high = 6.55
+low = 6.35
+volume = 12700000.0
+variation = 0.0201
+
+[[records]]
+date = "05.01.2023"
+closing = 6.92
+opening = 6.56
+high = 6.94
+low = 6.5
+volume = 26810000.0
+variation = 0.0592
+
+[[records]]
+date = "06.01.2023"
+closing = 7.0
+opening = 6.93
+high = 7.16
+low = 6.92
+volume = 18340000.0
+variation = 0.0107
+
+[[records]]
+date = "09.01.2023"
+closing = 7.03
+opening = 6.9
+high = 7.08
+low = 6.8
+volume = 10690000.0
+variation = 0.004
+
+[[records]]
+date = "10.01.2023"
+closing = 7.28
+opening = 7.01
+high = 7.3
+low = 6.99
+volume = 13820000.0
+variation = 0.0367
+
+[[records]]
+date = "11.01.2023"
+closing = 7.24
+opening = 7.32
+high = 7.38
+low = 7.14
+volume = 13900000.0
+variation = -0.0063
+
+[[records]]
+date = "12.01.2023"
+closing = 7.27
+opening = 7.27
+high = 7.36
+low = 7.23
+volume = 11680000.0
+variation = 0.0038
+
+[[records]]
+date = "13.01.2023"
+closing = 7.2
+opening = 7.28
+high = 7.28
+low = 7.15
+volume = 7270000.0
+variation = -0.0089
+
+[[records]]
+date = "16.01.2023"
+closing = 7.14
+opening = 7.13
+high = 7.17
+low = 7.0
+volume = 6790000.0
+variation = -0.009
+
+[[records]]
+date = "17.01.2023"
+closing = 7.32
+opening = 7.16
+high = 7.38
+low = 7.15
+volume = 9530000.0
+variation = 0.025799999
+
+[[records]]
+date = "18.01.2023"
+closing = 7.5
+opening = 7.38
+high = 7.59
+low = 7.35
+volume = 18520000.0
+variation = 0.0239
+
+[[records]]
+date = "19.01.2023"
+closing = 7.44
+opening = 7.47
+high = 7.63
+low = 7.32
+volume = 21800000.0
+variation = -0.0074
+
+[[records]]
+date = "20.01.2023"
+closing = 7.64
+opening = 7.44
+high = 7.64
+low = 7.41
+volume = 18060000.0
+variation = 0.0273
+
+[[records]]
+date = "23.01.2023"
+closing = 7.69
+opening = 7.67
+high = 7.89
+low = 7.67
+volume = 15870000.0
+variation = 0.006
+
+[[records]]
+date = "24.01.2023"
+closing = 7.63
+opening = 7.72
+high = 7.77
+low = 7.39
+volume = 28060000.0
+variation = -0.0084
+
+[[records]]
+date = "25.01.2023"
+closing = 7.63
+opening = 7.62
+high = 7.69
+low = 7.5
+volume = 9590000.0
+variation = 0.0011999999
+
+[[records]]
+date = "26.01.2023"
+closing = 7.92
+opening = 7.68
+high = 7.97
+low = 7.68
+volume = 16639999.0
+variation = 0.0374
+
+[[records]]
+date = "27.01.2023"
+closing = 7.81
+opening = 7.91
+high = 7.92
+low = 7.75
+volume = 12670000.0
+variation = -0.0139999995
+
+[[records]]
+date = "30.01.2023"
+closing = 7.81
+opening = 7.85
+high = 7.91
+low = 7.7
+volume = 10990000.0
+variation = 0.0
+
+[[records]]
+date = "31.01.2023"
+closing = 7.86
+opening = 7.8
+high = 7.99
+low = 7.74
+volume = 13360000.0
+variation = 0.0070999996
+
+[[records]]
+date = "01.02.2023"
+closing = 7.75
+opening = 7.85
+high = 7.86
+low = 7.63
+volume = 10550000.0
+variation = -0.014099999
+
+[[records]]
+date = "02.02.2023"
+closing = 7.29
+opening = 7.7
+high = 7.7
+low = 7.29
+volume = 20630000.0
+variation = -0.059499998
+
+[[records]]
+date = "03.02.2023"
+closing = 7.22
+opening = 7.32
+high = 7.45
+low = 7.2
+volume = 12940000.0
+variation = -0.0101
+
+[[records]]
+date = "06.02.2023"
+closing = 7.07
+opening = 7.2
+high = 7.2
+low = 6.97
+volume = 17160000.0
+variation = -0.020399999
+
+[[records]]
+date = "07.02.2023"
+closing = 6.99
+opening = 7.1
+high = 7.14
+low = 6.95
+volume = 13040000.0
+variation = -0.0117
+
+[[records]]
+date = "08.02.2023"
+closing = 7.02
+opening = 7.04
+high = 7.06
+low = 6.92
+volume = 11570000.0
+variation = 0.004
+
+[[records]]
+date = "09.02.2023"
+closing = 6.85
+opening = 7.04
+high = 7.1
+low = 6.82
+volume = 14750000.0
+variation = -0.023699999
+
+[[records]]
+date = "10.02.2023"
+closing = 6.77
+opening = 6.7
+high = 6.94
+low = 6.62
+volume = 18730000.0
+variation = -0.0121
+
+[[records]]
+date = "13.02.2023"
+closing = 6.73
+opening = 6.73
+high = 6.75
+low = 6.5
+volume = 12930000.0
+variation = -0.0054
+
+[[records]]
+date = "14.02.2023"
+closing = 6.56
+opening = 6.79
+high = 6.85
+low = 6.48
+volume = 21990000.0
+variation = -0.0247
+
+[[records]]
+date = "15.02.2023"
+closing = 6.68
+opening = 6.58
+high = 6.72
+low = 6.48
+volume = 16000000.0
+variation = 0.016900001
+
+[[records]]
+date = "16.02.2023"
+closing = 6.73
+opening = 6.69
+high = 6.78
+low = 6.59
+volume = 15190000.0
+variation = 0.0083
+
+[[records]]
+date = "17.02.2023"
+closing = 6.71
+opening = 6.69
+high = 6.72
+low = 6.59
+volume = 13150000.0
+variation = -0.0027
+
+[[records]]
+date = "22.02.2023"
+closing = 6.54
+opening = 6.66
+high = 6.68
+low = 6.5
+volume = 8930000.0
+variation = -0.026099999
+
+[[records]]
+date = "23.02.2023"
+closing = 6.45
+opening = 6.56
+high = 6.59
+low = 6.28
+volume = 23900000.0
+variation = -0.0127
+
+[[records]]
+date = "24.02.2023"
+closing = 6.3
+opening = 6.41
+high = 6.46
+low = 6.27
+volume = 11240000.0
+variation = -0.024300002
+
+[[records]]
+date = "27.02.2023"
+closing = 6.32
+opening = 6.31
+high = 6.43
+low = 6.27
+volume = 11700000.0
+variation = 0.0029
+
+[[records]]
+date = "28.02.2023"
+closing = 6.3
+opening = 6.32
+high = 6.38
+low = 6.24
+volume = 15280000.0
+variation = -0.0029
+
+[[records]]
+date = "01.03.2023"
+closing = 6.61
+opening = 6.39
+high = 6.65
+low = 6.32
+volume = 22170000.0
+variation = 0.0498
+
+[[records]]
+date = "02.03.2023"
+closing = 6.55
+opening = 6.61
+high = 6.61
+low = 6.47
+volume = 8189999.5
+variation = -0.0098
+
+[[records]]
+date = "03.03.2023"
+closing = 6.62
+opening = 6.56
+high = 6.74
+low = 6.52
+volume = 9620000.0
+variation = 0.0113
+
+[[records]]
+date = "06.03.2023"
+closing = 6.56
+opening = 6.57
+high = 6.59
+low = 6.44
+volume = 10790000.0
+variation = -0.0084
+
+[[records]]
+date = "07.03.2023"
+closing = 6.48
+opening = 6.57
+high = 6.64
+low = 6.37
+volume = 12860000.0
+variation = -0.0126
+
+[[records]]
+date = "08.03.2023"
+closing = 6.72
+opening = 6.48
+high = 6.73
+low = 6.46
+volume = 12070000.0
+variation = 0.037
+
+[[records]]
+date = "09.03.2023"
+closing = 6.56
+opening = 6.64
+high = 6.72
+low = 6.49
+volume = 14420000.0
+variation = -0.0233
+
+[[records]]
+date = "10.03.2023"
+closing = 6.39
+opening = 6.51
+high = 6.58
+low = 6.33
+volume = 13730000.0
+variation = -0.026700001
+
+[[records]]
+date = "13.03.2023"
+closing = 6.39
+opening = 6.33
+high = 6.47
+low = 6.28
+volume = 11020000.0
+variation = 0.0
+
+[[records]]
+date = "14.03.2023"
+closing = 6.46
+opening = 6.41
+high = 6.46
+low = 6.34
+volume = 15730000.0
+variation = 0.0115
+
+[[records]]
+date = "15.03.2023"
+closing = 6.35
+opening = 6.37
+high = 6.41
+low = 6.16
+volume = 20110000.0
+variation = -0.0171
+
+[[records]]
+date = "16.03.2023"
+closing = 6.44
+opening = 6.31
+high = 6.51
+low = 6.29
+volume = 24690000.0
+variation = 0.0145000005
+
+[[records]]
+date = "17.03.2023"
+closing = 6.4
+opening = 6.44
+high = 6.52
+low = 6.31
+volume = 22840000.0
+variation = -0.0072000003
+
+[[records]]
+date = "20.03.2023"
+closing = 6.32
+opening = 6.36
+high = 6.44
+low = 6.27
+volume = 12040000.0
+variation = -0.012999999
+
+[[records]]
+date = "21.03.2023"
+closing = 6.26
+opening = 6.33
+high = 6.36
+low = 6.24
+volume = 9120000.0
+variation = -0.0088
+
+[[records]]
+date = "22.03.2023"
+closing = 6.27
+opening = 6.25
+high = 6.38
+low = 6.21
+volume = 11150000.0
+variation = 0.0015
+
+[[records]]
+date = "23.03.2023"
+closing = 6.12
+opening = 6.29
+high = 6.34
+low = 6.05
+volume = 12630000.0
+variation = -0.0235
+
+[[records]]
+date = "24.03.2023"
+closing = 6.1
+opening = 6.12
+high = 6.16
+low = 6.02
+volume = 13780000.0
+variation = -0.003
+
+[[records]]
+date = "27.03.2023"
+closing = 6.1
+opening = 6.18
+high = 6.23
+low = 6.09
+volume = 6430000.0
+variation = 0.0
+
+[[records]]
+date = "28.03.2023"
+closing = 6.3
+opening = 6.12
+high = 6.37
+low = 6.11
+volume = 16389999.0
+variation = 0.0317
+
+[[records]]
+date = "29.03.2023"
+closing = 6.3
+opening = 6.32
+high = 6.37
+low = 6.22
+volume = 13840000.0
+variation = 0.0
+
+[[records]]
+date = "30.03.2023"
+closing = 6.74
+opening = 6.69
+high = 6.81
+low = 6.5
+volume = 36030000.0
+variation = 0.070300005
+
+[[records]]
+date = "31.03.2023"
+closing = 6.72
+opening = 6.78
+high = 6.94
+low = 6.67
+volume = 11790000.0
+variation = -0.0027
+
+[[records]]
+date = "03.04.2023"
+closing = 6.63
+opening = 6.7
+high = 6.73
+low = 6.56
+volume = 11550000.0
+variation = -0.0137
+
+[[records]]
+date = "04.04.2023"
+closing = 6.6
+opening = 6.63
+high = 6.7
+low = 6.57
+volume = 10200000.0
+variation = -0.0042
+
+[[records]]
+date = "05.04.2023"
+closing = 6.54
+opening = 6.58
+high = 6.61
+low = 6.44
+volume = 10890000.0
+variation = -0.0098
+
+[[records]]
+date = "06.04.2023"
+closing = 6.46
+opening = 6.47
+high = 6.6
+low = 6.45
+volume = 7870000.0
+variation = -0.0113
+
+[[records]]
+date = "10.04.2023"
+closing = 6.68
+opening = 6.45
+high = 6.79
+low = 6.44
+volume = 12600000.0
+variation = 0.0328
+
+[[records]]
+date = "11.04.2023"
+closing = 7.13
+opening = 6.77
+high = 7.24
+low = 6.77
+volume = 25120000.0
+variation = 0.0677
+
+[[records]]
+date = "12.04.2023"
+closing = 7.06
+opening = 7.13
+high = 7.18
+low = 7.04
+volume = 11250000.0
+variation = -0.0091
+
+[[records]]
+date = "13.04.2023"
+closing = 7.05
+opening = 7.05
+high = 7.14
+low = 7.0
+volume = 7860000.0
+variation = -0.0013
+
+[[records]]
+date = "14.04.2023"
+closing = 6.94
+opening = 7.02
+high = 7.04
+low = 6.9
+volume = 6610000.0
+variation = -0.015700001
+
+[[records]]
+date = "17.04.2023"
+closing = 6.95
+opening = 6.94
+high = 7.04
+low = 6.92
+volume = 6040000.0
+variation = 0.0013
+
+[[records]]
+date = "18.04.2023"
+closing = 7.02
+opening = 7.03
+high = 7.09
+low = 6.9
+volume = 8930000.0
+variation = 0.0093
+
+[[records]]
+date = "19.04.2023"
+closing = 6.87
+opening = 6.92
+high = 6.95
+low = 6.75
+volume = 18630000.0
+variation = -0.021
+
+[[records]]
+date = "20.04.2023"
+closing = 6.62
+opening = 6.92
+high = 7.05
+low = 6.6
+volume = 19390000.0
+variation = -0.036199998
+
+[[records]]
+date = "24.04.2023"
+closing = 6.56
+opening = 6.42
+high = 6.62
+low = 6.42
+volume = 15760000.0
+variation = -0.0084
+
+[[records]]
+date = "25.04.2023"
+closing = 6.5
+opening = 6.52
+high = 6.55
+low = 6.39
+volume = 17090000.0
+variation = -0.0098
+
+[[records]]
+date = "26.04.2023"
+closing = 6.48
+opening = 6.55
+high = 6.58
+low = 6.44
+volume = 9930000.0
+variation = -0.0028
+
+[[records]]
+date = "27.04.2023"
+closing = 6.56
+opening = 6.5
+high = 6.66
+low = 6.49
+volume = 15810000.0
+variation = 0.0128
+
+[[records]]
+date = "28.04.2023"
+closing = 6.96
+opening = 6.64
+high = 6.96
+low = 6.61
+volume = 14040000.0
+variation = 0.0602
+
+[[records]]
+date = "02.05.2023"
+closing = 6.91
+opening = 6.9
+high = 6.98
+low = 6.77
+volume = 10660000.0
+variation = -0.0069
+
+[[records]]
+date = "03.05.2023"
+closing = 6.96
+opening = 6.94
+high = 7.01
+low = 6.82
+volume = 9080000.0
+variation = 0.0069999998
+
+[[records]]
+date = "04.05.2023"
+closing = 6.86
+opening = 6.98
+high = 7.04
+low = 6.74
+volume = 15180000.0
+variation = -0.0139
+
+[[records]]
+date = "05.05.2023"
+closing = 7.24
+opening = 6.88
+high = 7.32
+low = 6.84
+volume = 14400000.0
+variation = 0.054899998
+
+[[records]]
+date = "06.05.2023"
+closing = 7.46
+opening = 7.46
+high = 7.46
+low = 7.46
+volume = 0.0
+variation = 0.030299999
+
+[[records]]
+date = "08.05.2023"
+closing = 7.29
+opening = 7.41
+high = 7.43
+low = 7.26
+volume = 5240000.0
+variation = -0.023
+
+[[records]]
+date = "09.05.2023"
+closing = 7.35
+opening = 7.21
+high = 7.4
+low = 7.2
+volume = 6410000.0
+variation = 0.008
+
+[[records]]
+date = "10.05.2023"
+closing = 7.38
+opening = 7.38
+high = 7.39
+low = 7.23
+volume = 9570000.0
+variation = 0.0039
+
+[[records]]
+date = "11.05.2023"
+closing = 7.19
+opening = 7.27
+high = 7.29
+low = 7.12
+volume = 11360000.0
+variation = -0.0249
+
+[[records]]
+date = "12.05.2023"
+closing = 7.21
+opening = 7.17
+high = 7.24
+low = 7.11
+volume = 7150000.0
+variation = 0.0027
+
+[[records]]
+date = "15.05.2023"
+closing = 7.36
+opening = 7.3
+high = 7.43
+low = 7.26
+volume = 8890000.0
+variation = 0.0201
+
+[[records]]
+date = "16.05.2023"
+closing = 7.22
+opening = 7.37
+high = 7.42
+low = 7.18
+volume = 7810000.0
+variation = -0.0184
+
+[[records]]
+date = "17.05.2023"
+closing = 7.46
+opening = 7.33
+high = 7.63
+low = 7.31
+volume = 12920000.0
+variation = 0.0335
+
+[[records]]
+date = "18.05.2023"
+closing = 7.54
+opening = 7.49
+high = 7.62
+low = 7.39
+volume = 8840000.0
+variation = 0.0104
+
+[[records]]
+date = "19.05.2023"
+closing = 7.72
+opening = 7.6
+high = 7.75
+low = 7.48
+volume = 12590000.0
+variation = 0.024400001
+
+[[records]]
+date = "22.05.2023"
+closing = 7.58
+opening = 7.68
+high = 7.77
+low = 7.56
+volume = 9840000.0
+variation = -0.0188
+
+[[records]]
+date = "23.05.2023"
+closing = 7.24
+opening = 7.54
+high = 7.55
+low = 7.21
+volume = 21810000.0
+variation = -0.0446
+
+[[records]]
+date = "24.05.2023"
+closing = 7.14
+opening = 7.13
+high = 7.22
+low = 7.05
+volume = 19340000.0
+variation = -0.0134000005
+
+[[records]]
+date = "25.05.2023"
+closing = 7.04
+opening = 7.22
+high = 7.25
+low = 7.01
+volume = 11410000.0
+variation = -0.0149
+
+[[records]]
+date = "26.05.2023"
+closing = 7.07
+opening = 7.21
+high = 7.23
+low = 7.02
+volume = 12300000.0
+variation = 0.0041
+
+[[records]]
+date = "29.05.2023"
+closing = 7.04
+opening = 7.13
+high = 7.17
+low = 7.03
+volume = 6290000.0
+variation = -0.0041
+
+[[records]]
+date = "30.05.2023"
+closing = 6.83
+opening = 7.08
+high = 7.1
+low = 6.8
+volume = 18510000.0
+variation = -0.028800001
+
+[[records]]
+date = "31.05.2023"
+closing = 6.79
+opening = 6.84
+high = 6.89
+low = 6.77
+volume = 13580000.0
+variation = -0.0070999996
+
+[[records]]
+date = "01.06.2023"
+closing = 6.92
+opening = 6.89
+high = 6.96
+low = 6.81
+volume = 11670000.0
+variation = 0.0199
+
+[[records]]
+date = "02.06.2023"
+closing = 7.13
+opening = 7.25
+high = 7.29
+low = 7.1
+volume = 14520000.0
+variation = 0.0307
+
+[[records]]
+date = "05.06.2023"
+closing = 7.16
+opening = 7.17
+high = 7.21
+low = 7.05
+volume = 5590000.0
+variation = 0.0041
+
+[[records]]
+date = "06.06.2023"
+closing = 7.14
+opening = 7.16
+high = 7.23
+low = 7.13
+volume = 14140000.0
+variation = -0.0027
+
+[[records]]
+date = "07.06.2023"
+closing = 7.1
+opening = 7.19
+high = 7.19
+low = 7.05
+volume = 9440000.0
+variation = -0.0068
+
+[[records]]
+date = "09.06.2023"
+closing = 7.09
+opening = 7.14
+high = 7.2
+low = 7.06
+volume = 12950000.0
+variation = -0.0014
+
+[[records]]
+date = "12.06.2023"
+closing = 7.07
+opening = 7.07
+high = 7.12
+low = 6.98
+volume = 10000000.0
+variation = -0.0027
+
+[[records]]
+date = "13.06.2023"
+closing = 7.05
+opening = 7.12
+high = 7.17
+low = 7.03
+volume = 9800000.0
+variation = -0.0027
+
+[[records]]
+date = "14.06.2023"
+closing = 7.15
+opening = 7.11
+high = 7.23
+low = 7.05
+volume = 17040000.0
+variation = 0.0150999995
+
+[[records]]
+date = "15.06.2023"
+closing = 7.15
+opening = 7.16
+high = 7.18
+low = 7.1
+volume = 8810000.0
+variation = 0.0
+
+[[records]]
+date = "16.06.2023"
+closing = 7.14
+opening = 7.15
+high = 7.18
+low = 7.1
+volume = 10520000.0
+variation = -0.0014
+
+[[records]]
+date = "19.06.2023"
+closing = 7.25
+opening = 7.14
+high = 7.28
+low = 7.07
+volume = 10000000.0
+variation = 0.0149
+
+[[records]]
+date = "20.06.2023"
+closing = 7.14
+opening = 7.24
+high = 7.24
+low = 7.09
+volume = 11580000.0
+variation = -0.0147
+
+[[records]]
+date = "21.06.2023"
+closing = 7.06
+opening = 7.11
+high = 7.13
+low = 7.03
+volume = 10220000.0
+variation = -0.012200001
+
+[[records]]
+date = "22.06.2023"
+closing = 6.98
+opening = 7.02
+high = 7.08
+low = 6.93
+volume = 9070000.0
+variation = -0.011
+
+[[records]]
+date = "23.06.2023"
+closing = 6.99
+opening = 6.96
+high = 7.05
+low = 6.92
+volume = 6230000.0
+variation = 0.0014
+
+[[records]]
+date = "26.06.2023"
+closing = 7.04
+opening = 6.99
+high = 7.06
+low = 6.95
+volume = 7110000.0
+variation = 0.0069
+
+[[records]]
+date = "27.06.2023"
+closing = 6.98
+opening = 7.05
+high = 7.07
+low = 6.92
+volume = 20710000.0
+variation = -0.0082
+
+[[records]]
+date = "28.06.2023"
+closing = 6.88
+opening = 7.0
+high = 7.03
+low = 6.88
+volume = 7890000.0
+variation = -0.0139
+
+[[records]]
+date = "29.06.2023"
+closing = 6.96
+opening = 6.91
+high = 7.01
+low = 6.87
+volume = 10710000.0
+variation = 0.0112
+
+[[records]]
+date = "30.06.2023"
+closing = 6.83
+opening = 6.98
+high = 7.01
+low = 6.78
+volume = 18670000.0
+variation = -0.018099999
+
+[[records]]
+date = "03.07.2023"
+closing = 7.01
+opening = 6.86
+high = 7.13
+low = 6.86
+volume = 12770000.0
+variation = 0.0255
+
+[[records]]
+date = "04.07.2023"
+closing = 7.08
+opening = 7.01
+high = 7.13
+low = 6.96
+volume = 7220000.0
+variation = 0.0097
+
+[[records]]
+date = "05.07.2023"
+closing = 7.13
+opening = 7.06
+high = 7.2
+low = 7.02
+volume = 10480000.0
+variation = 0.0082
+
+[[records]]
+date = "06.07.2023"
+closing = 7.12
+opening = 7.1
+high = 7.19
+low = 7.06
+volume = 16459999.0
+variation = -0.0014
+
+[[records]]
+date = "07.07.2023"
+closing = 7.28
+opening = 7.1
+high = 7.4
+low = 7.1
+volume = 13340000.0
+variation = 0.0217
+
+[[records]]
+date = "10.07.2023"
+closing = 7.12
+opening = 7.11
+high = 7.19
+low = 6.98
+volume = 16430000.0
+variation = -0.0212
+
+[[records]]
+date = "11.07.2023"
+closing = 7.1
+opening = 7.11
+high = 7.18
+low = 7.07
+volume = 8290000.0
+variation = -0.0041
+
+[[records]]
+date = "12.07.2023"
+closing = 7.1
+opening = 7.19
+high = 7.22
+low = 7.09
+volume = 8229999.5
+variation = 0.0014
+
+[[records]]
+date = "13.07.2023"
+closing = 7.42
+opening = 7.18
+high = 7.46
+low = 7.13
+volume = 16740000.0
+variation = 0.044899996
+
+[[records]]
+date = "14.07.2023"
+closing = 7.25
+opening = 7.51
+high = 7.55
+low = 7.2
+volume = 9430000.0
+variation = -0.0234
+
+[[records]]
+date = "17.07.2023"
+closing = 7.17
+opening = 7.25
+high = 7.25
+low = 7.11
+volume = 7310000.0
+variation = -0.0107
+
+[[records]]
+date = "18.07.2023"
+closing = 7.17
+opening = 7.16
+high = 7.22
+low = 7.09
+volume = 7730000.0
+variation = 0.0
+
+[[records]]
+date = "19.07.2023"
+closing = 6.97
+opening = 7.2
+high = 7.2
+low = 6.91
+volume = 16020000.0
+variation = -0.028299998
+
+[[records]]
+date = "20.07.2023"
+closing = 6.92
+opening = 7.02
+high = 7.03
+low = 6.91
+volume = 11680000.0
+variation = -0.0069
+
+[[records]]
+date = "21.07.2023"
+closing = 6.93
+opening = 6.92
+high = 6.96
+low = 6.86
+volume = 11630000.0
+variation = 0.0014
+
+[[records]]
+date = "24.07.2023"
+closing = 7.1
+opening = 6.92
+high = 7.15
+low = 6.91
+volume = 14020000.0
+variation = 0.0251
+
+[[records]]
+date = "25.07.2023"
+closing = 7.26
+opening = 7.17
+high = 7.37
+low = 7.16
+volume = 21920000.0
+variation = 0.0218
+
+[[records]]
+date = "26.07.2023"
+closing = 7.19
+opening = 7.21
+high = 7.29
+low = 7.15
+volume = 11520000.0
+variation = -0.0093
+
+[[records]]
+date = "27.07.2023"
+closing = 7.24
+opening = 7.19
+high = 7.28
+low = 7.1
+volume = 10380000.0
+variation = 0.0067000003
+
+[[records]]
+date = "28.07.2023"
+closing = 6.85
+opening = 7.24
+high = 7.24
+low = 6.84
+volume = 31020000.0
+variation = -0.053400002
+
+[[records]]
+date = "31.07.2023"
+closing = 6.99
+opening = 6.9
+high = 7.04
+low = 6.89
+volume = 15650000.0
+variation = 0.0197
+
+[[records]]
+date = "01.08.2023"
+closing = 6.94
+opening = 6.95
+high = 7.0
+low = 6.88
+volume = 9510000.0
+variation = -0.0069
+
+[[records]]
+date = "02.08.2023"
+closing = 6.87
+opening = 6.91
+high = 6.98
+low = 6.87
+volume = 10030000.0
+variation = -0.0097
+
+[[records]]
+date = "03.08.2023"
+closing = 6.85
+opening = 6.9
+high = 6.98
+low = 6.85
+volume = 14840000.0
+variation = -0.0028
+
+[[records]]
+date = "04.08.2023"
+closing = 6.85
+opening = 6.86
+high = 6.95
+low = 6.85
+volume = 12900000.0
+variation = 0.0
+
+[[records]]
+date = "07.08.2023"
+closing = 6.83
+opening = 6.88
+high = 6.88
+low = 6.81
+volume = 8200000.0
+variation = -0.0028
+
+[[records]]
+date = "08.08.2023"
+closing = 6.81
+opening = 6.81
+high = 6.87
+low = 6.7
+volume = 11920000.0
+variation = -0.0028
+
+[[records]]
+date = "09.08.2023"
+closing = 6.77
+opening = 6.8
+high = 6.83
+low = 6.75
+volume = 7360000.0
+variation = -0.0070999996
+
+[[records]]
+date = "10.08.2023"
+closing = 6.78
+opening = 6.83
+high = 6.83
+low = 6.75
+volume = 6100000.0
+variation = 0.0014
+
+[[records]]
+date = "11.08.2023"
+closing = 6.72
+opening = 6.81
+high = 6.81
+low = 6.66
+volume = 9000000.0
+variation = -0.0086
+
+[[records]]
+date = "14.08.2023"
+closing = 6.68
+opening = 6.72
+high = 6.73
+low = 6.65
+volume = 7200000.0
+variation = -0.0058
+
+[[records]]
+date = "15.08.2023"
+closing = 6.66
+opening = 6.7
+high = 6.71
+low = 6.63
+volume = 6970000.0
+variation = -0.0029
+
+[[records]]
+date = "16.08.2023"
+closing = 6.63
+opening = 6.73
+high = 6.75
+low = 6.62
+volume = 10700000.0
+variation = -0.0044
+
+[[records]]
+date = "17.08.2023"
+closing = 6.63
+opening = 6.73
+high = 6.77
+low = 6.6
+volume = 6360000.0
+variation = 0.0
+
+[[records]]
+date = "18.08.2023"
+closing = 6.62
+opening = 6.65
+high = 6.66
+low = 6.54
+volume = 7700000.0
+variation = -0.0015
+
+[[records]]
+date = "21.08.2023"
+closing = 6.65
+opening = 6.6
+high = 6.65
+low = 6.52
+volume = 10740000.0
+variation = 0.0044
+
+[[records]]
+date = "22.08.2023"
+closing = 6.7
+opening = 6.72
+high = 6.75
+low = 6.63
+volume = 8189999.5
+variation = 0.0073
+
+[[records]]
+date = "23.08.2023"
+closing = 6.67
+opening = 6.72
+high = 6.72
+low = 6.63
+volume = 6700000.0
+variation = -0.0043
+
+[[records]]
+date = "24.08.2023"
+closing = 6.61
+opening = 6.62
+high = 6.66
+low = 6.59
+volume = 5390000.0
+variation = -0.0087
+
+[[records]]
+date = "25.08.2023"
+closing = 6.57
+opening = 6.62
+high = 6.62
+low = 6.55
+volume = 4780000.0
+variation = -0.0058
+
+[[records]]
+date = "28.08.2023"
+closing = 6.65
+opening = 6.57
+high = 6.67
+low = 6.54
+volume = 8200000.0
+variation = 0.0117999995
+
+[[records]]
+date = "29.08.2023"
+closing = 6.72
+opening = 6.64
+high = 6.72
+low = 6.64
+volume = 6460000.0
+variation = 0.010199999
+
+[[records]]
+date = "30.08.2023"
+closing = 6.73
+opening = 6.77
+high = 6.78
+low = 6.71
+volume = 6650000.0
+variation = 0.0014
+
+[[records]]
+date = "31.08.2023"
+closing = 6.65
+opening = 6.63
+high = 6.7
+low = 6.6
+volume = 10630000.0
+variation = -0.0115
+
+[[records]]
+date = "01.09.2023"
+closing = 6.7
+opening = 6.68
+high = 6.73
+low = 6.66
+volume = 8500000.0
+variation = 0.0073
+
+[[records]]
+date = "02.09.2023"
+closing = 6.92
+opening = 6.92
+high = 6.92
+low = 6.92
+volume = 0.0
+variation = 0.033
+
+[[records]]
+date = "04.09.2023"
+closing = 6.76
+opening = 6.69
+high = 6.83
+low = 6.67
+volume = 7130000.0
+variation = -0.023599999
+
+[[records]]
+date = "05.09.2023"
+closing = 6.67
+opening = 6.74
+high = 6.78
+low = 6.67
+volume = 8890000.0
+variation = -0.0128999995
+
+[[records]]
+date = "06.09.2023"
+closing = 6.69
+opening = 6.66
+high = 6.76
+low = 6.64
+volume = 7990000.0
+variation = 0.0029
+
+[[records]]
+date = "08.09.2023"
+closing = 6.6
+opening = 6.64
+high = 6.65
+low = 6.56
+volume = 5420000.0
+variation = -0.012999999
+
+[[records]]
+date = "11.09.2023"
+closing = 6.67
+opening = 6.65
+high = 6.7
+low = 6.59
+volume = 10620000.0
+variation = 0.010199999
+
+[[records]]
+date = "12.09.2023"
+closing = 6.59
+opening = 6.67
+high = 6.68
+low = 6.58
+volume = 12070000.0
+variation = -0.0116
+
+[[records]]
+date = "13.09.2023"
+closing = 6.57
+opening = 6.6
+high = 6.61
+low = 6.55
+volume = 10090000.0
+variation = -0.0029
+
+[[records]]
+date = "14.09.2023"
+closing = 6.67
+opening = 6.61
+high = 6.78
+low = 6.59
+volume = 18970000.0
+variation = 0.0147
+
+[[records]]
+date = "15.09.2023"
+closing = 6.71
+opening = 6.71
+high = 6.77
+low = 6.62
+volume = 15510000.0
+variation = 0.0058
+
+[[records]]
+date = "18.09.2023"
+closing = 6.57
+opening = 6.71
+high = 6.72
+low = 6.57
+volume = 10600000.0
+variation = -0.0202
+
+[[records]]
+date = "19.09.2023"
+closing = 6.52
+opening = 6.57
+high = 6.59
+low = 6.48
+volume = 18560000.0
+variation = -0.0074
+
+[[records]]
+date = "20.09.2023"
+closing = 6.53
+opening = 6.55
+high = 6.62
+low = 6.52
+volume = 8210000.0
+variation = 0.0015
+
+[[records]]
+date = "21.09.2023"
+closing = 6.36
+opening = 6.48
+high = 6.49
+low = 6.32
+volume = 19440000.0
+variation = -0.026600001
+
+[[records]]
+date = "22.09.2023"
+closing = 6.37
+opening = 6.43
+high = 6.46
+low = 6.34
+volume = 9340000.0
+variation = 0.0015
+
+[[records]]
+date = "25.09.2023"
+closing = 6.28
+opening = 6.32
+high = 6.33
+low = 6.26
+volume = 10340000.0
+variation = -0.0137
+
+[[records]]
+date = "26.09.2023"
+closing = 6.25
+opening = 6.25
+high = 6.33
+low = 6.23
+volume = 12170000.0
+variation = -0.0046
+
+[[records]]
+date = "27.09.2023"
+closing = 6.3
+opening = 6.28
+high = 6.37
+low = 6.27
+volume = 9350000.0
+variation = 0.0077
+
+[[records]]
+date = "28.09.2023"
+closing = 6.36
+opening = 6.32
+high = 6.4
+low = 6.29
+volume = 10970000.0
+variation = 0.0092
+
+[[records]]
+date = "29.09.2023"
+closing = 6.42
+opening = 6.4
+high = 6.45
+low = 6.4
+volume = 8140000.5
+variation = 0.0091
+
+[[records]]
+date = "02.10.2023"
+closing = 6.35
+opening = 6.42
+high = 6.43
+low = 6.34
+volume = 7610000.0
+variation = -0.0105
+
+[[records]]
+date = "03.10.2023"
+closing = 6.27
+opening = 6.32
+high = 6.41
+low = 6.24
+volume = 8180000.5
+variation = -0.012200001
+
+[[records]]
+date = "04.10.2023"
+closing = 6.21
+opening = 6.26
+high = 6.3
+low = 6.21
+volume = 7140000.0
+variation = -0.0108
+
+[[records]]
+date = "05.10.2023"
+closing = 6.13
+opening = 6.21
+high = 6.23
+low = 6.1
+volume = 9030000.0
+variation = -0.0125
+
+[[records]]
+date = "06.10.2023"
+closing = 6.12
+opening = 6.09
+high = 6.13
+low = 6.05
+volume = 8420000.0
+variation = -0.0016
+
+[[records]]
+date = "09.10.2023"
+closing = 6.05
+opening = 6.03
+high = 6.08
+low = 5.93
+volume = 11250000.0
+variation = -0.0111
+
+[[records]]
+date = "10.10.2023"
+closing = 6.09
+opening = 6.09
+high = 6.16
+low = 6.06
+volume = 9860000.0
+variation = 0.0064
+
+[[records]]
+date = "11.10.2023"
+closing = 6.13
+opening = 6.11
+high = 6.13
+low = 6.05
+volume = 10140000.0
+variation = 0.0063
+
+[[records]]
+date = "13.10.2023"
+closing = 6.05
+opening = 6.11
+high = 6.15
+low = 6.05
+volume = 7830000.0
+variation = -0.0126
+
+[[records]]
+date = "16.10.2023"
+closing = 6.06
+opening = 6.08
+high = 6.15
+low = 6.06
+volume = 7200000.0
+variation = 0.0016
+
+[[records]]
+date = "17.10.2023"
+closing = 5.99
+opening = 6.02
+high = 6.08
+low = 5.95
+volume = 13040000.0
+variation = -0.0112
+
+[[records]]
+date = "18.10.2023"
+closing = 5.97
+opening = 5.95
+high = 6.03
+low = 5.94
+volume = 14040000.0
+variation = -0.0032
+
+[[records]]
+date = "19.10.2023"
+closing = 5.9
+opening = 5.96
+high = 6.01
+low = 5.88
+volume = 9170000.0
+variation = -0.0128999995
+
+[[records]]
+date = "20.10.2023"
+closing = 5.75
+opening = 5.85
+high = 5.89
+low = 5.72
+volume = 12990000.0
+variation = -0.024600001
+
+[[records]]
+date = "23.10.2023"
+closing = 5.73
+opening = 5.71
+high = 5.8
+low = 5.71
+volume = 8750000.0
+variation = -0.0034
+
+[[records]]
+date = "24.10.2023"
+closing = 5.77
+opening = 5.8
+high = 5.84
+low = 5.74
+volume = 10930000.0
+variation = 0.0067000003
+
+[[records]]
+date = "25.10.2023"
+closing = 5.67
+opening = 5.79
+high = 5.81
+low = 5.65
+volume = 11440000.0
+variation = -0.0168
+
+[[records]]
+date = "26.10.2023"
+closing = 5.78
+opening = 5.68
+high = 5.8
+low = 5.65
+volume = 10110000.0
+variation = 0.0187
+
+[[records]]
+date = "27.10.2023"
+closing = 6.02
+opening = 5.8
+high = 6.14
+low = 5.79
+volume = 27050000.0
+variation = 0.0418
+
+[[records]]
+date = "30.10.2023"
+closing = 6.29
+opening = 6.08
+high = 6.38
+low = 6.03
+volume = 23840000.0
+variation = 0.044899996
+
+[[records]]
+date = "31.10.2023"
+closing = 6.39
+opening = 6.28
+high = 6.6
+low = 6.25
+volume = 26200000.0
+variation = 0.0154
+
+[[records]]
+date = "01.11.2023"
+closing = 6.52
+opening = 6.46
+high = 6.6
+low = 6.34
+volume = 16780000.0
+variation = 0.0197
+
+[[records]]
+date = "03.11.2023"
+closing = 6.64
+opening = 6.59
+high = 6.7
+low = 6.58
+volume = 12280000.0
+variation = 0.019299999
+
+[[records]]
+date = "06.11.2023"
+closing = 6.59
+opening = 6.66
+high = 6.66
+low = 6.51
+volume = 7330000.0
+variation = -0.0073
+
+[[records]]
+date = "07.11.2023"
+closing = 6.58
+opening = 6.55
+high = 6.59
+low = 6.51
+volume = 7350000.0
+variation = -0.0015
+
+[[records]]
+date = "08.11.2023"
+closing = 6.58
+opening = 6.58
+high = 6.79
+low = 6.54
+volume = 12480000.0
+variation = 0.0
+
+[[records]]
+date = "09.11.2023"
+closing = 6.45
+opening = 6.61
+high = 6.65
+low = 6.42
+volume = 12840000.0
+variation = -0.020599999
+
+[[records]]
+date = "10.11.2023"
+closing = 6.58
+opening = 6.48
+high = 6.59
+low = 6.47
+volume = 7700000.0
+variation = 0.021
+
+[[records]]
+date = "13.11.2023"
+closing = 6.54
+opening = 6.59
+high = 6.6
+low = 6.52
+volume = 5290000.0
+variation = -0.0058999998
+
+[[records]]
+date = "14.11.2023"
+closing = 6.83
+opening = 6.54
+high = 6.83
+low = 6.54
+volume = 16620001.0
+variation = 0.044299997
+
+[[records]]
+date = "16.11.2023"
+closing = 7.33
+opening = 6.84
+high = 7.46
+low = 6.82
+volume = 32590000.0
+variation = 0.0721
+
+[[records]]
+date = "17.11.2023"
+closing = 7.35
+opening = 7.3
+high = 7.46
+low = 7.19
+volume = 15900000.0
+variation = 0.0026
+
+[[records]]
+date = "20.11.2023"
+closing = 7.5
+opening = 7.44
+high = 7.67
+low = 7.41
+volume = 18120000.0
+variation = 0.0211
+
+[[records]]
+date = "21.11.2023"
+closing = 7.52
+opening = 7.5
+high = 7.66
+low = 7.37
+volume = 12610000.0
+variation = 0.0026
+
+[[records]]
+date = "22.11.2023"
+closing = 7.63
+opening = 7.54
+high = 7.7
+low = 7.39
+volume = 18020000.0
+variation = 0.014099999
+
+[[records]]
+date = "23.11.2023"
+closing = 7.5
+opening = 7.63
+high = 7.71
+low = 7.5
+volume = 8820000.0
+variation = -0.0165
+
+[[records]]
+date = "24.11.2023"
+closing = 7.44
+opening = 7.48
+high = 7.51
+low = 7.39
+volume = 6580000.0
+variation = -0.0077
+
+[[records]]
+date = "27.11.2023"
+closing = 7.55
+opening = 7.45
+high = 7.62
+low = 7.41
+volume = 9460000.0
+variation = 0.0143
+
+[[records]]
+date = "28.11.2023"
+closing = 7.61
+opening = 7.52
+high = 7.63
+low = 7.49
+volume = 7020000.0
+variation = 0.0077
+
+[[records]]
+date = "29.11.2023"
+closing = 7.49
+opening = 7.64
+high = 7.71
+low = 7.39
+volume = 12620000.0
+variation = -0.0152
+
+[[records]]
+date = "30.11.2023"
+closing = 7.6
+opening = 7.53
+high = 7.67
+low = 7.48
+volume = 12680000.0
+variation = 0.014199999
+
+[[records]]
+date = "01.12.2023"
+closing = 7.95
+opening = 7.6
+high = 8.11
+low = 7.58
+volume = 21640000.0
+variation = 0.0458
+
+[[records]]
+date = "04.12.2023"
+closing = 8.01
+opening = 7.86
+high = 8.04
+low = 7.82
+volume = 12060000.0
+variation = 0.0085
+
+[[records]]
+date = "05.12.2023"
+closing = 7.98
+opening = 8.01
+high = 8.1
+low = 7.88
+volume = 7440000.0
+variation = -0.0036000002
+
+[[records]]
+date = "06.12.2023"
+closing = 8.01
+opening = 8.03
+high = 8.16
+low = 7.94
+volume = 8880000.0
+variation = 0.0036000002
+
+[[records]]
+date = "07.12.2023"
+closing = 8.09
+opening = 8.06
+high = 8.18
+low = 7.99
+volume = 15880000.0
+variation = 0.0097
+
+[[records]]
+date = "08.12.2023"
+closing = 8.2
+opening = 8.1
+high = 8.22
+low = 8.05
+volume = 8140000.5
+variation = 0.013099999
+
+[[records]]
+date = "11.12.2023"
+closing = 8.22
+opening = 8.15
+high = 8.28
+low = 8.12
+volume = 8390000.0
+variation = 0.0023999999
+
+[[records]]
+date = "12.12.2023"
+closing = 8.22
+opening = 8.32
+high = 8.36
+low = 8.1
+volume = 8500000.0
+variation = 0.0
+
+[[records]]
+date = "13.12.2023"
+closing = 8.3
+opening = 8.22
+high = 8.4
+low = 8.11
+volume = 11000000.0
+variation = 0.0106
+
+[[records]]
+date = "14.12.2023"
+closing = 8.43
+opening = 8.38
+high = 8.52
+low = 8.24
+volume = 12420000.0
+variation = 0.0150999995
+
+[[records]]
+date = "15.12.2023"
+closing = 8.54
+opening = 8.46
+high = 8.69
+low = 8.45
+volume = 18940000.0
+variation = 0.0126
+
+[[records]]
+date = "18.12.2023"
+closing = 8.55
+opening = 8.55
+high = 8.64
+low = 8.46
+volume = 10820000.0
+variation = 0.0023
+
+[[records]]
+date = "19.12.2023"
+closing = 8.56
+opening = 8.51
+high = 8.6
+low = 8.5
+volume = 6920000.0
+variation = 0.0011
+
+[[records]]
+date = "20.12.2023"
+closing = 8.51
+opening = 8.56
+high = 8.59
+low = 8.47
+volume = 5000000.0
+variation = -0.0068
+
+[[records]]
+date = "21.12.2023"
+closing = 8.83
+opening = 8.56
+high = 8.84
+low = 8.55
+volume = 16480000.0
+variation = 0.0375
+
+[[records]]
+date = "22.12.2023"
+closing = 8.97
+opening = 8.84
+high = 9.04
+low = 8.84
+volume = 11050000.0
+variation = 0.0164
+
+[[records]]
+date = "26.12.2023"
+closing = 9.01
+opening = 9.01
+high = 9.04
+low = 8.89
+volume = 5270000.0
+variation = 0.0043
+
+[[records]]
+date = "27.12.2023"
+closing = 9.03
+opening = 8.98
+high = 9.07
+low = 8.92
+volume = 4400000.0
+variation = 0.0021
+
+[[records]]
+date = "28.12.2023"
+closing = 8.98
+opening = 8.99
+high = 9.01
+low = 8.89
+volume = 7530000.0
+variation = -0.0054
+
+[[records]]
+date = "02.01.2024"
+closing = 8.83
+opening = 8.99
+high = 8.99
+low = 8.76
+volume = 10370000.0
+variation = -0.0172
+
+[[records]]
+date = "03.01.2024"
+closing = 8.78
+opening = 8.81
+high = 8.83
+low = 8.65
+volume = 9140000.0
+variation = -0.0055
+
+[[records]]
+date = "04.01.2024"
+closing = 8.64
+opening = 8.75
+high = 8.75
+low = 8.53
+volume = 10180000.0
+variation = -0.0154
+
+[[records]]
+date = "05.01.2024"
+closing = 8.62
+opening = 8.6
+high = 8.68
+low = 8.49
+volume = 10460000.0
+variation = -0.0022
+
+[[records]]
+date = "08.01.2024"
+closing = 8.56
+opening = 8.61
+high = 8.64
+low = 8.51
+volume = 6240000.0
+variation = -0.0067000003
+
+[[records]]
+date = "09.01.2024"
+closing = 8.34
+opening = 8.53
+high = 8.55
+low = 8.33
+volume = 11030000.0
+variation = -0.025999999
+
+[[records]]
+date = "10.01.2024"
+closing = 8.12
+opening = 8.25
+high = 8.31
+low = 7.97
+volume = 17220000.0
+variation = -0.026700001
+
+[[records]]
+date = "11.01.2024"
+closing = 8.24
+opening = 8.12
+high = 8.26
+low = 7.99
+volume = 11740000.0
+variation = 0.0143
+
+[[records]]
+date = "12.01.2024"
+closing = 8.19
+opening = 8.19
+high = 8.29
+low = 8.15
+volume = 5230000.0
+variation = -0.0058999998
+
+[[records]]
+date = "15.01.2024"
+closing = 8.26
+opening = 8.13
+high = 8.26
+low = 8.08
+volume = 3940000.0
+variation = 0.0083
+
+[[records]]
+date = "16.01.2024"
+closing = 8.09
+opening = 8.17
+high = 8.2
+low = 7.97
+volume = 9780000.0
+variation = -0.0199
+
+[[records]]
+date = "17.01.2024"
+closing = 8.01
+opening = 8.05
+high = 8.15
+low = 8.0
+volume = 8910000.0
+variation = -0.0095999995
+
+[[records]]
+date = "18.01.2024"
+closing = 8.24
+opening = 8.09
+high = 8.49
+low = 8.03
+volume = 19480000.0
+variation = 0.0277
+
+[[records]]
+date = "19.01.2024"
+closing = 8.22
+opening = 8.3
+high = 8.48
+low = 8.2
+volume = 13250000.0
+variation = -0.0023
+
+[[records]]
+date = "22.01.2024"
+closing = 8.31
+opening = 8.19
+high = 8.41
+low = 8.17
+volume = 10870000.0
+variation = 0.0117999995
+
+[[records]]
+date = "23.01.2024"
+closing = 8.35
+opening = 8.37
+high = 8.51
+low = 8.32
+volume = 9490000.0
+variation = 0.0047
+
+[[records]]
+date = "24.01.2024"
+closing = 8.67
+opening = 8.47
+high = 8.67
+low = 8.42
+volume = 15920000.0
+variation = 0.0382
+
+[[records]]
+date = "25.01.2024"
+closing = 8.73
+opening = 8.69
+high = 8.74
+low = 8.57
+volume = 9680000.0
+variation = 0.0067000003
+
+[[records]]
+date = "26.01.2024"
+closing = 9.18
+opening = 9.09
+high = 9.24
+low = 8.87
+volume = 33920000.0
+variation = 0.051999997
+
+[[records]]
+date = "29.01.2024"
+closing = 8.99
+opening = 9.22
+high = 9.22
+low = 8.84
+volume = 10410000.0
+variation = -0.0211
+
+[[records]]
+date = "30.01.2024"
+closing = 8.79
+opening = 8.94
+high = 8.95
+low = 8.79
+volume = 7990000.0
+variation = -0.0226
+
+[[records]]
+date = "31.01.2024"
+closing = 8.88
+opening = 8.75
+high = 8.99
+low = 8.73
+volume = 10580000.0
+variation = 0.011
+
+[[records]]
+date = "01.02.2024"
+closing = 8.92
+opening = 8.87
+high = 8.98
+low = 8.8
+volume = 10040000.0
+variation = 0.0044
+
+[[records]]
+date = "02.02.2024"
+closing = 8.79
+opening = 8.92
+high = 8.99
+low = 8.76
+volume = 9780000.0
+variation = -0.0152
+
+[[records]]
+date = "05.02.2024"
+closing = 8.79
+opening = 8.76
+high = 8.86
+low = 8.71
+volume = 8189999.5
+variation = 0.0
+
+[[records]]
+date = "06.02.2024"
+closing = 8.91
+opening = 8.81
+high = 8.96
+low = 8.8
+volume = 10330000.0
+variation = 0.0143
+
+[[records]]
+date = "07.02.2024"
+closing = 9.02
+opening = 8.92
+high = 9.08
+low = 8.83
+volume = 9450000.0
+variation = 0.0119
+
+[[records]]
+date = "08.02.2024"
+closing = 9.09
+opening = 9.02
+high = 9.14
+low = 8.96
+volume = 16580000.0
+variation = 0.0075
+
+[[records]]
+date = "09.02.2024"
+closing = 8.97
+opening = 9.35
+high = 9.44
+low = 8.71
+volume = 31510000.0
+variation = -0.0128
+
+[[records]]
+date = "14.02.2024"
+closing = 9.05
+opening = 8.91
+high = 9.05
+low = 8.81
+volume = 10010000.0
+variation = 0.0086
+
+[[records]]
+date = "15.02.2024"
+closing = 9.55
+opening = 9.07
+high = 9.56
+low = 9.04
+volume = 38120000.0
+variation = 0.0556
+
+[[records]]
+date = "16.02.2024"
+closing = 9.77
+opening = 9.57
+high = 9.95
+low = 9.5
+volume = 20480000.0
+variation = 0.0233
+
+[[records]]
+date = "19.02.2024"
+closing = 9.82
+opening = 9.67
+high = 9.87
+low = 9.49
+volume = 9530000.0
+variation = 0.0049
+
+[[records]]
+date = "20.02.2024"
+closing = 9.99
+opening = 9.84
+high = 10.28
+low = 9.84
+volume = 34750000.0
+variation = 0.0167
+
+[[records]]
+date = "21.02.2024"
+closing = 10.0
+opening = 9.94
+high = 10.03
+low = 9.65
+volume = 15380000.0
+variation = 0.0019
+
+[[records]]
+date = "22.02.2024"
+closing = 10.29
+opening = 10.05
+high = 10.29
+low = 10.03
+volume = 17160000.0
+variation = 0.029000001
+
+[[records]]
+date = "23.02.2024"
+closing = 10.34
+opening = 10.3
+high = 10.34
+low = 10.17
+volume = 12140000.0
+variation = 0.0047
+
+[[records]]
+date = "26.02.2024"
+closing = 10.31
+opening = 10.23
+high = 10.44
+low = 10.19
+volume = 13930000.0
+variation = -0.0028
+
+[[records]]
+date = "27.02.2024"
+closing = 10.48
+opening = 10.43
+high = 10.56
+low = 10.4
+volume = 8570000.0
+variation = 0.0159
+
+[[records]]
+date = "28.02.2024"
+closing = 10.58
+opening = 10.42
+high = 10.63
+low = 10.36
+volume = 8240000.0
+variation = 0.0101
+
+[[records]]
+date = "29.02.2024"
+closing = 10.7
+opening = 10.53
+high = 10.76
+low = 10.48
+volume = 14620000.0
+variation = 0.011
+
+[[records]]
+date = "01.03.2024"
+closing = 10.74
+opening = 10.65
+high = 10.89
+low = 10.63
+volume = 11320000.0
+variation = 0.0036000002
+
+[[records]]
+date = "04.03.2024"
+closing = 10.34
+opening = 10.72
+high = 10.72
+low = 10.28
+volume = 12020000.0
+variation = -0.0369
+
+[[records]]
+date = "05.03.2024"
+closing = 10.38
+opening = 10.38
+high = 10.38
+low = 10.22
+volume = 7820000.0
+variation = 0.0037
+
+[[records]]
+date = "06.03.2024"
+closing = 10.39
+opening = 10.38
+high = 10.55
+low = 10.29
+volume = 8250000.0
+variation = 0.00090000004
+
+[[records]]
+date = "07.03.2024"
+closing = 10.28
+opening = 10.42
+high = 10.45
+low = 10.24
+volume = 5520000.0
+variation = -0.0112
+
+[[records]]
+date = "08.03.2024"
+closing = 10.5
+opening = 10.18
+high = 10.52
+low = 10.03
+volume = 9930000.0
+variation = 0.0216
+
+[[records]]
+date = "11.03.2024"
+closing = 10.0
+opening = 10.39
+high = 10.41
+low = 9.92
+volume = 15400000.0
+variation = -0.047
+
+[[records]]
+date = "12.03.2024"
+closing = 9.87
+opening = 10.05
+high = 10.18
+low = 9.82
+volume = 12660000.0
+variation = -0.0135
+
+[[records]]
+date = "13.03.2024"
+closing = 9.75
+opening = 9.79
+high = 9.89
+low = 9.62
+volume = 19840000.0
+variation = -0.0117999995
+
+[[records]]
+date = "14.03.2024"
+closing = 9.55
+opening = 9.7
+high = 9.74
+low = 9.48
+volume = 8720000.0
+variation = -0.0208
+
+[[records]]
+date = "15.03.2024"
+closing = 9.45
+opening = 9.51
+high = 9.51
+low = 9.22
+volume = 23110000.0
+variation = -0.0101
+
+[[records]]
+date = "16.03.2024"
+closing = 9.71
+opening = 9.71
+high = 9.71
+low = 9.71
+volume = 0.0
+variation = 0.0271
+
+[[records]]
+date = "18.03.2024"
+closing = 9.6
+opening = 9.46
+high = 9.67
+low = 9.43
+volume = 19370000.0
+variation = -0.0114
+
+[[records]]
+date = "19.03.2024"
+closing = 9.83
+opening = 9.7
+high = 9.94
+low = 9.7
+volume = 16639999.0
+variation = 0.0242
+
+[[records]]
+date = "20.03.2024"
+closing = 10.03
+opening = 9.85
+high = 10.03
+low = 9.72
+volume = 5470000.0
+variation = 0.020599999
+
+[[records]]
+date = "21.03.2024"
+closing = 9.99
+opening = 10.08
+high = 10.09
+low = 9.93
+volume = 3420000.0
+variation = -0.0047999998
+
+[[records]]
+date = "22.03.2024"
+closing = 9.81
+opening = 9.93
+high = 9.99
+low = 9.81
+volume = 3660000.0
+variation = -0.0174
+
+[[records]]
+date = "23.03.2024"
+closing = 10.1
+opening = 10.1
+high = 10.1
+low = 10.1
+volume = 0.0
+variation = 0.0294
+
+[[records]]
+date = "25.03.2024"
+closing = 9.64
+opening = 9.76
+high = 9.9
+low = 9.63
+volume = 5680000.0
+variation = -0.0458
+
+[[records]]
+date = "26.03.2024"
+closing = 9.6
+opening = 9.61
+high = 9.71
+low = 9.52
+volume = 5870000.0
+variation = -0.004
+
+[[records]]
+date = "27.03.2024"
+closing = 9.71
+opening = 9.61
+high = 9.78
+low = 9.5
+volume = 6810000.0
+variation = 0.0111
+
+[[records]]
+date = "28.03.2024"
+closing = 9.68
+opening = 9.71
+high = 9.81
+low = 9.61
+volume = 5680000.0
+variation = -0.003
+
+[[records]]
+date = "01.04.2024"
+closing = 9.75
+opening = 9.73
+high = 9.87
+low = 9.69
+volume = 6890000.0
+variation = 0.008
+
+[[records]]
+date = "02.04.2024"
+closing = 9.9
+opening = 9.77
+high = 9.98
+low = 9.71
+volume = 8750000.0
+variation = 0.0149
+
+[[records]]
+date = "03.04.2024"
+closing = 9.83
+opening = 9.86
+high = 10.01
+low = 9.73
+volume = 10810000.0
+variation = -0.0068
+
+[[records]]
+date = "04.04.2024"
+closing = 9.84
+opening = 10.05
+high = 10.12
+low = 9.77
+volume = 10500000.0
+variation = 0.001
+
+[[records]]
+date = "05.04.2024"
+closing = 9.59
+opening = 9.85
+high = 9.86
+low = 9.55
+volume = 8740000.0
+variation = -0.0255
+
+[[records]]
+date = "08.04.2024"
+closing = 10.15
+opening = 9.69
+high = 10.21
+low = 9.68
+volume = 14500000.0
+variation = 0.0585
+
+[[records]]
+date = "09.04.2024"
+closing = 10.29
+opening = 10.32
+high = 10.37
+low = 10.14
+volume = 12670000.0
+variation = 0.0143
+
+[[records]]
+date = "10.04.2024"
+closing = 10.01
+opening = 10.24
+high = 10.24
+low = 9.95
+volume = 10000000.0
+variation = -0.0272
+
+[[records]]
+date = "11.04.2024"
+closing = 9.93
+opening = 10.04
+high = 10.04
+low = 9.76
+volume = 6620000.0
+variation = -0.0087
+
+[[records]]
+date = "12.04.2024"
+closing = 9.83
+opening = 10.01
+high = 10.28
+low = 9.76
+volume = 12370000.0
+variation = -0.0097
+
+[[records]]
+date = "15.04.2024"
+closing = 9.88
+opening = 9.93
+high = 10.11
+low = 9.72
+volume = 12250000.0
+variation = 0.0049
+
+[[records]]
+date = "16.04.2024"
+closing = 9.71
+opening = 9.72
+high = 9.76
+low = 9.5
+volume = 16760000.0
+variation = -0.0166
+
+[[records]]
+date = "17.04.2024"
+closing = 9.59
+opening = 9.89
+high = 9.9
+low = 9.44
+volume = 12120000.0
+variation = -0.0128999995
+
+[[records]]
+date = "18.04.2024"
+closing = 9.61
+opening = 9.58
+high = 9.8
+low = 9.55
+volume = 8760000.0
+variation = 0.002
+
+[[records]]
+date = "19.04.2024"
+closing = 9.99
+opening = 9.58
+high = 10.15
+low = 9.54
+volume = 22840000.0
+variation = 0.0392
+
+[[records]]
+date = "22.04.2024"
+closing = 10.22
+opening = 9.99
+high = 10.32
+low = 9.79
+volume = 17160000.0
+variation = 0.0232
+
+[[records]]
+date = "23.04.2024"
+closing = 8.8
+opening = 9.67
+high = 9.74
+low = 8.78
+volume = 61030000.0
+variation = -0.1391
+
+[[records]]
+date = "24.04.2024"
+closing = 8.47
+opening = 8.84
+high = 8.92
+low = 8.26
+volume = 40410000.0
+variation = -0.0374
+
+[[records]]
+date = "25.04.2024"
+closing = 8.21
+opening = 8.43
+high = 8.51
+low = 8.21
+volume = 15260000.0
+variation = -0.0308
+
+[[records]]
+date = "26.04.2024"
+closing = 8.2
+opening = 8.39
+high = 8.4
+low = 8.11
+volume = 20220000.0
+variation = -0.0008
+
+[[records]]
+date = "29.04.2024"
+closing = 8.21
+opening = 8.2
+high = 8.25
+low = 8.14
+volume = 10790000.0
+variation = 0.0011999999
+
+[[records]]
+date = "30.04.2024"
+closing = 7.91
+opening = 8.17
+high = 8.17
+low = 7.9
+volume = 13770000.0
+variation = -0.0365
+
+[[records]]
+date = "02.05.2024"
+closing = 7.98
+opening = 7.99
+high = 8.08
+low = 7.93
+volume = 10930000.0
+variation = 0.0088
+
+[[records]]
+date = "03.05.2024"
+closing = 8.0
+opening = 8.03
+high = 8.13
+low = 7.99
+volume = 13680000.0
+variation = 0.0025
+
+[[records]]
+date = "06.05.2024"
+closing = 8.04
+opening = 8.02
+high = 8.2
+low = 8.02
+volume = 15360000.0
+variation = 0.005
+
+[[records]]
+date = "07.05.2024"
+closing = 8.01
+opening = 8.05
+high = 8.11
+low = 7.96
+volume = 9290000.0
+variation = -0.0037
+
+[[records]]
+date = "08.05.2024"
+closing = 8.06
+opening = 7.98
+high = 8.09
+low = 7.87
+volume = 9270000.0
+variation = 0.0062
+
+[[records]]
+date = "09.05.2024"
+closing = 8.0
+opening = 7.96
+high = 8.08
+low = 7.96
+volume = 9740000.0
+variation = -0.0074
+
+[[records]]
+date = "10.05.2024"
+closing = 7.96
+opening = 8.05
+high = 8.09
+low = 7.92
+volume = 7270000.0
+variation = -0.005
+
+[[records]]
+date = "13.05.2024"
+closing = 7.98
+opening = 8.0
+high = 8.06
+low = 7.94
+volume = 8500000.0
+variation = 0.0025
+
+[[records]]
+date = "14.05.2024"
+closing = 7.9
+opening = 7.99
+high = 8.06
+low = 7.88
+volume = 12460000.0
+variation = -0.01
+
+[[records]]
+date = "15.05.2024"
+closing = 7.93
+opening = 7.87
+high = 7.95
+low = 7.74
+volume = 10890000.0
+variation = 0.0038
+
+[[records]]
+date = "16.05.2024"
+closing = 7.97
+opening = 7.94
+high = 8.03
+low = 7.92
+volume = 7370000.0
+variation = 0.005
+
+[[records]]
+date = "17.05.2024"
+closing = 7.96
+opening = 7.97
+high = 8.03
+low = 7.92
+volume = 12460000.0
+variation = -0.0013
+
+[[records]]
+date = "20.05.2024"
+closing = 8.15
+opening = 7.96
+high = 8.17
+low = 7.94
+volume = 11040000.0
+variation = 0.0239
+
+[[records]]
+date = "21.05.2024"
+closing = 8.29
+opening = 8.19
+high = 8.38
+low = 8.16
+volume = 12710000.0
+variation = 0.0172
+
+[[records]]
+date = "22.05.2024"
+closing = 8.17
+opening = 8.3
+high = 8.32
+low = 8.14
+volume = 7350000.0
+variation = -0.0145000005
+
+[[records]]
+date = "23.05.2024"
+closing = 8.03
+opening = 8.13
+high = 8.15
+low = 7.97
+volume = 5580000.0
+variation = -0.0171
+
+[[records]]
+date = "24.05.2024"
+closing = 7.93
+opening = 7.99
+high = 8.0
+low = 7.73
+volume = 16290001.0
+variation = -0.0125
+
+[[records]]
+date = "25.05.2024"
+closing = 7.92
+opening = 7.92
+high = 7.92
+low = 7.92
+volume = 0.0
+variation = -0.0013
+
+[[records]]
+date = "27.05.2024"
+closing = 8.01
+opening = 7.91
+high = 8.03
+low = 7.85
+volume = 4490000.0
+variation = 0.0114
+
+[[records]]
+date = "28.05.2024"
+closing = 7.91
+opening = 8.04
+high = 8.08
+low = 7.91
+volume = 9090000.0
+variation = -0.0125
+
+[[records]]
+date = "29.05.2024"
+closing = 7.77
+opening = 7.89
+high = 7.9
+low = 7.76
+volume = 9120000.0
+variation = -0.0177
+
+[[records]]
+date = "31.05.2024"
+closing = 7.57
+opening = 7.75
+high = 7.8
+low = 7.52
+volume = 12440000.0
+variation = -0.0257
+
+[[records]]
+date = "03.06.2024"
+closing = 7.58
+opening = 7.58
+high = 7.64
+low = 7.47
+volume = 9410000.0
+variation = 0.0013
+
+[[records]]
+date = "04.06.2024"
+closing = 7.48
+opening = 7.53
+high = 7.55
+low = 7.42
+volume = 6060000.0
+variation = -0.013200001
+
+[[records]]
+date = "05.06.2024"
+closing = 7.29
+opening = 7.48
+high = 7.53
+low = 7.25
+volume = 10930000.0
+variation = -0.0254
+
+[[records]]
+date = "06.06.2024"
+closing = 7.32
+opening = 7.31
+high = 7.44
+low = 7.23
+volume = 13550000.0
+variation = 0.0041
+
+[[records]]
+date = "07.06.2024"
+closing = 7.18
+opening = 7.26
+high = 7.28
+low = 7.09
+volume = 9400000.0
+variation = -0.0191
+
+[[records]]
+date = "10.06.2024"
+closing = 7.05
+opening = 7.16
+high = 7.16
+low = 7.02
+volume = 5060000.0
+variation = -0.018099999
+
+[[records]]
+date = "11.06.2024"
+closing = 7.13
+opening = 7.02
+high = 7.13
+low = 7.0
+volume = 7820000.0
+variation = 0.0113
+
+[[records]]
+date = "12.06.2024"
+closing = 7.05
+opening = 7.16
+high = 7.23
+low = 7.01
+volume = 6890000.0
+variation = -0.0112
+
+[[records]]
+date = "13.06.2024"
+closing = 7.16
+opening = 7.04
+high = 7.18
+low = 7.0
+volume = 6440000.0
+variation = 0.0156
+
+[[records]]
+date = "14.06.2024"
+closing = 7.18
+opening = 7.17
+high = 7.26
+low = 7.07
+volume = 6480000.0
+variation = 0.0028
+
+[[records]]
+date = "17.06.2024"
+closing = 7.1
+opening = 7.11
+high = 7.18
+low = 7.07
+volume = 4790000.0
+variation = -0.0111
+
+[[records]]
+date = "18.06.2024"
+closing = 7.23
+opening = 7.11
+high = 7.38
+low = 7.1
+volume = 14010000.0
+variation = 0.0183
+
+[[records]]
+date = "19.06.2024"
+closing = 7.34
+opening = 7.2
+high = 7.34
+low = 7.1
+volume = 6210000.0
+variation = 0.0152
+
+[[records]]
+date = "20.06.2024"
+closing = 7.61
+opening = 7.38
+high = 7.81
+low = 7.36
+volume = 16740000.0
+variation = 0.0368
+
+[[records]]
+date = "21.06.2024"
+closing = 7.54
+opening = 7.56
+high = 7.6
+low = 7.46
+volume = 8400000.0
+variation = -0.0092
+
+[[records]]
+date = "24.06.2024"
+closing = 7.69
+opening = 7.53
+high = 7.72
+low = 7.51
+volume = 7060000.0
+variation = 0.0199
+
+[[records]]
+date = "25.06.2024"
+closing = 7.54
+opening = 7.7
+high = 7.79
+low = 7.54
+volume = 7530000.0
+variation = -0.0195
+
+[[records]]
+date = "26.06.2024"
+closing = 7.79
+opening = 7.6
+high = 7.84
+low = 7.52
+volume = 11680000.0
+variation = 0.0332
+
+[[records]]
+date = "27.06.2024"
+closing = 8.0
+opening = 7.85
+high = 8.01
+low = 7.78
+volume = 9000000.0
+variation = 0.027
+
+[[records]]
+date = "28.06.2024"
+closing = 7.91
+opening = 7.99
+high = 8.14
+low = 7.91
+volume = 9050000.0
+variation = -0.0113
+
+[[records]]
+date = "01.07.2024"
+closing = 7.87
+opening = 7.96
+high = 8.02
+low = 7.81
+volume = 8580000.0
+variation = -0.0050999997
+
+[[records]]
+date = "02.07.2024"
+closing = 7.97
+opening = 7.88
+high = 8.0
+low = 7.86
+volume = 8020000.5
+variation = 0.0127
+
+[[records]]
+date = "03.07.2024"
+closing = 7.99
+opening = 8.07
+high = 8.14
+low = 7.99
+volume = 6370000.0
+variation = 0.0025
+
+[[records]]
+date = "04.07.2024"
+closing = 8.15
+opening = 8.04
+high = 8.16
+low = 8.04
+volume = 5980000.0
+variation = 0.02
+
+[[records]]
+date = "05.07.2024"
+closing = 7.99
+opening = 8.15
+high = 8.21
+low = 7.89
+volume = 8720000.0
+variation = -0.0196
+
+[[records]]
+date = "08.07.2024"
+closing = 7.87
+opening = 7.97
+high = 7.98
+low = 7.81
+volume = 6570000.0
+variation = -0.015
+
+[[records]]
+date = "09.07.2024"
+closing = 8.02
+opening = 7.85
+high = 8.02
+low = 7.84
+volume = 5020000.0
+variation = 0.0191
+
+[[records]]
+date = "10.07.2024"
+closing = 7.92
+opening = 8.01
+high = 8.05
+low = 7.87
+volume = 7920000.0
+variation = -0.0125
+
+[[records]]
+date = "11.07.2024"
+closing = 8.0
+opening = 7.96
+high = 8.02
+low = 7.94
+volume = 8310000.5
+variation = 0.0101
+
+[[records]]
+date = "12.07.2024"
+closing = 8.06
+opening = 8.0
+high = 8.07
+low = 7.93
+volume = 5530000.0
+variation = 0.0075
+
+[[records]]
+date = "15.07.2024"
+closing = 8.17
+opening = 8.05
+high = 8.19
+low = 7.95
+volume = 8710000.0
+variation = 0.0136
+
+[[records]]
+date = "16.07.2024"
+closing = 8.14
+opening = 8.12
+high = 8.2
+low = 8.03
+volume = 7900000.0
+variation = -0.0037
+
+[[records]]
+date = "17.07.2024"
+closing = 8.55
+opening = 8.04
+high = 8.55
+low = 8.04
+volume = 15860000.0
+variation = 0.0504
+
+[[records]]
+date = "18.07.2024"
+closing = 8.4
+opening = 8.55
+high = 8.7
+low = 8.37
+volume = 12040000.0
+variation = -0.0175
+
+[[records]]
+date = "19.07.2024"
+closing = 8.53
+opening = 8.33
+high = 8.53
+low = 8.28
+volume = 11430000.0
+variation = 0.0155
+
+[[records]]
+date = "22.07.2024"
+closing = 8.56
+opening = 8.59
+high = 8.61
+low = 8.4
+volume = 5530000.0
+variation = 0.0034999999
+
+[[records]]
+date = "23.07.2024"
+closing = 8.29
+opening = 8.49
+high = 8.53
+low = 8.21
+volume = 11030000.0
+variation = -0.0315
+
+[[records]]
+date = "24.07.2024"
+closing = 8.11
+opening = 8.29
+high = 8.36
+low = 8.06
+volume = 10010000.0
+variation = -0.0217
+
+[[records]]
+date = "25.07.2024"
+closing = 8.28
+opening = 8.07
+high = 8.35
+low = 8.06
+volume = 11190000.0
+variation = 0.021
+
+[[records]]
+date = "26.07.2024"
+closing = 6.33
+opening = 7.3
+high = 7.35
+low = 6.3
+volume = 111620000.0
+variation = -0.2355
+
+[[records]]
+date = "29.07.2024"
+closing = 6.05
+opening = 6.37
+high = 6.5
+low = 5.98
+volume = 64510004.0
+variation = -0.0442
+
+[[records]]
+date = "30.07.2024"
+closing = 6.33
+opening = 5.99
+high = 6.37
+low = 5.91
+volume = 48710000.0
+variation = 0.0463
+
+[[records]]
+date = "31.07.2024"
+closing = 6.22
+opening = 6.35
+high = 6.38
+low = 6.2
+volume = 20450000.0
+variation = -0.0174
+
+[[records]]
+date = "01.08.2024"
+closing = 6.13
+opening = 6.25
+high = 6.27
+low = 6.07
+volume = 18910000.0
+variation = -0.0145000005
+
+[[records]]
+date = "02.08.2024"
+closing = 5.94
+opening = 6.12
+high = 6.2
+low = 5.93
+volume = 21750000.0
+variation = -0.031
+
+[[records]]
+date = "05.08.2024"
+closing = 5.81
+opening = 5.7
+high = 5.87
+low = 5.65
+volume = 20750000.0
+variation = -0.0219
+
+[[records]]
+date = "06.08.2024"
+closing = 5.77
+opening = 5.85
+high = 5.91
+low = 5.7
+volume = 18490000.0
+variation = -0.0069
+
+[[records]]
+date = "07.08.2024"
+closing = 5.73
+opening = 5.83
+high = 5.85
+low = 5.71
+volume = 12410000.0
+variation = -0.0069
+
+[[records]]
+date = "08.08.2024"
+closing = 5.83
+opening = 5.73
+high = 5.87
+low = 5.73
+volume = 11700000.0
+variation = 0.0175
+
+[[records]]
+date = "09.08.2024"
+closing = 5.95
+opening = 5.86
+high = 5.96
+low = 5.81
+volume = 12730000.0
+variation = 0.020599999
+
+[[records]]
+date = "12.08.2024"
+closing = 6.06
+opening = 5.99
+high = 6.15
+low = 5.95
+volume = 17600000.0
+variation = 0.0185
+
+[[records]]
+date = "13.08.2024"
+closing = 6.25
+opening = 6.15
+high = 6.3
+low = 6.1
+volume = 19150000.0
+variation = 0.031400003
+
+[[records]]
+date = "14.08.2024"
+closing = 6.09
+opening = 6.23
+high = 6.27
+low = 6.08
+volume = 13220000.0
+variation = -0.0256
+
+[[records]]
+date = "15.08.2024"
+closing = 6.18
+opening = 6.1
+high = 6.2
+low = 6.06
+volume = 10800000.0
+variation = 0.0148
+
+[[records]]
+date = "16.08.2024"
+closing = 6.08
+opening = 6.18
+high = 6.22
+low = 6.08
+volume = 10290000.0
+variation = -0.0162
+
+[[records]]
+date = "19.08.2024"
+closing = 6.5
+opening = 6.12
+high = 6.54
+low = 6.1
+volume = 26380000.0
+variation = 0.0691
+
+[[records]]
+date = "20.08.2024"
+closing = 6.45
+opening = 6.53
+high = 6.53
+low = 6.38
+volume = 15560000.0
+variation = -0.0077
+
+[[records]]
+date = "21.08.2024"
+closing = 6.64
+opening = 6.56
+high = 6.74
+low = 6.54
+volume = 24800000.0
+variation = 0.0295
+
+[[records]]
+date = "22.08.2024"
+closing = 6.41
+opening = 6.65
+high = 6.7
+low = 6.38
+volume = 15060000.0
+variation = -0.0346
+
+[[records]]
+date = "23.08.2024"
+closing = 6.58
+opening = 6.43
+high = 6.64
+low = 6.36
+volume = 14370000.0
+variation = 0.026500002
+
+[[records]]
+date = "26.08.2024"
+closing = 6.6
+opening = 6.66
+high = 6.69
+low = 6.46
+volume = 12560000.0
+variation = 0.003
+
+[[records]]
+date = "27.08.2024"
+closing = 6.46
+opening = 6.62
+high = 6.66
+low = 6.46
+volume = 11660000.0
+variation = -0.0212
+
+[[records]]
+date = "28.08.2024"
+closing = 6.24
+opening = 6.43
+high = 6.43
+low = 6.19
+volume = 17660000.0
+variation = -0.0341
+
+[[records]]
+date = "29.08.2024"
+closing = 6.23
+opening = 6.22
+high = 6.28
+low = 6.19
+volume = 9900000.0
+variation = -0.0016
+
+[[records]]
+date = "30.08.2024"
+closing = 6.23
+opening = 6.2
+high = 6.29
+low = 6.17
+volume = 11990000.0
+variation = 0.0
+
+[[records]]
+date = "02.09.2024"
+closing = 6.16
+opening = 6.19
+high = 6.21
+low = 6.15
+volume = 6370000.0
+variation = -0.0112
+
+[[records]]
+date = "03.09.2024"
+closing = 5.96
+opening = 6.13
+high = 6.16
+low = 5.94
+volume = 22020000.0
+variation = -0.0325
+
+[[records]]
+date = "04.09.2024"
+closing = 6.08
+opening = 5.99
+high = 6.13
+low = 5.96
+volume = 11950000.0
+variation = 0.0201
+
+[[records]]
+date = "05.09.2024"
+closing = 6.08
+opening = 6.06
+high = 6.22
+low = 6.02
+volume = 10240000.0
+variation = 0.0
+
+[[records]]
+date = "06.09.2024"
+closing = 5.99
+opening = 6.08
+high = 6.1
+low = 5.94
+volume = 11540000.0
+variation = -0.0148
+
+[[records]]
+date = "09.09.2024"
+closing = 5.84
+opening = 6.03
+high = 6.04
+low = 5.83
+volume = 10380000.0
+variation = -0.025
+
+[[records]]
+date = "10.09.2024"
+closing = 5.77
+opening = 5.83
+high = 5.86
+low = 5.76
+volume = 10200000.0
+variation = -0.012
+
+[[records]]
+date = "11.09.2024"
+closing = 5.91
+opening = 5.81
+high = 5.96
+low = 5.81
+volume = 11420000.0
+variation = 0.024300002
+
+[[records]]
+date = "12.09.2024"
+closing = 5.91
+opening = 5.93
+high = 5.98
+low = 5.86
+volume = 11010000.0
+variation = 0.0
+
+[[records]]
+date = "13.09.2024"
+closing = 6.17
+opening = 5.93
+high = 6.18
+low = 5.91
+volume = 15090000.0
+variation = 0.044
+
+[[records]]
+date = "16.09.2024"
+closing = 6.05
+opening = 6.18
+high = 6.18
+low = 6.03
+volume = 10460000.0
+variation = -0.0194
+
+[[records]]
+date = "17.09.2024"
+closing = 6.09
+opening = 6.05
+high = 6.12
+low = 6.03
+volume = 6040000.0
+variation = 0.0066000004
+
+[[records]]
+date = "18.09.2024"
+closing = 6.26
+opening = 6.05
+high = 6.4
+low = 6.04
+volume = 21910000.0
+variation = 0.0279
+
+[[records]]
+date = "19.09.2024"
+closing = 6.23
+opening = 6.31
+high = 6.44
+low = 6.21
+volume = 12600000.0
+variation = -0.0047999998
+
+[[records]]
+date = "20.09.2024"
+closing = 5.88
+opening = 6.14
+high = 6.16
+low = 5.83
+volume = 18070000.0
+variation = -0.056199998
+
+[[records]]
+date = "23.09.2024"
+closing = 5.6
+opening = 5.67
+high = 5.67
+low = 5.42
+volume = 31780000.0
+variation = -0.0476
+
+[[records]]
+date = "24.09.2024"
+closing = 6.03
+opening = 5.78
+high = 6.04
+low = 5.72
+volume = 31330000.0
+variation = 0.076799996
+
+[[records]]
+date = "25.09.2024"
+closing = 6.04
+opening = 6.08
+high = 6.18
+low = 5.95
+volume = 19180000.0
+variation = 0.0017
+
+[[records]]
+date = "26.09.2024"
+closing = 6.38
+opening = 6.2
+high = 6.39
+low = 6.18
+volume = 20330000.0
+variation = 0.0563
+
+[[records]]
+date = "27.09.2024"
+closing = 6.24
+opening = 6.4
+high = 6.4
+low = 6.21
+volume = 12190000.0
+variation = -0.0219
+
+[[records]]
+date = "30.09.2024"
+closing = 6.24
+opening = 6.33
+high = 6.34
+low = 6.16
+volume = 12060000.0
+variation = 0.0
+
+[[records]]
+date = "01.10.2024"
+closing = 6.24
+opening = 6.2
+high = 6.33
+low = 6.16
+volume = 8149999.5
+variation = 0.0
+
+[[records]]
+date = "02.10.2024"
+closing = 6.31
+opening = 6.31
+high = 6.39
+low = 6.3
+volume = 14460000.0
+variation = 0.0112
+
+[[records]]
+date = "03.10.2024"
+closing = 6.11
+opening = 6.23
+high = 6.24
+low = 6.09
+volume = 9600000.0
+variation = -0.0317
+
+[[records]]
+date = "04.10.2024"
+closing = 6.21
+opening = 6.09
+high = 6.21
+low = 6.07
+volume = 12250000.0
+variation = 0.0164
+
+[[records]]
+date = "07.10.2024"
+closing = 6.28
+opening = 6.25
+high = 6.34
+low = 6.17
+volume = 8500000.0
+variation = 0.0113
+
+[[records]]
+date = "08.10.2024"
+closing = 6.02
+opening = 6.12
+high = 6.14
+low = 5.96
+volume = 21810000.0
+variation = -0.0414
+
+[[records]]
+date = "09.10.2024"
+closing = 6.29
+opening = 6.2
+high = 6.49
+low = 6.17
+volume = 30630000.0
+variation = 0.044899996
+
+[[records]]
+date = "10.10.2024"
+closing = 6.23
+opening = 6.32
+high = 6.43
+low = 6.15
+volume = 13670000.0
+variation = -0.0095
+
+[[records]]
+date = "11.10.2024"
+closing = 6.25
+opening = 6.27
+high = 6.27
+low = 6.17
+volume = 8880000.0
+variation = 0.0032
+
+[[records]]
+date = "14.10.2024"
+closing = 6.27
+opening = 6.26
+high = 6.32
+low = 6.19
+volume = 8420000.0
+variation = 0.0032
+
+[[records]]
+date = "15.10.2024"
+closing = 6.12
+opening = 6.25
+high = 6.29
+low = 6.12
+volume = 9170000.0
+variation = -0.0239
+
+[[records]]
+date = "16.10.2024"
+closing = 6.17
+opening = 6.14
+high = 6.21
+low = 6.1
+volume = 10670000.0
+variation = 0.0082
+
+[[records]]
+date = "17.10.2024"
+closing = 6.07
+opening = 6.09
+high = 6.11
+low = 5.99
+volume = 13600000.0
+variation = -0.0162
+
+[[records]]
+date = "18.10.2024"
+closing = 6.12
+opening = 6.12
+high = 6.26
+low = 6.09
+volume = 14620000.0
+variation = 0.0082
+
+[[records]]
+date = "21.10.2024"
+closing = 6.27
+opening = 6.15
+high = 6.32
+low = 6.15
+volume = 12540000.0
+variation = 0.024500001
+
+[[records]]
+date = "22.10.2024"
+closing = 6.15
+opening = 6.21
+high = 6.29
+low = 6.14
+volume = 8610000.0
+variation = -0.0191
+
+[[records]]
+date = "23.10.2024"
+closing = 6.27
+opening = 6.1
+high = 6.31
+low = 6.1
+volume = 12020000.0
+variation = 0.0195
+
+[[records]]
+date = "24.10.2024"
+closing = 6.37
+opening = 6.25
+high = 6.37
+low = 6.21
+volume = 17510000.0
+variation = 0.0159
+
+[[records]]
+date = "25.10.2024"
+closing = 6.64
+opening = 6.63
+high = 6.86
+low = 6.57
+volume = 46600000.0
+variation = 0.0424
+
+[[records]]
+date = "28.10.2024"
+closing = 6.63
+opening = 6.74
+high = 6.75
+low = 6.61
+volume = 10890000.0
+variation = -0.0015
+
+[[records]]
+date = "29.10.2024"
+closing = 6.43
+opening = 6.61
+high = 6.62
+low = 6.39
+volume = 14700000.0
+variation = -0.030199999
+
+[[records]]
+date = "30.10.2024"
+closing = 6.57
+opening = 6.43
+high = 6.62
+low = 6.39
+volume = 10570000.0
+variation = 0.0218
+
+[[records]]
+date = "31.10.2024"
+closing = 6.61
+opening = 6.55
+high = 6.65
+low = 6.52
+volume = 8950000.0
+variation = 0.0061000003
+
+[[records]]
+date = "01.11.2024"
+closing = 6.32
+opening = 6.58
+high = 6.59
+low = 6.25
+volume = 13480000.0
+variation = -0.043899998
+
+[[records]]
+date = "04.11.2024"
+closing = 6.56
+opening = 6.4
+high = 6.63
+low = 6.37
+volume = 11040000.0
+variation = 0.038
+
+[[records]]
+date = "05.11.2024"
+closing = 6.66
+opening = 6.62
+high = 6.69
+low = 6.55
+volume = 7350000.0
+variation = 0.0152
+
+[[records]]
+date = "06.11.2024"
+closing = 6.62
+opening = 6.56
+high = 6.67
+low = 6.42
+volume = 12670000.0
+variation = -0.006
+
+[[records]]
+date = "07.11.2024"
+closing = 6.65
+opening = 6.62
+high = 6.72
+low = 6.55
+volume = 15590000.0
+variation = 0.0045
+
+[[records]]
+date = "08.11.2024"
+closing = 6.25
+opening = 6.46
+high = 6.47
+low = 6.19
+volume = 20570000.0
+variation = -0.0602
+
+[[records]]
+date = "11.11.2024"
+closing = 6.09
+opening = 6.2
+high = 6.24
+low = 5.97
+volume = 17060000.0
+variation = -0.0256
+
+[[records]]
+date = "12.11.2024"
+closing = 6.0
+opening = 6.05
+high = 6.09
+low = 5.9
+volume = 16820000.0
+variation = -0.0148
+
+[[records]]
+date = "13.11.2024"
+closing = 6.09
+opening = 6.0
+high = 6.12
+low = 5.97
+volume = 17480000.0
+variation = 0.015
+
+[[records]]
+date = "14.11.2024"
+closing = 6.1
+opening = 6.06
+high = 6.13
+low = 6.03
+volume = 11710000.0
+variation = 0.0016
+
+[[records]]
+date = "18.11.2024"
+closing = 6.2
+opening = 6.1
+high = 6.27
+low = 6.04
+volume = 12020000.0
+variation = 0.0164
+
+[[records]]
+date = "19.11.2024"
+closing = 6.21
+opening = 6.23
+high = 6.23
+low = 6.09
+volume = 6060000.0
+variation = 0.0016
+
+[[records]]
+date = "21.11.2024"
+closing = 6.05
+opening = 6.15
+high = 6.15
+low = 5.99
+volume = 11970000.0
+variation = -0.025799999
+
+[[records]]
+date = "22.11.2024"
+closing = 6.18
+opening = 6.07
+high = 6.18
+low = 6.05
+volume = 6950000.0
+variation = 0.0215
+
+[[records]]
+date = "25.11.2024"
+closing = 6.25
+opening = 6.18
+high = 6.28
+low = 6.12
+volume = 7900000.0
+variation = 0.0113
+
+[[records]]
+date = "26.11.2024"
+closing = 6.24
+opening = 6.26
+high = 6.32
+low = 6.21
+volume = 5890000.0
+variation = -0.0016
+
+[[records]]
+date = "27.11.2024"
+closing = 6.36
+opening = 6.25
+high = 6.44
+low = 6.17
+volume = 14570000.0
+variation = 0.019199999
+
+[[records]]
+date = "28.11.2024"
+closing = 6.06
+opening = 6.31
+high = 6.33
+low = 6.05
+volume = 10070000.0
+variation = -0.047199998
+
+[[records]]
+date = "29.11.2024"
+closing = 6.14
+opening = 6.05
+high = 6.23
+low = 6.03
+volume = 11810000.0
+variation = 0.013200001
+
+[[records]]
+date = "02.12.2024"
+closing = 6.17
+opening = 6.15
+high = 6.22
+low = 6.05
+volume = 8200000.0
+variation = 0.0049
+
+[[records]]
+date = "03.12.2024"
+closing = 6.08
+opening = 6.18
+high = 6.25
+low = 6.05
+volume = 12420000.0
+variation = -0.0146
+
+[[records]]
+date = "04.12.2024"
+closing = 6.07
+opening = 6.08
+high = 6.16
+low = 6.03
+volume = 6620000.0
+variation = -0.0016
+
+[[records]]
+date = "05.12.2024"
+closing = 6.16
+opening = 6.12
+high = 6.19
+low = 6.1
+volume = 6750000.0
+variation = 0.0148
+
+[[records]]
+date = "06.12.2024"
+closing = 5.98
+opening = 6.11
+high = 6.15
+low = 5.97
+volume = 10520000.0
+variation = -0.0292
+
+[[records]]
+date = "09.12.2024"
+closing = 6.12
+opening = 6.12
+high = 6.25
+low = 6.08
+volume = 11400000.0
+variation = 0.0234
+
+[[records]]
+date = "10.12.2024"
+closing = 6.12
+opening = 6.19
+high = 6.19
+low = 6.1
+volume = 5380000.0
+variation = 0.0
+
+[[records]]
+date = "11.12.2024"
+closing = 6.13
+opening = 6.12
+high = 6.23
+low = 6.01
+volume = 10670000.0
+variation = 0.0016
+
+[[records]]
+date = "12.12.2024"
+closing = 5.96
+opening = 6.1
+high = 6.11
+low = 5.91
+volume = 13050000.0
+variation = -0.0277
+
+[[records]]
+date = "13.12.2024"
+closing = 5.86
+opening = 5.91
+high = 6.03
+low = 5.86
+volume = 8590000.0
+variation = -0.0168
+
+[[records]]
+date = "16.12.2024"
+closing = 5.83
+opening = 5.87
+high = 5.97
+low = 5.83
+volume = 8730000.0
+variation = -0.0050999997
+
+[[records]]
+date = "17.12.2024"
+closing = 5.78
+opening = 5.79
+high = 5.89
+low = 5.56
+volume = 21620000.0
+variation = -0.0086
+
+[[records]]
+date = "18.12.2024"
+closing = 5.55
+opening = 5.75
+high = 5.75
+low = 5.48
+volume = 20520000.0
+variation = -0.0398
+
+[[records]]
+date = "19.12.2024"
+closing = 5.52
+opening = 5.56
+high = 5.63
+low = 5.52
+volume = 14860000.0
+variation = -0.0054
+
+[[records]]
+date = "20.12.2024"
+closing = 5.43
+opening = 5.51
+high = 5.58
+low = 5.36
+volume = 21960000.0
+variation = -0.0163
+
+[[records]]
+date = "23.12.2024"
+closing = 5.24
+opening = 5.41
+high = 5.43
+low = 5.24
+volume = 14830000.0
+variation = -0.035
+
+[[records]]
+date = "26.12.2024"
+closing = 5.29
+opening = 5.34
+high = 5.34
+low = 5.19
+volume = 13230000.0
+variation = 0.0095
+
+[[records]]
+date = "27.12.2024"
+closing = 5.29
+opening = 5.3
+high = 5.34
+low = 5.21
+volume = 10660000.0
+variation = 0.0
+
+[[records]]
+date = "30.12.2024"
+closing = 5.32
+opening = 5.32
+high = 5.35
+low = 5.27
+volume = 8860000.0
+variation = 0.0057
+
+[[records]]
+date = "02.01.2025"
+closing = 5.16
+opening = 5.34
+high = 5.34
+low = 5.16
+volume = 11230000.0
+variation = -0.0301
+
+[[records]]
+date = "03.01.2025"
+closing = 4.85
+opening = 5.16
+high = 5.16
+low = 4.85
+volume = 18660000.0
+variation = -0.060100004
+
+[[records]]
+date = "06.01.2025"
+closing = 5.09
+opening = 4.9
+high = 5.09
+low = 4.87
+volume = 15630000.0
+variation = 0.0495
+
+[[records]]
+date = "07.01.2025"
+closing = 5.08
+opening = 5.1
+high = 5.15
+low = 5.02
+volume = 13080000.0
+variation = -0.002
+
+[[records]]
+date = "08.01.2025"
+closing = 4.88
+opening = 5.04
+high = 5.04
+low = 4.87
+volume = 10510000.0
+variation = -0.0394
+
+[[records]]
+date = "09.01.2025"
+closing = 4.79
+opening = 4.84
+high = 4.86
+low = 4.74
+volume = 9000000.0
+variation = -0.0184
+
+[[records]]
+date = "10.01.2025"
+closing = 4.76
+opening = 4.81
+high = 4.83
+low = 4.68
+volume = 12550000.0
+variation = -0.0063
+
+[[records]]
+date = "13.01.2025"
+closing = 4.75
+opening = 4.8
+high = 4.93
+low = 4.72
+volume = 11160000.0
+variation = -0.0021
+
+[[records]]
+date = "14.01.2025"
+closing = 4.68
+opening = 4.8
+high = 4.81
+low = 4.68
+volume = 8290000.0
+variation = -0.0147
+
+[[records]]
+date = "15.01.2025"
+closing = 4.95
+opening = 4.72
+high = 4.98
+low = 4.7
+volume = 14570000.0
+variation = 0.0577
+
+[[records]]
+date = "16.01.2025"
+closing = 4.84
+opening = 4.95
+high = 4.95
+low = 4.82
+volume = 11160000.0
+variation = -0.0222
+
+[[records]]
+date = "17.01.2025"
+closing = 5.01
+opening = 4.86
+high = 5.1
+low = 4.83
+volume = 15780000.0
+variation = 0.035099998
+
+[[records]]
+date = "20.01.2025"
+closing = 5.04
+opening = 5.01
+high = 5.07
+low = 4.94
+volume = 7170000.0
+variation = 0.006
+
+[[records]]
+date = "21.01.2025"
+closing = 5.31
+opening = 5.03
+high = 5.31
+low = 5.01
+volume = 13040000.0
+variation = 0.053600002
+
+[[records]]
+date = "22.01.2025"
+closing = 5.22
+opening = 5.28
+high = 5.45
+low = 5.22
+volume = 15840000.0
+variation = -0.016900001
+
+[[records]]
+date = "23.01.2025"
+closing = 5.15
+opening = 5.27
+high = 5.35
+low = 5.09
+volume = 14350000.0
+variation = -0.0134000005
+
+[[records]]
+date = "24.01.2025"
+closing = 5.23
+opening = 5.19
+high = 5.36
+low = 5.18
+volume = 15500000.0
+variation = 0.0155
+
+[[records]]
+date = "27.01.2025"
+closing = 5.41
+opening = 5.23
+high = 5.43
+low = 5.15
+volume = 10900000.0
+variation = 0.0344
+
+[[records]]
+date = "28.01.2025"
+closing = 5.33
+opening = 5.41
+high = 5.47
+low = 5.29
+volume = 11740000.0
+variation = -0.0148
+
+[[records]]
+date = "29.01.2025"
+closing = 5.4
+opening = 5.4
+high = 5.43
+low = 5.31
+volume = 10530000.0
+variation = 0.013099999
+
+[[records]]
+date = "30.01.2025"
+closing = 5.64
+opening = 5.4
+high = 5.67
+low = 5.4
+volume = 16260000.0
+variation = 0.0444
+
+[[records]]
+date = "31.01.2025"
+closing = 5.51
+opening = 5.65
+high = 5.66
+low = 5.44
+volume = 12320000.0
+variation = -0.023
+
+[[records]]
+date = "03.02.2025"
+closing = 5.53
+opening = 5.46
+high = 5.55
+low = 5.42
+volume = 10590000.0
+variation = 0.0036000002
+
+[[records]]
+date = "04.02.2025"
+closing = 5.48
+opening = 5.52
+high = 5.53
+low = 5.44
+volume = 7530000.0
+variation = -0.009
+
+[[records]]
+date = "05.02.2025"
+closing = 5.5
+opening = 5.48
+high = 5.57
+low = 5.38
+volume = 11350000.0
+variation = 0.0036000002
+
+[[records]]
+date = "06.02.2025"
+closing = 5.6
+opening = 5.52
+high = 5.67
+low = 5.5
+volume = 9320000.0
+variation = 0.0182
+
+[[records]]
+date = "07.02.2025"
+closing = 5.6
+opening = 5.64
+high = 5.69
+low = 5.58
+volume = 9240000.0
+variation = 0.0
+
+[[records]]
+date = "10.02.2025"
+closing = 5.72
+opening = 5.42
+high = 5.77
+low = 5.41
+volume = 12510000.0
+variation = 0.0214
+
+[[records]]
+date = "11.02.2025"
+closing = 5.92
+opening = 5.59
+high = 5.96
+low = 5.58
+volume = 16070000.0
+variation = 0.035
+
+[[records]]
+date = "12.02.2025"
+closing = 5.68
+opening = 5.86
+high = 5.89
+low = 5.68
+volume = 17280000.0
+variation = -0.0405
+
+[[records]]
+date = "13.02.2025"
+closing = 5.87
+opening = 5.67
+high = 5.9
+low = 5.64
+volume = 11450000.0
+variation = 0.0335
+
+[[records]]
+date = "14.02.2025"
+closing = 5.98
+opening = 5.8
+high = 5.98
+low = 5.71
+volume = 22420000.0
+variation = 0.0187
+
+[[records]]
+date = "17.02.2025"
+closing = 5.95
+opening = 5.91
+high = 6.09
+low = 5.91
+volume = 10400000.0
+variation = -0.005
+
+[[records]]
+date = "18.02.2025"
+closing = 6.04
+opening = 5.98
+high = 6.18
+low = 5.98
+volume = 12830000.0
+variation = 0.0150999995
+
+[[records]]
+date = "19.02.2025"
+closing = 6.07
+opening = 6.13
+high = 6.27
+low = 6.04
+volume = 21090000.0
+variation = 0.005
+
+[[records]]
+date = "20.02.2025"
+closing = 6.13
+opening = 6.14
+high = 6.2
+low = 6.05
+volume = 12250000.0
+variation = 0.0099
+
+[[records]]
+date = "21.02.2025"
+closing = 5.98
+opening = 6.13
+high = 6.16
+low = 5.97
+volume = 10470000.0
+variation = -0.024500001
+
+[[records]]
+date = "24.02.2025"
+closing = 5.82
+opening = 6.04
+high = 6.05
+low = 5.82
+volume = 9260000.0
+variation = -0.026800001
+
+[[records]]
+date = "25.02.2025"
+closing = 5.91
+opening = 5.8
+high = 5.93
+low = 5.79
+volume = 7810000.0
+variation = 0.0155
+
+[[records]]
+date = "26.02.2025"
+closing = 5.97
+opening = 5.95
+high = 6.02
+low = 5.88
+volume = 8160000.0
+variation = 0.010199999
+
+[[records]]
+date = "27.02.2025"
+closing = 5.96
+opening = 5.92
+high = 6.07
+low = 5.92
+volume = 6350000.0
+variation = -0.0017
+
+[[records]]
+date = "28.02.2025"
+closing = 5.71
+opening = 5.91
+high = 5.95
+low = 5.66
+volume = 10450000.0
+variation = -0.0419
+
+[[records]]
+date = "05.03.2025"
+closing = 5.85
+opening = 5.71
+high = 5.89
+low = 5.7
+volume = 6760000.0
+variation = 0.024500001
+
+[[records]]
+date = "06.03.2025"
+closing = 5.92
+opening = 5.87
+high = 5.99
+low = 5.82
+volume = 10860000.0
+variation = 0.012
+
+[[records]]
+date = "07.03.2025"
+closing = 6.02
+opening = 5.9
+high = 6.05
+low = 5.8
+volume = 11710000.0
+variation = 0.016900001
+
+[[records]]
+date = "10.03.2025"
+closing = 5.96
+opening = 5.94
+high = 6.01
+low = 5.86
+volume = 7270000.0
+variation = -0.01
+
+[[records]]
+date = "11.03.2025"
+closing = 5.88
+opening = 5.96
+high = 6.01
+low = 5.76
+volume = 8010000.0
+variation = -0.0134000005
+
+[[records]]
+date = "12.03.2025"
+closing = 5.86
+opening = 5.83
+high = 5.9
+low = 5.74
+volume = 8050000.0
+variation = -0.0034
+
+[[records]]
+date = "13.03.2025"
+closing = 5.65
+opening = 5.86
+high = 5.95
+low = 5.65
+volume = 16980000.0
+variation = -0.0358
+
+[[records]]
+date = "14.03.2025"
+closing = 5.88
+opening = 5.73
+high = 5.92
+low = 5.71
+volume = 18910000.0
+variation = 0.040700004
+
+[[records]]
+date = "17.03.2025"
+closing = 5.87
+opening = 5.86
+high = 5.91
+low = 5.82
+volume = 8069999.5
+variation = -0.0017
+
+[[records]]
+date = "18.03.2025"
+closing = 5.84
+opening = 5.85
+high = 5.92
+low = 5.75
+volume = 10310000.0
+variation = -0.0050999997
+
+[[records]]
+date = "19.03.2025"
+closing = 5.94
+opening = 5.84
+high = 5.99
+low = 5.8
+volume = 11930000.0
+variation = 0.0171
+
+[[records]]
+date = "20.03.2025"
+closing = 5.89
+opening = 5.89
+high = 5.96
+low = 5.85
+volume = 6680000.0
+variation = -0.0084
+
+[[records]]
+date = "21.03.2025"
+closing = 5.79
+opening = 5.83
+high = 5.91
+low = 5.79
+volume = 8189999.5
+variation = -0.017
+
+[[records]]
+date = "24.03.2025"
+closing = 5.87
+opening = 5.86
+high = 6.0
+low = 5.82
+volume = 10880000.0
+variation = 0.0138
+
+[[records]]
+date = "25.03.2025"
+closing = 5.9
+opening = 5.88
+high = 5.98
+low = 5.86
+volume = 7630000.0
+variation = 0.0050999997
+
+[[records]]
+date = "26.03.2025"
+closing = 5.93
+opening = 5.89
+high = 5.95
+low = 5.88
+volume = 5430000.0
+variation = 0.0050999997
+
+[[records]]
+date = "27.03.2025"
+closing = 5.95
+opening = 5.99
+high = 6.03
+low = 5.88
+volume = 8189999.5
+variation = 0.0034
+
+[[records]]
+date = "28.03.2025"
+closing = 5.72
+opening = 5.95
+high = 5.95
+low = 5.66
+volume = 15200000.0
+variation = -0.0387
+
+[[records]]
+date = "31.03.2025"
+closing = 5.68
+opening = 5.68
+high = 5.72
+low = 5.58
+volume = 8590000.0
+variation = -0.0069999998
+
+[[records]]
+date = "01.04.2025"
+closing = 5.9
+opening = 5.73
+high = 6.0
+low = 5.68
+volume = 14200000.0
+variation = 0.0387
+
+[[records]]
+date = "02.04.2025"
+closing = 5.82
+opening = 5.91
+high = 5.92
+low = 5.75
+volume = 7850000.0
+variation = -0.0136
+
+[[records]]
+date = "03.04.2025"
+closing = 5.76
+opening = 5.76
+high = 5.81
+low = 5.7
+volume = 10500000.0
+variation = -0.010299999
+
+[[records]]
+date = "04.04.2025"
+closing = 5.35
+opening = 5.63
+high = 5.64
+low = 5.33
+volume = 19740000.0
+variation = -0.0712
+
+[[records]]
+date = "07.04.2025"
+closing = 5.36
+opening = 5.14
+high = 5.49
+low = 5.12
+volume = 16660000.0
+variation = 0.0019
+
+[[records]]
+date = "08.04.2025"
+closing = 5.11
+opening = 5.46
+high = 5.46
+low = 5.07
+volume = 12830000.0
+variation = -0.0466
+
+[[records]]
+date = "09.04.2025"
+closing = 5.47
+opening = 5.05
+high = 5.51
+low = 5.02
+volume = 24990000.0
+variation = 0.0705
+
+[[records]]
+date = "10.04.2025"
+closing = 5.33
+opening = 5.48
+high = 5.48
+low = 5.24
+volume = 16120001.0
+variation = -0.0256
+
+[[records]]
+date = "11.04.2025"
+closing = 5.42
+opening = 5.37
+high = 5.47
+low = 5.32
+volume = 9380000.0
+variation = 0.016900001
+
+[[records]]
+date = "14.04.2025"
+closing = 5.6
+opening = 5.49
+high = 5.61
+low = 5.46
+volume = 11240000.0
+variation = 0.0332
+
+[[records]]
+date = "15.04.2025"
+closing = 5.46
+opening = 5.59
+high = 5.7
+low = 5.46
+volume = 8830000.0
+variation = -0.025
+
+[[records]]
+date = "16.04.2025"
+closing = 5.58
+opening = 5.42
+high = 5.63
+low = 5.4
+volume = 14220000.0
+variation = 0.022
+
+[[records]]
+date = "17.04.2025"
+closing = 5.67
+opening = 5.59
+high = 5.7
+low = 5.56
+volume = 9080000.0
+variation = 0.0161
+
+[[records]]
+date = "22.04.2025"
+closing = 5.71
+opening = 5.67
+high = 5.79
+low = 5.62
+volume = 8950000.0
+variation = 0.0070999996
+
+[[records]]
+date = "23.04.2025"
+closing = 6.07
+opening = 5.83
+high = 6.11
+low = 5.83
+volume = 19100000.0
+variation = 0.063
+
+[[records]]
+date = "24.04.2025"
+closing = 5.81
+opening = 6.15
+high = 6.25
+low = 5.67
+volume = 48300000.0
+variation = -0.0428
+
+[[records]]
+date = "25.04.2025"
+closing = 5.73
+opening = 5.83
+high = 5.9
+low = 5.69
+volume = 17700000.0
+variation = -0.0138
+
+[[records]]
+date = "28.04.2025"
+closing = 5.75
+opening = 5.73
+high = 5.79
+low = 5.67
+volume = 9810000.0
+variation = 0.0034999999
+
+[[records]]
+date = "29.04.2025"
+closing = 5.73
+opening = 5.75
+high = 5.82
+low = 5.7
+volume = 10770000.0
+variation = -0.0034999999
+
+[[records]]
+date = "30.04.2025"
+closing = 5.53
+opening = 5.69
+high = 5.7
+low = 5.5
+volume = 12700000.0
+variation = -0.0349
+
+[[records]]
+date = "02.05.2025"
+closing = 5.52
+opening = 5.54
+high = 5.56
+low = 5.44
+volume = 10220000.0
+variation = -0.0018000001
+
+[[records]]
+date = "05.05.2025"
+closing = 5.42
+opening = 5.54
+high = 5.59
+low = 5.39
+volume = 6510000.0
+variation = -0.018099999
+
+[[records]]
+date = "06.05.2025"
+closing = 5.42
+opening = 5.45
+high = 5.54
+low = 5.39
+volume = 5480000.0
+variation = 0.0
+
+[[records]]
+date = "07.05.2025"
+closing = 5.46
+opening = 5.44
+high = 5.49
+low = 5.37
+volume = 9620000.0
+variation = 0.0074
+
+[[records]]
+date = "08.05.2025"
+closing = 5.6
+opening = 5.52
+high = 5.69
+low = 5.51
+volume = 10860000.0
+variation = 0.0256
+
+[[records]]
+date = "09.05.2025"
+closing = 5.38
+opening = 5.64
+high = 5.64
+low = 5.27
+volume = 17440000.0
+variation = -0.039300002
+
+[[records]]
+date = "12.05.2025"
+closing = 5.44
+opening = 5.55
+high = 5.6
+low = 5.42
+volume = 9080000.0
+variation = 0.0112
+
+[[records]]
+date = "13.05.2025"
+closing = 5.54
+opening = 5.43
+high = 5.61
+low = 5.42
+volume = 10160000.0
+variation = 0.0184
+
+[[records]]
+date = "14.05.2025"
+closing = 5.5
+opening = 5.56
+high = 5.57
+low = 5.45
+volume = 8550000.0
+variation = -0.0072000003
+
+[[records]]
+date = "15.05.2025"
+closing = 5.55
+opening = 5.5
+high = 5.59
+low = 5.48
+volume = 6410000.0
+variation = 0.0091
+
+[[records]]
+date = "16.05.2025"
+closing = 5.51
+opening = 5.48
+high = 5.54
+low = 5.46
+volume = 8700000.0
+variation = -0.0072000003
+
+[[records]]
+date = "19.05.2025"
+closing = 5.49
+opening = 5.5
+high = 5.56
+low = 5.46
+volume = 5630000.0
+variation = -0.0036000002
+
+[[records]]
+date = "20.05.2025"
+closing = 5.45
+opening = 5.52
+high = 5.52
+low = 5.4
+volume = 7220000.0
+variation = -0.0073
+
+[[records]]
+date = "21.05.2025"
+closing = 5.33
+opening = 5.46
+high = 5.46
+low = 5.32
+volume = 8920000.0
+variation = -0.022
+
+[[records]]
+date = "22.05.2025"
+closing = 5.24
+opening = 5.34
+high = 5.36
+low = 5.22
+volume = 9030000.0
+variation = -0.016900001
+
+[[records]]
+date = "23.05.2025"
+closing = 5.33
+opening = 5.2
+high = 5.35
+low = 5.15
+volume = 10480000.0
+variation = 0.0172
+
+[[records]]
+date = "26.05.2025"
+closing = 5.35
+opening = 5.35
+high = 5.37
+low = 5.31
+volume = 3440000.0
+variation = 0.0038
+
+[[records]]
+date = "27.05.2025"
+closing = 5.57
+opening = 5.35
+high = 5.63
+low = 5.35
+volume = 17110000.0
+variation = 0.041100003
+
+[[records]]
+date = "28.05.2025"
+closing = 5.31
+opening = 5.57
+high = 5.59
+low = 5.28
+volume = 16340000.0
+variation = -0.0467
+
+[[records]]
+date = "29.05.2025"
+closing = 5.23
+opening = 5.33
+high = 5.38
+low = 5.22
+volume = 9700000.0
+variation = -0.0150999995
+
+[[records]]
+date = "30.05.2025"
+closing = 5.2
+opening = 5.23
+high = 5.27
+low = 5.12
+volume = 10160000.0
+variation = -0.0057
+
+[[records]]
+date = "02.06.2025"
+closing = 5.18
+opening = 5.23
+high = 5.3
+low = 5.17
+volume = 8830000.0
+variation = -0.0038
+
+[[records]]
+date = "03.06.2025"
+closing = 5.28
+opening = 5.18
+high = 5.3
+low = 5.17
+volume = 6210000.0
+variation = 0.019299999
+
+[[records]]
+date = "04.06.2025"
+closing = 5.22
+opening = 5.29
+high = 5.35
+low = 5.17
+volume = 7610000.0
+variation = -0.0114
+
+[[records]]
+date = "05.06.2025"
+closing = 5.17
+opening = 5.25
+high = 5.28
+low = 5.13
+volume = 9890000.0
+variation = -0.0095999995
+
+[[records]]
+date = "06.06.2025"
+closing = 5.18
+opening = 5.19
+high = 5.21
+low = 5.14
+volume = 5580000.0
+variation = 0.0019
+
+[[records]]
+date = "09.06.2025"
+closing = 5.25
+opening = 5.16
+high = 5.27
+low = 5.1
+volume = 8170000.0
+variation = 0.0135
+
+[[records]]
+date = "10.06.2025"
+closing = 5.17
+opening = 5.28
+high = 5.3
+low = 5.12
+volume = 13540000.0
+variation = -0.0152
+
+[[records]]
+date = "11.06.2025"
+closing = 5.17
+opening = 5.17
+high = 5.18
+low = 5.09
+volume = 11590000.0
+variation = 0.0
+
+[[records]]
+date = "12.06.2025"
+closing = 5.07
+opening = 5.15
+high = 5.16
+low = 5.0
+volume = 16750000.0
+variation = -0.019299999
+
+[[records]]
+date = "13.06.2025"
+closing = 4.77
+opening = 5.01
+high = 5.02
+low = 4.77
+volume = 31700000.0
+variation = -0.0592
+
+[[records]]
+date = "16.06.2025"
+closing = 4.93
+opening = 4.82
+high = 4.94
+low = 4.81
+volume = 9600000.0
+variation = 0.0335
+
+[[records]]
+date = "17.06.2025"
+closing = 4.59
+opening = 4.81
+high = 4.82
+low = 4.58
+volume = 42520000.0
+variation = -0.069
+
+[[records]]
+date = "18.06.2025"
+closing = 4.54
+opening = 4.61
+high = 4.67
+low = 4.53
+volume = 17170000.0
+variation = -0.0109
+
+[[records]]
+date = "20.06.2025"
+closing = 4.4
+opening = 4.54
+high = 4.56
+low = 4.39
+volume = 17300000.0
+variation = -0.0308
+
+[[records]]
+date = "23.06.2025"
+closing = 4.35
+opening = 4.42
+high = 4.42
+low = 4.24
+volume = 20930000.0
+variation = -0.0114
+
+[[records]]
+date = "24.06.2025"
+closing = 4.2
+opening = 4.37
+high = 4.39
+low = 4.18
+volume = 21820000.0
+variation = -0.0345
+
+[[records]]
+date = "25.06.2025"
+closing = 4.02
+opening = 4.12
+high = 4.16
+low = 4.0
+volume = 29080000.0
+variation = -0.0429
+
+[[records]]
+date = "26.06.2025"
+closing = 4.14
+opening = 4.1
+high = 4.16
+low = 4.03
+volume = 22000000.0
+variation = 0.0299
+
+[[records]]
+date = "27.06.2025"
+closing = 4.15
+opening = 4.17
+high = 4.19
+low = 4.11
+volume = 12140000.0
+variation = 0.0023999999
+
+[[records]]
+date = "30.06.2025"
+closing = 4.12
+opening = 4.15
+high = 4.16
+low = 4.09
+volume = 13090000.0
+variation = -0.0072000003
+
+[[records]]
+date = "01.07.2025"
+closing = 4.1
+opening = 4.1
+high = 4.15
+low = 4.09
+volume = 11110000.0
+variation = -0.0049
+
+[[records]]
+date = "02.07.2025"
+closing = 4.32
+opening = 4.12
+high = 4.36
+low = 4.11
+volume = 23210000.0
+variation = 0.0537
+
+[[records]]
+date = "03.07.2025"
+closing = 4.41
+opening = 4.34
+high = 4.46
+low = 4.29
+volume = 12690000.0
+variation = 0.0208
+
+[[records]]
+date = "04.07.2025"
+closing = 4.47
+opening = 4.4
+high = 4.49
+low = 4.37
+volume = 6720000.0
+variation = 0.0136
+
+[[records]]
+date = "07.07.2025"
+closing = 4.39
+opening = 4.48
+high = 4.48
+low = 4.36
+volume = 7900000.0
+variation = -0.0179
+
+[[records]]
+date = "08.07.2025"
+closing = 4.38
+opening = 4.42
+high = 4.42
+low = 4.35
+volume = 7850000.0
+variation = -0.0023
+
+[[records]]
+date = "09.07.2025"
+closing = 4.24
+opening = 4.4
+high = 4.4
+low = 4.24
+volume = 7660000.0
+variation = -0.032
+
+[[records]]
+date = "10.07.2025"
+closing = 4.32
+opening = 4.19
+high = 4.4
+low = 4.17
+volume = 22330000.0
+variation = 0.0189
+
+[[records]]
+date = "11.07.2025"
+closing = 4.29
+opening = 4.3
+high = 4.32
+low = 4.23
+volume = 7220000.0
+variation = -0.0069
+
+[[records]]
+date = "14.07.2025"
+closing = 4.22
+opening = 4.27
+high = 4.28
+low = 4.19
+volume = 7500000.0
+variation = -0.0163
+
+[[records]]
+date = "15.07.2025"
+closing = 4.2
+opening = 4.21
+high = 4.24
+low = 4.14
+volume = 12350000.0
+variation = -0.0047
+
+[[records]]
+date = "16.07.2025"
+closing = 4.01
+opening = 4.07
+high = 4.1
+low = 3.98
+volume = 23920000.0
+variation = -0.0452
+
+[[records]]
+date = "17.07.2025"
+closing = 4.03
+opening = 4.01
+high = 4.11
+low = 4.0
+volume = 10980000.0
+variation = 0.005
+
+[[records]]
+date = "18.07.2025"
+closing = 3.92
+opening = 4.01
+high = 4.02
+low = 3.9
+volume = 15620000.0
+variation = -0.0273
+
+[[records]]
+date = "21.07.2025"
+closing = 4.01
+opening = 3.95
+high = 4.08
+low = 3.93
+volume = 12530000.0
+variation = 0.023
+
+[[records]]
+date = "22.07.2025"
+closing = 4.25
+opening = 4.06
+high = 4.37
+low = 4.06
+volume = 29090000.0
+variation = 0.059899997
+
+[[records]]
+date = "23.07.2025"
+closing = 4.36
+opening = 4.24
+high = 4.4
+low = 4.19
+volume = 16410000.0
+variation = 0.025899999
+
+[[records]]
+date = "24.07.2025"
+closing = 4.28
+opening = 4.3
+high = 4.36
+low = 4.26
+volume = 8220000.5
+variation = -0.0183
+
+[[records]]
+date = "25.07.2025"
+closing = 4.2
+opening = 4.28
+high = 4.28
+low = 4.14
+volume = 22510000.0
+variation = -0.0187
+
+[[records]]
+date = "28.07.2025"
+closing = 4.17
+opening = 4.16
+high = 4.21
+low = 4.11
+volume = 13790000.0
+variation = -0.0070999996
+
+[[records]]
+date = "29.07.2025"
+closing = 4.2
+opening = 4.21
+high = 4.23
+low = 4.14
+volume = 13350000.0
+variation = 0.0072000003
+
+[[records]]
+date = "30.07.2025"
+closing = 4.14
+opening = 4.17
+high = 4.21
+low = 4.1
+volume = 17190000.0
+variation = -0.0143
+
+[[records]]
+date = "31.07.2025"
+closing = 4.38
+opening = 4.13
+high = 4.43
+low = 4.05
+volume = 38010000.0
+variation = 0.058000002
+
+[[records]]
+date = "01.08.2025"
+closing = 4.37
+opening = 4.45
+high = 4.45
+low = 4.33
+volume = 12140000.0
+variation = -0.0023

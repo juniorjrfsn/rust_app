@@ -1,6 +1,6 @@
 // projeto : lstmfilextract
 // file : src/main.rs
- 
+
 use clap::{Parser};
 use std::fs::{File, OpenOptions};
 use std::path::Path;
@@ -11,8 +11,7 @@ use log::{info, warn, error};
 use env_logger;
 use thiserror::Error;
 use chrono::NaiveDate;
-use postgres::{Client, NoTls};
-use std::fs;
+use rusqlite::{Connection, params, Transaction};
 
 #[derive(Error, Debug)]
 enum LSTMError {
@@ -31,22 +30,24 @@ enum LSTMError {
     #[error("Serialization error: {0}")]
     SerializationError(String),
     #[error("Database error: {0}")]
-    DatabaseError(#[from] postgres::Error),
+    DatabaseError(#[from] rusqlite::Error),
 }
 
 #[derive(Parser)]
 #[command(name = "lstm_extract")]
-#[command(about = "Extract and convert CSV data to TOML format and PostgreSQL database")]
+#[command(about = "Extract and convert CSV data to TOML format and SQLite database")]
 #[command(version = "1.0.0")]
 struct Cli {
+    #[arg(long, help = "Stock symbol (e.g., WEGE3)")]
+    asset: String,
     #[arg(long, help = "Data source (e.g., investing)")]
     source: String,
     #[arg(long, default_value = "../dados", help = "Data directory path")]
     data_dir: String,
     #[arg(long, help = "Skip TOML output generation")]
     skip_toml: bool,
-    #[arg(long, help = "Database URL (e.g., postgres://postgres:postgres@localhost:5432/lstm_db)")]
-    db_url: String,
+    #[arg(long, help = "Skip SQLite database storage")]
+    skip_db: bool,
     #[arg(long, help = "Date format pattern", default_value = "%d.%m.%Y")]
     date_format: String,
 }
@@ -155,7 +156,7 @@ fn parse_csv_data(file_path: &str, date_format: &str) -> Result<ParsedData, LSTM
     let mut rdr = ReaderBuilder::new()
         .delimiter(b',')
         .has_headers(true)
-        .flexible(true)
+        .flexible(true) // Allow variable number of columns
         .from_reader(file);
     
     let mut valid_records = Vec::new();
@@ -201,6 +202,8 @@ fn parse_csv_data(file_path: &str, date_format: &str) -> Result<ParsedData, LSTM
 
 fn parse_single_record(record: &csv::StringRecord, date_format: &str) -> Result<StockRecord, LSTMError> {
     let date = record[0].to_string();
+    
+    // Validate date format
     parse_date(&date, date_format)?;
     
     let closing = parse_float(&record[1])?;
@@ -246,120 +249,133 @@ fn save_to_toml(stock_data: &StockData, output_path: &str) -> Result<(), LSTMErr
     Ok(())
 }
 
-fn save_to_database(records: &[StockRecord], asset: &str, client: &mut Client) -> Result<(), LSTMError> {
-    // Create table if it doesn't exist
-    client.batch_execute(
+fn save_to_database(records: &[StockRecord], asset: &str, db_path: &str) -> Result<(), LSTMError> {
+    let conn = Connection::open(db_path)?;
+    
+    // Create table with indexes for better performance
+    conn.execute(
         "CREATE TABLE IF NOT EXISTS stock_records (
-            asset TEXT NOT NULL,
-            date TEXT NOT NULL,
-            closing REAL NOT NULL,
-            opening REAL NOT NULL,
-            high REAL NOT NULL,
-            low REAL NOT NULL,
-            volume REAL NOT NULL,
-            variation REAL NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            asset TEXT,
+            date TEXT,
+            closing REAL,
+            opening REAL,
+            high REAL,
+            low REAL,
+            volume REAL,
+            variation REAL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             PRIMARY KEY (asset, date)
         )",
+        [],
     )?;
-
-    // Clear existing data for this asset
-    client.execute("DELETE FROM stock_records WHERE asset = $1", &[&asset])?;
-
-    // Insert new records
-    for record in records {
-        client.execute(
-            "INSERT INTO stock_records (asset, date, closing, opening, high, low, volume, variation)
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-             ON CONFLICT ON CONSTRAINT stock_records_pkey DO NOTHING",
-            &[
-                &asset,
-                &record.date,
-                &record.closing,
-                &record.opening,
-                &record.high,
-                &record.low,
-                &record.volume,
-                &record.variation,
-            ],
-        )?;
-    }
     
-    info!("Data successfully saved to PostgreSQL for asset: {}", asset);
+    // Create indexes for better query performance
+    conn.execute(
+        "CREATE INDEX IF NOT EXISTS idx_asset_date ON stock_records(asset, date)",
+        [],
+    )?;
+    
+    conn.execute(
+        "CREATE INDEX IF NOT EXISTS idx_date ON stock_records(date)",
+        [],
+    )?;
+    
+    // Use transaction for better performance and consistency
+    let tx = conn.unchecked_transaction()?;
+    
+    // Clear existing data for this asset
+    tx.execute("DELETE FROM stock_records WHERE asset = ?1", params![asset])?;
+    
+    // Scope the statement to ensure it's dropped before commit
+    {
+        let mut stmt = tx.prepare(
+            "INSERT INTO stock_records (asset, date, closing, opening, high, low, volume, variation) 
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)"
+        )?;
+        
+        for record in records {
+            stmt.execute(params![
+                asset,
+                &record.date,
+                record.closing,
+                record.opening,
+                record.high,
+                record.low,
+                record.volume,
+                record.variation
+            ])?;
+        }
+    } // stmt is dropped here
+    
+    tx.commit()?;
+    info!("Data successfully saved to SQLite database: {}", db_path);
     Ok(())
 }
 
 fn extract_command(cli: Cli) -> Result<(), LSTMError> {
-    info!("Starting data extraction from {}", cli.source);
+    info!("Starting data extraction for {} from {}", cli.asset, cli.source);
     
-    let data_dir = Path::new(&cli.data_dir);
-    if !data_dir.exists() || !data_dir.is_dir() {
-        return Err(LSTMError::FileNotFound { path: cli.data_dir.clone() });
+    let input_file_path = format!("{}/{}/{}.csv", cli.data_dir, cli.source, cli.asset);
+    let output_file_path = format!("{}/{}_{}_output.toml", cli.data_dir, cli.asset, cli.source);
+    let db_file_path = format!("{}/{}.db", cli.data_dir, cli.source);
+    
+    let input_path = Path::new(&input_file_path);
+    if !input_path.exists() {
+        return Err(LSTMError::FileNotFound { path: input_file_path });
     }
-
-    let mut all_records = Vec::new();
-    let mut total_skipped = 0;
-    let mut total_errors = 0;
-
-    // List all CSV files in the directory
-    let entries = fs::read_dir(&cli.data_dir)?
-        .filter_map(|entry| entry.ok())
-        .filter(|entry| {
-            entry.path().extension().and_then(|s| s.to_str()) == Some("csv")
-        })
-        .collect::<Vec<_>>();
-
-    if entries.is_empty() {
-        return Err(LSTMError::InvalidCsv { msg: "No CSV files found in directory".into() });
+    
+    // Parse CSV data
+    let parsed_data = parse_csv_data(&input_file_path, &cli.date_format)?;
+    
+    if parsed_data.valid_records.is_empty() {
+        return Err(LSTMError::InvalidCsv { 
+            msg: format!("No valid records found. Skipped: {}, Errors: {}", 
+                        parsed_data.skipped_count, parsed_data.error_count)
+        });
     }
-
-    let mut client = Client::connect(&cli.db_url, NoTls)?;
-
-    for entry in entries {
-        let file_path = entry.path();
-        let file_name = file_path.file_stem().unwrap().to_str().unwrap();
-        let asset = file_name.split('_').next().unwrap_or(file_name).to_string();
-
-        let parsed_data = parse_csv_data(file_path.to_str().unwrap(), &cli.date_format)?;
-        let mut records = parsed_data.valid_records;
-
-        sort_records_by_date(&mut records, &cli.date_format);
-        
-        let date_range = if !records.is_empty() {
-            Some((records.first().unwrap().date.clone(), records.last().unwrap().date.clone()))
-        } else {
-            None
-        };
-
-        let stock_data = StockData {
-            asset: asset.clone(),
-            source: cli.source.clone(),
-            total_records: records.len(),
-            date_range,
-            records: records.clone(),
-        };
-
-        if !cli.skip_toml {
-            let output_file_path = format!("{}/{}_{}_output.toml", cli.data_dir, asset, cli.source);
-            save_to_toml(&stock_data, &output_file_path)?;
-        }
-
-        save_to_database(&records, &asset, &mut client)?;
-
-        all_records.extend(records);
-        total_skipped += parsed_data.skipped_count;
-        total_errors += parsed_data.error_count;
-
-        info!("Processed {} records for asset {}", stock_data.total_records, asset);
-    }
-
-    println!("✅ Extraction complete! {} total records processed", all_records.len());
+    
+    let mut records = parsed_data.valid_records;
+    
+    // Sort records by date
+    sort_records_by_date(&mut records, &cli.date_format);
+    
+    // Create date range info
+    let date_range = if !records.is_empty() {
+        Some((records.first().unwrap().date.clone(), records.last().unwrap().date.clone()))
+    } else {
+        None
+    };
+    
+    info!("Successfully parsed {} valid records (skipped: {}, errors: {})", 
+          records.len(), parsed_data.skipped_count, parsed_data.error_count);
+    
+    let stock_data = StockData { 
+        asset: cli.asset.clone(),
+        source: cli.source.clone(),
+        total_records: records.len(),
+        date_range,
+        records: records.clone()
+    };
+    
+    // Save to TOML if not skipped
     if !cli.skip_toml {
-        println!("   📄 TOML files generated in {}", cli.data_dir);
+        save_to_toml(&stock_data, &output_file_path)?;
     }
-    println!("   🗄️  Database updated");
-    if total_skipped > 0 || total_errors > 0 {
-        println!("   ⚠️  Skipped {} records, {} errors", total_skipped, total_errors);
+    
+    // Save to database if not skipped
+    if !cli.skip_db {
+        save_to_database(&records, &cli.asset, &db_file_path)?;
+    }
+    
+    println!("✅ Extraction complete! {} records processed", records.len());
+    if !cli.skip_toml {
+        println!("   📄 TOML: {}", output_file_path);
+    }
+    if !cli.skip_db {
+        println!("   🗄️  Database: {}", db_file_path);
+    }
+    if parsed_data.skipped_count > 0 || parsed_data.error_count > 0 {
+        println!("   ⚠️  Skipped {} records, {} errors", parsed_data.skipped_count, parsed_data.error_count);
     }
     
     Ok(())
@@ -383,9 +399,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
     }
 }
-
-
-// cargo run -- --source investing --db-url postgres://postgres:postgres@localhost:5432/lstm_db
 
 // Example usage:
 // cargo run -- --asset WEGE3 --source investing

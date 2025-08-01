@@ -20,7 +20,6 @@ edition = "2024"
     rand_distr = "0.5.0"
     thiserror = "2.0.12"
 
-
     serde_bson = "0.0.1"
     smartcore = "0.4.0"
     crossbeam = "0.8"
@@ -29,13 +28,14 @@ edition = "2024"
     # burn = { version = "0.18.0", features = ["wgpu","train", "dataset", "ndarray", "autodiff"] }
     burn = { version = "0.18.0", features = ["wgpu", "autodiff", "train"] }
 
-
-    plotly = "0.13.4"
+    plotly = "0.13.5"
     rusqlite = "0.37.0"
     burn-train = "0.18.0"
     log = "0.4"
     env_logger = "0.11.8"
- 
+    postgres = { version = "0.19.9", features = ["with-serde_json-1"] }
+    reqwest = { version = "0.12.22", features = ["blocking"] }
+
 
     [[bin]]
     name = "lstm"
