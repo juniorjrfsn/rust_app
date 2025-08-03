@@ -1,6 +1,5 @@
-// projeto : lstmfiletrain
-// file : src/main.rs - Enhanced Version with Better Training
-
+// projeto: lstmfiletrain
+// file: src/main.rs - Enhanced LSTM for Stock Price Prediction with PostgreSQL for All Assets
 
 use clap::Parser;
 use serde::{Deserialize, Serialize};
@@ -9,21 +8,19 @@ use log::{info, error};
 use env_logger;
 use thiserror::Error;
 use chrono::Utc;
-use rusqlite::{Connection, params};
 use postgres::{Client, NoTls};
 use postgres::types::Json;
-use rand::{thread_rng, rngs::ThreadRng};
+use rand::{rngs::ThreadRng};
 use rand_distr::{Distribution, Normal};
 use std::time::Instant;
 
 #[derive(Error, Debug)]
+#[allow(dead_code)]
 enum LSTMError {
-    #[error("Insufficient data: need at least {required}, got {actual}")]
-    InsufficientData { required: usize, actual: usize },
+    #[error("Insufficient data for asset {asset}: need at least {required}, got {actual}")]
+    InsufficientData { asset: String, required: usize, actual: usize },
     #[error("IO error: {0}")]
     IoError(#[from] std::io::Error),
-    #[error("SQLite error: {0}")]
-    SqliteError(#[from] rusqlite::Error),
     #[error("PostgreSQL error: {0}")]
     PgError(#[from] postgres::Error),
     #[error("Training error: {0}")]
@@ -32,14 +29,10 @@ enum LSTMError {
 
 #[derive(Parser)]
 #[command(name = "lstm_train")]
-#[command(about = "Enhanced LSTM model for stock prediction")]
+#[command(about = "Enhanced LSTM model for stock price prediction using PostgreSQL data for all assets")]
 #[command(version = "3.0.0")]
 struct Cli {
-    #[arg(long, help = "Stock symbol")]
-    asset: String,
-    #[arg(long, help = "Data source")]
-    source: String,
-    #[arg(long, default_value = "../dados", help = "Data directory")]
+    #[arg(long, default_value = "../dados", help = "Data directory (for compatibility, not used for data loading)")]
     data_dir: String,
     #[arg(long, default_value_t = 30, help = "Sequence length")]
     seq_length: usize,
@@ -65,17 +58,20 @@ struct Cli {
 struct StockData {
     date: String,
     closing: f32,
+    opening: f32,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 struct ModelWeights {
     asset: String,
-    source: String,
+    source: String, // Kept for compatibility, set to "investing"
     layers: Vec<LSTMLayerWeights>,
     w_final: Array1<f32>,
     b_final: f32,
-    data_mean: f32,
-    data_std: f32,
+    closing_mean: f32,
+    closing_std: f32,
+    opening_mean: f32,
+    opening_std: f32,
     seq_length: usize,
     hidden_size: usize,
     num_layers: usize,
@@ -101,7 +97,7 @@ struct LSTMLayerWeights {
 #[derive(Debug, Serialize, Deserialize)]
 struct TrainingMetrics {
     asset: String,
-    source: String,
+    source: String, // Kept for compatibility, set to "investing"
     final_loss: f32,
     final_val_loss: f32,
     directional_accuracy: f32,
@@ -113,7 +109,7 @@ struct TrainingMetrics {
 }
 
 mod model {
-    use super::{Array1, Array2, Distribution, Normal, ThreadRng};
+    use super::{Array1, Array2, Distribution, Normal, ThreadRng, Cli, ModelWeights, LSTMLayerWeights, Utc};
 
     pub struct LSTMCell {
         hidden_size: usize,
@@ -145,7 +141,7 @@ mod model {
                 b_input: Array1::zeros(hidden_size),
                 w_forget: Array2::from_shape_fn((hidden_size, input_size), |_| normal_input.sample(rng)),
                 u_forget: Array2::from_shape_fn((hidden_size, hidden_size), |_| normal_hidden.sample(rng)),
-                b_forget: Array1::ones(hidden_size), // Forget gate bias initialized to 1
+                b_forget: Array1::ones(hidden_size),
                 w_output: Array2::from_shape_fn((hidden_size, input_size), |_| normal_input.sample(rng)),
                 u_output: Array2::from_shape_fn((hidden_size, hidden_size), |_| normal_hidden.sample(rng)),
                 b_output: Array1::zeros(hidden_size),
@@ -182,6 +178,23 @@ mod model {
             if x < -20.0 { return -1.0; }
             x.tanh()
         }
+
+        pub fn to_weights(&self) -> LSTMLayerWeights {
+            LSTMLayerWeights {
+                w_input: self.w_input.clone(),
+                u_input: self.u_input.clone(),
+                b_input: self.b_input.clone(),
+                w_forget: self.w_forget.clone(),
+                u_forget: self.u_forget.clone(),
+                b_forget: self.b_forget.clone(),
+                w_output: self.w_output.clone(),
+                u_output: self.u_output.clone(),
+                b_output: self.b_output.clone(),
+                w_cell: self.w_cell.clone(),
+                u_cell: self.u_cell.clone(),
+                b_cell: self.b_cell.clone(),
+            }
+        }
     }
 
     pub struct MultiLayerLSTM {
@@ -195,7 +208,6 @@ mod model {
         pub fn new(input_size: usize, hidden_size: usize, num_layers: usize, dropout_rate: f32, rng: &mut ThreadRng) -> Self {
             let mut layers = Vec::new();
             
-            // First layer takes input_size, others take hidden_size
             for i in 0..num_layers {
                 let layer_input_size = if i == 0 { input_size } else { hidden_size };
                 layers.push(LSTMCell::new(layer_input_size, hidden_size, rng));
@@ -220,15 +232,19 @@ mod model {
             let mut h_states = vec![Array1::zeros(hidden_size); num_layers];
             let mut c_states = vec![Array1::zeros(hidden_size); num_layers];
 
-            for &input_val in sequence {
-                let mut layer_input = Array1::from_vec(vec![input_val]);
+            for i in (0..sequence.len()).step_by(4) {
+                let mut layer_input = Array1::from_vec(vec![
+                    sequence[i],     // Normalized closing price
+                    sequence[i + 1], // Normalized opening price
+                    sequence[i + 2], // Normalized moving average
+                    sequence[i + 3], // Normalized momentum
+                ]);
                 
-                for (i, layer) in self.layers.iter().enumerate() {
-                    let (h_new, c_new) = layer.forward(&layer_input, &h_states[i], &c_states[i]);
-                    h_states[i] = h_new.clone();
-                    c_states[i] = c_new;
+                for (j, layer) in self.layers.iter().enumerate() {
+                    let (h_new, c_new) = layer.forward(&layer_input, &h_states[j], &c_states[j]);
+                    h_states[j] = h_new.clone();
+                    c_states[j] = c_new;
                     
-                    // Apply dropout during training (simplified - no actual random dropout here)
                     layer_input = if training && self.dropout_rate > 0.0 {
                         &h_new * (1.0 - self.dropout_rate)
                     } else {
@@ -237,7 +253,6 @@ mod model {
                 }
             }
 
-            // Use the last hidden state from the final layer
             self.w_final.dot(&h_states[num_layers - 1]) + self.b_final
         }
 
@@ -253,29 +268,25 @@ mod model {
                 let error = prediction - target;
                 let lr_scaled = learning_rate * 2.0 * error / batch_size as f32;
 
-                // Simplified gradient computation - update final layer
                 let hidden_size = self.layers[0].hidden_size;
                 let mut h_states = vec![Array1::zeros(hidden_size); self.layers.len()];
                 let mut c_states = vec![Array1::zeros(hidden_size); self.layers.len()];
 
-                // Forward pass to get final hidden state
-                for &input_val in seq {
-                    let mut layer_input = Array1::from_vec(vec![input_val]);
+                for i in (0..seq.len()).step_by(4) {
+                    let mut layer_input = Array1::from_vec(vec![seq[i], seq[i + 1], seq[i + 2], seq[i + 3]]);
                     
-                    for (i, layer) in self.layers.iter().enumerate() {
-                        let (h_new, c_new) = layer.forward(&layer_input, &h_states[i], &c_states[i]);
-                        h_states[i] = h_new.clone();
-                        c_states[i] = c_new;
+                    for (j, layer) in self.layers.iter().enumerate() {
+                        let (h_new, c_new) = layer.forward(&layer_input, &h_states[j], &c_states[j]);
+                        h_states[j] = h_new.clone();
+                        c_states[j] = c_new;
                         layer_input = h_new;
                     }
                 }
 
-                // Update final layer weights
                 let final_hidden = &h_states[self.layers.len() - 1];
                 self.w_final = &self.w_final - &(final_hidden * lr_scaled);
                 self.b_final -= lr_scaled;
 
-                // Simplified gradient updates for LSTM layers
                 let gradient_scale = (lr_scaled * 0.01).max(-0.1).min(0.1);
                 for layer in &mut self.layers {
                     for i in 0..layer.hidden_size {
@@ -289,27 +300,58 @@ mod model {
 
             total_loss / batch_size as f32
         }
+
+        pub fn to_weights(&self, cli: &Cli, closing_mean: f32, closing_std: f32, opening_mean: f32, opening_std: f32) -> ModelWeights {
+            ModelWeights {
+                asset: String::new(), // Will be set in train_model
+                source: "investing".to_string(), // Hardcoded to match original command
+                layers: self.layers.iter().map(|layer| layer.to_weights()).collect(),
+                w_final: self.w_final.clone(),
+                b_final: self.b_final,
+                closing_mean,
+                closing_std,
+                opening_mean,
+                opening_std,
+                seq_length: cli.seq_length,
+                hidden_size: cli.hidden_size,
+                num_layers: cli.num_layers,
+                timestamp: Utc::now().to_rfc3339(),
+            }
+        }
     }
 }
 
 mod data {
-    use super::{Connection, params, StockData, LSTMError};
+    use super::{Client, StockData, LSTMError};
     use rand::seq::SliceRandom;
-    use rand::thread_rng as rng;
+    use rand::rngs::ThreadRng;
 
-    pub fn load_data_from_sqlite(data_dir: &str, source: &str, asset: &str) -> Result<Vec<StockData>, LSTMError> {
-        let db_path = format!("{}/{}.db", data_dir, source);
-        let conn = Connection::open(&db_path)?;
-        let mut stmt = conn.prepare(
-            "SELECT date, closing FROM stock_records WHERE asset = ?1 ORDER BY date ASC"
+    pub fn load_all_assets(pg_client: &mut Client) -> Result<Vec<String>, LSTMError> {
+        let rows = pg_client.query(
+            "SELECT DISTINCT asset FROM stock_records",
+            &[],
         )?;
-        let records: Result<Vec<StockData>, _> = stmt.query_map(params![asset], |row| {
-            Ok(StockData {
-                date: row.get(0)?,
-                closing: row.get(1)?,
-            })
-        })?.collect();
-        Ok(records?)
+        
+        let assets: Vec<String> = rows.into_iter().map(|row| row.get(0)).collect();
+        Ok(assets)
+    }
+
+    pub fn load_data_from_postgres(pg_client: &mut Client, asset: &str) -> Result<Vec<StockData>, LSTMError> {
+        let rows = pg_client.query(
+            "SELECT date, closing, opening 
+             FROM stock_records 
+             WHERE asset = $1 
+             ORDER BY date ASC",
+            &[&asset],
+        )?;
+        
+        let records: Vec<StockData> = rows.into_iter().map(|row| StockData {
+            date: row.get(0),
+            closing: row.get(1),
+            opening: row.get(2),
+        }).collect();
+        
+        Ok(records)
     }
 
     pub fn normalize_data(prices: &[f32]) -> (Vec<f32>, f32, f32) {
@@ -320,19 +362,39 @@ mod data {
         (normalized, mean, std)
     }
 
-    pub fn create_sequences(data: &[f32], seq_length: usize) -> (Vec<Vec<f32>>, Vec<f32>) {
+    pub fn create_sequences(data: &[StockData], seq_length: usize) -> (Vec<Vec<f32>>, Vec<f32>) {
+        let closing_prices: Vec<f32> = data.iter().map(|d| d.closing).collect();
+        let opening_prices: Vec<f32> = data.iter().map(|d| d.opening).collect();
+        
+        let (norm_closing, closing_mean, closing_std) = normalize_data(&closing_prices);
+        let (_norm_opening, _opening_mean, _opening_std) = normalize_data(&opening_prices);
+        
         let mut sequences = Vec::new();
         let mut targets = Vec::new();
+        
         for i in 0..(data.len() - seq_length) {
-            sequences.push(data[i..i + seq_length].to_vec());
-            targets.push(data[i + seq_length]);
+            let mut sequence = Vec::new();
+            for j in i..(i + seq_length) {
+                sequence.push(norm_closing[j]);
+                sequence.push(_norm_opening[j]);
+                if j >= 4 {
+                    let ma5 = closing_prices[(j-4)..=j].iter().sum::<f32>() / 5.0;
+                    sequence.push((ma5 - closing_mean) / closing_std);
+                } else {
+                    sequence.push(norm_closing[j]);
+                }
+                sequence.push(if j > 0 { (closing_prices[j] - closing_prices[j-1]) / closing_std } else { 0.0 });
+            }
+            sequences.push(sequence);
+            targets.push(norm_closing[i + seq_length]);
         }
         (sequences, targets)
     }
 
     pub fn create_batches(sequences: Vec<Vec<f32>>, targets: Vec<f32>, batch_size: usize) -> Vec<(Vec<Vec<f32>>, Vec<f32>)> {
+        let mut rng = ThreadRng::default();
         let mut combined: Vec<_> = sequences.into_iter().zip(targets).collect();
-        combined.shuffle(&mut rng());
+        combined.shuffle(&mut rng);
         
         combined.chunks(batch_size)
             .map(|chunk| {
@@ -341,41 +403,6 @@ mod data {
             })
             .collect()
     }
-
-    pub fn add_features(prices: &[f32], seq_length: usize) -> Vec<Vec<f32>> {
-        let mut enhanced_sequences = Vec::new();
-        
-        for i in seq_length..prices.len() {
-            let mut features = Vec::new();
-            
-            // Original prices
-            for j in (i - seq_length)..i {
-                features.push(prices[j]);
-            }
-            
-            // Moving averages
-            if i >= seq_length + 4 {
-                let ma5 = prices[(i-5)..i].iter().sum::<f32>() / 5.0;
-                let ma20 = if i >= 20 { prices[(i-20)..i].iter().sum::<f32>() / 20.0 } else { ma5 };
-                features.push(ma5);
-                features.push(ma20);
-            } else {
-                features.push(prices[i-1]);
-                features.push(prices[i-1]);
-            }
-            
-            // Price differences (momentum)
-            if i >= seq_length + 1 {
-                features.push(prices[i-1] - prices[i-2]);
-            } else {
-                features.push(0.0);
-            }
-            
-            enhanced_sequences.push(features);
-        }
-        
-        enhanced_sequences
-    }
 }
 
 mod metrics {
@@ -383,9 +410,9 @@ mod metrics {
         let mut correct = 0;
         let total = predictions.len();
         for i in 0..total {
-            if let Some(&last_price) = sequences[i].first() { // Use first element as base price
-                let pred_direction = predictions[i] > last_price;
-                let actual_direction = targets[i] > last_price;
+            if let Some(&last_closing) = sequences[i].first() {
+                let pred_direction = predictions[i] > last_closing;
+                let actual_direction = targets[i] > last_closing;
                 if pred_direction == actual_direction {
                     correct += 1;
                 }
@@ -422,15 +449,18 @@ mod metrics {
 }
 
 mod storage {
-    use super::{model, Cli, TrainingMetrics, ModelWeights, LSTMError, Client, Json, Utc};
+    use super::{Cli, TrainingMetrics, LSTMError, Client, Json};
     use log::info;
 
     pub fn save_model_to_postgres(
         pg_client: &mut Client,
-        model: &model::MultiLayerLSTM,
+        model: &super::model::MultiLayerLSTM,
         cli: &Cli,
-        mean: f32,
-        std: f32,
+        asset: &str,
+        closing_mean: f32,
+        closing_std: f32,
+        opening_mean: f32,
+        opening_std: f32,
         metrics: &TrainingMetrics
     ) -> Result<(), LSTMError> {
         pg_client.execute(
@@ -453,225 +483,242 @@ mod storage {
                 rmse REAL,
                 epochs_trained INTEGER,
                 training_time DOUBLE PRECISION,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (asset, source)
             )", &[])?;
 
-        // Create placeholder weights structure (simplified for this example)
-        let weights = ModelWeights {
-            asset: cli.asset.clone(),
-            source: cli.source.clone(),
-            layers: vec![],
-            w_final: model.w_final.clone(),
-            b_final: model.b_final,
-            data_mean: mean,
-            data_std: std,
-            seq_length: cli.seq_length,
-            hidden_size: cli.hidden_size,
-            num_layers: cli.num_layers,
-            timestamp: Utc::now().to_rfc3339(),
-        };
+        let mut weights = model.to_weights(cli, closing_mean, closing_std, opening_mean, opening_std);
+        weights.asset = asset.to_string();
 
         pg_client.execute(
-            "DELETE FROM lstm_weights_v3 WHERE asset = $1 AND source = $2",
-            &[&cli.asset, &cli.source])?;
+            "INSERT INTO lstm_weights_v3 (asset, source, weights_json) 
+             VALUES ($1, $2, $3)
+             ON CONFLICT ON CONSTRAINT lstm_weights_v3_pkey 
+             DO UPDATE SET weights_json = $3, created_at = CURRENT_TIMESTAMP",
+            &[&asset, &weights.source, &Json(&weights)]
+        )?;
 
         pg_client.execute(
-            "INSERT INTO lstm_weights_v3 (asset, source, weights_json) VALUES ($1, $2, $3)",
-            &[&cli.asset, &cli.source, &Json(&weights)])?;
-
-        pg_client.execute(
-            "INSERT INTO training_metrics_v3 (asset, source, final_loss, final_val_loss, directional_accuracy, mape, rmse, epochs_trained, training_time)
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)",
+            "INSERT INTO training_metrics_v3 (asset, source, final_loss, final_val_loss, directional_accuracy, mape, rmse, epochs_trained, training_time) 
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+             ON CONFLICT ON CONSTRAINT training_metrics_v3_pkey 
+             DO UPDATE SET 
+                 final_loss = $3, 
+                 final_val_loss = $4, 
+                 directional_accuracy = $5, 
+                 mape = $6, 
+                 rmse = $7, 
+                 epochs_trained = $8, 
+                 training_time = $9, 
+                 created_at = CURRENT_TIMESTAMP",
             &[&metrics.asset, &metrics.source, &metrics.final_loss, &metrics.final_val_loss,
-              &metrics.directional_accuracy, &metrics.mape, &metrics.rmse, &(metrics.epochs_trained as i32), &metrics.training_time])?;
+              &metrics.directional_accuracy, &metrics.mape, &metrics.rmse, &(metrics.epochs_trained as i32), &metrics.training_time]
+        )?;
 
-        info!("Enhanced model and metrics saved to PostgreSQL");
+        info!("Enhanced model and metrics saved to PostgreSQL for asset {}", asset);
         Ok(())
     }
 }
 
 fn train_model(cli: Cli) -> Result<(), LSTMError> {
-    let start_time = Instant::now();
-    println!("🚀 Loading data for {} from {} (Enhanced Version)", cli.asset, cli.source);
+    let total_start_time = Instant::now();
+    println!("🚀 Starting training for all assets (Enhanced Version)");
 
-    let data = data::load_data_from_sqlite(&cli.data_dir, &cli.source, &cli.asset)?;
-    if data.len() < cli.seq_length + 100 {
-        return Err(LSTMError::InsufficientData {
-            required: cli.seq_length + 100,
-            actual: data.len(),
-        });
-    }
-    println!("📊 Loaded {} records", data.len());
+    let mut pg_client = Client::connect(&cli.pg_conn, NoTls)?;
+    let assets = data::load_all_assets(&mut pg_client)?;
+    println!("📊 Found {} unique assets to process", assets.len());
 
-    let prices: Vec<f32> = data.iter().map(|d| d.closing).collect();
-    let (normalized_prices, mean, std) = data::normalize_data(&prices);
-    let (sequences, targets) = data::create_sequences(&normalized_prices, cli.seq_length);
-    
-    info!("Data normalized - Mean: {:.4}, Std: {:.4}", mean, std);
-    info!("Created {} sequences of length {}", sequences.len(), cli.seq_length);
+    let mut overall_metrics = Vec::new();
 
-    let split_idx = (sequences.len() as f32 * cli.train_split) as usize;
-    let train_sequences = sequences[..split_idx].to_vec();
-    let train_targets = targets[..split_idx].to_vec();
-    let val_sequences = sequences[split_idx..].to_vec();
-    let val_targets = targets[split_idx..].to_vec();
-    
-    println!("🧠 Training: {} samples, Validation: {} samples", train_sequences.len(), val_sequences.len());
-    println!("🏗️ Model: {} layers, {} hidden units, {:.1}% dropout", cli.num_layers, cli.hidden_size, cli.dropout_rate * 100.0);
+    for asset in assets {
+        println!("\n🔍 Processing asset: {}", asset);
+        let start_time = Instant::now();
 
-    let mut rng = rand::thread_rng();
-    let mut model = model::MultiLayerLSTM::new(1, cli.hidden_size, cli.num_layers, cli.dropout_rate, &mut rng);
-    
-    let mut best_val_loss = f32::INFINITY;
-    let mut patience = 0;
-    const MAX_PATIENCE: usize = 20;
-    let mut lr = cli.learning_rate;
+        let data = data::load_data_from_postgres(&mut pg_client, &asset)?;
+        if data.len() < cli.seq_length + 100 {
+            println!("⚠️ Skipping asset {}: insufficient data ({} records, need {})", 
+                    asset, data.len(), cli.seq_length + 100);
+            continue;
+        }
+        println!("📊 Loaded {} records for asset {}", data.len(), asset);
 
-    println!("🎯 Starting enhanced training with batching...");
-    
-    for epoch in 0..cli.epochs {
-        // Create batches for training
-        let train_batches = data::create_batches(train_sequences.clone(), train_targets.clone(), cli.batch_size);
-        let mut epoch_loss = 0.0;
+        let (sequences, targets) = data::create_sequences(&data, cli.seq_length);
+        let closing_prices: Vec<f32> = data.iter().map(|d| d.closing).collect();
+        let opening_prices: Vec<f32> = data.iter().map(|d| d.opening).collect();
+        let (_norm_closing, closing_mean, closing_std) = data::normalize_data(&closing_prices);
+        let (_norm_opening, opening_mean, opening_std) = data::normalize_data(&opening_prices);
         
-        for (batch_seqs, batch_targets) in train_batches {
-            let batch_loss = model.train_step(&batch_seqs, &batch_targets, lr);
-            epoch_loss += batch_loss;
-        }
+        info!("Data normalized for {} - Closing Mean: {:.4}, Closing Std: {:.4}, Opening Mean: {:.4}, Opening Std: {:.4}", 
+              asset, closing_mean, closing_std, opening_mean, opening_std);
+        info!("Created {} sequences of length {} (4 features per timestep) for {}", 
+              sequences.len(), cli.seq_length, asset);
+
+        let split_idx = (sequences.len() as f32 * cli.train_split) as usize;
+        let train_sequences = sequences[..split_idx].to_vec();
+        let train_targets = targets[..split_idx].to_vec();
+        let val_sequences = sequences[split_idx..].to_vec();
+        let val_targets = targets[split_idx..].to_vec();
         
-        epoch_loss /= (train_sequences.len() / cli.batch_size) as f32;
+        println!("🧠 Training: {} samples, Validation: {} samples for {}", 
+                 train_sequences.len(), val_sequences.len(), asset);
+        println!("🏗️ Model: {} layers, {} hidden units, {:.1}% dropout", 
+                 cli.num_layers, cli.hidden_size, cli.dropout_rate * 100.0);
 
-        // Validation
-        let mut val_loss = 0.0;
-        let mut val_predictions = Vec::new();
-
-        for (seq, &target) in val_sequences.iter().zip(val_targets.iter()) {
-            let pred = model.forward(seq, false);
-            val_predictions.push(pred);
-            val_loss += (pred - target).powi(2);
-        }
-        val_loss /= val_sequences.len() as f32;
-
-        let directional_acc = metrics::calculate_directional_accuracy(&val_predictions, &val_targets, &val_sequences);
+        let mut rng = ThreadRng::default();
+        let input_size = 4; // Closing, opening, moving average, momentum
+        let mut model = model::MultiLayerLSTM::new(input_size, cli.hidden_size, cli.num_layers, cli.dropout_rate, &mut rng);
         
-        // Learning rate scheduling
-        if epoch > 0 && epoch % 30 == 0 {
-            lr *= 0.9;
-        }
+        let mut best_val_loss = f32::INFINITY;
+        let mut patience = 0;
+        const MAX_PATIENCE: usize = 20;
+        let mut lr = cli.learning_rate;
 
-        if epoch % 5 == 0 || epoch < 10 {
-            println!("Epoch {:3}: Train Loss: {:.6}, Val Loss: {:.6}, Dir Acc: {:.1}%, LR: {:.6}",
-                    epoch + 1, epoch_loss, val_loss, directional_acc * 100.0, lr);
-        }
+        println!("🎯 Starting enhanced training for {}...", asset);
+        
+        for epoch in 0..cli.epochs {
+            let train_batches = data::create_batches(train_sequences.clone(), train_targets.clone(), cli.batch_size);
+            let mut epoch_loss = 0.0;
+            
+            for (batch_seqs, batch_targets) in train_batches {
+                let batch_loss = model.train_step(&batch_seqs, &batch_targets, lr);
+                epoch_loss += batch_loss;
+            }
+            
+            epoch_loss /= (train_sequences.len() / cli.batch_size) as f32;
 
-        // Early stopping with improved patience
-        if val_loss < best_val_loss {
-            best_val_loss = val_loss;
-            patience = 0;
-        } else {
-            patience += 1;
-            if patience >= MAX_PATIENCE {
-                println!("⏹️ Early stopping at epoch {} (best val loss: {:.6})", epoch + 1, best_val_loss);
-                break;
+            let mut val_loss = 0.0;
+            let mut val_predictions = Vec::new();
+
+            for (seq, &target) in val_sequences.iter().zip(val_targets.iter()) {
+                let pred = model.forward(seq, false);
+                val_predictions.push(pred);
+                val_loss += (pred - target).powi(2);
+            }
+            val_loss /= val_sequences.len() as f32;
+
+            let directional_acc = metrics::calculate_directional_accuracy(&val_predictions, &val_targets, &val_sequences);
+            
+            if epoch > 0 && epoch % 30 == 0 {
+                lr *= 0.9;
+            }
+
+            if epoch % 5 == 0 || epoch < 10 {
+                println!("Epoch {:3}: Train Loss: {:.6}, Val Loss: {:.6}, Dir Acc: {:.1}%, LR: {:.6}",
+                        epoch + 1, epoch_loss, val_loss, directional_acc * 100.0, lr);
+            }
+
+            if val_loss < best_val_loss {
+                best_val_loss = val_loss;
+                patience = 0;
+            } else {
+                patience += 1;
+                if patience >= MAX_PATIENCE {
+                    println!("⏹️ Early stopping at epoch {} (best val loss: {:.6})", epoch + 1, best_val_loss);
+                    break;
+                }
+            }
+
+            if epoch_loss > 100.0 || epoch_loss.is_nan() {
+                return Err(LSTMError::TrainingError(format!("Training diverged for asset {}", asset)));
             }
         }
 
-        if epoch_loss > 100.0 || epoch_loss.is_nan() {
-            return Err(LSTMError::TrainingError("Training diverged".into()));
+        let training_time = start_time.elapsed().as_secs_f64();
+        println!("\n🔍 Final evaluation for {}...", asset);
+        
+        let mut train_predictions = Vec::new();
+        let mut val_predictions = Vec::new();
+
+        for seq in &train_sequences {
+            train_predictions.push(model.forward(seq, false));
         }
-    }
-
-    let training_time = start_time.elapsed().as_secs_f64();
-    println!("\n🔍 Final comprehensive evaluation...");
-    
-    // Final predictions
-    let mut train_predictions = Vec::new();
-    let mut val_predictions = Vec::new();
-
-    for seq in &train_sequences {
-        train_predictions.push(model.forward(seq, false));
-    }
-    
-    for seq in &val_sequences {
-        val_predictions.push(model.forward(seq, false));
-    }
-
-    // Calculate comprehensive metrics
-    let final_train_loss = metrics::calculate_rmse(&train_predictions, &train_targets).powi(2);
-    let final_val_loss = metrics::calculate_rmse(&val_predictions, &val_targets).powi(2);
-    let train_directional_acc = metrics::calculate_directional_accuracy(&train_predictions, &train_targets, &train_sequences);
-    let val_directional_acc = metrics::calculate_directional_accuracy(&val_predictions, &val_targets, &val_sequences);
-    
-    // Denormalize for MAPE calculation
-    let train_pred_denorm: Vec<f32> = train_predictions.iter().map(|x| x * std + mean).collect();
-    let train_targets_denorm: Vec<f32> = train_targets.iter().map(|x| x * std + mean).collect();
-    let val_pred_denorm: Vec<f32> = val_predictions.iter().map(|x| x * std + mean).collect();
-    let val_targets_denorm: Vec<f32> = val_targets.iter().map(|x| x * std + mean).collect();
-    
-    let train_mape = metrics::calculate_mape(&train_pred_denorm, &train_targets_denorm);
-    let val_mape = metrics::calculate_mape(&val_pred_denorm, &val_targets_denorm);
-    let train_rmse = metrics::calculate_rmse(&train_pred_denorm, &train_targets_denorm);
-    let val_rmse = metrics::calculate_rmse(&val_pred_denorm, &val_targets_denorm);
-
-    let training_metrics = TrainingMetrics {
-        asset: cli.asset.clone(),
-        source: cli.source.clone(),
-        final_loss: final_train_loss,
-        final_val_loss,
-        directional_accuracy: val_directional_acc,
-        mape: val_mape,
-        rmse: val_rmse,
-        epochs_trained: cli.epochs - patience,
-        training_time,
-        timestamp: Utc::now().to_rfc3339(),
-    };
-
-    println!("💾 Saving enhanced model to PostgreSQL...");
-    let mut pg_client = Client::connect(&cli.pg_conn, NoTls)?;
-    storage::save_model_to_postgres(&mut pg_client, &model, &cli, mean, std, &training_metrics)?;
-
-    println!("\n✅ Enhanced training completed!");
-    println!("   📊 Final Results:");
-    println!("      🎯 Train Loss: {:.6}", final_train_loss);
-    println!("      🎯 Val Loss: {:.6}", final_val_loss);
-    println!("      📈 Train Dir Accuracy: {:.1}%", train_directional_acc * 100.0);
-    println!("      📈 Val Dir Accuracy: {:.1}%", val_directional_acc * 100.0);
-    println!("      📊 Train MAPE: {:.2}%", train_mape);
-    println!("      📊 Val MAPE: {:.2}%", val_mape);
-    println!("      📏 Train RMSE: {:.4}", train_rmse);
-    println!("      📏 Val RMSE: {:.4}", val_rmse);
-    println!("      ⏱️ Training Time: {:.1}s", training_time);
-    println!("      🔢 Data Stats: Mean={:.2}, Std={:.2}", mean, std);
-
-    println!("\n🔮 Enhanced sample predictions (last 5 validation samples):");
-    let n_val = val_sequences.len();
-    for i in (n_val.saturating_sub(5))..n_val {
-        let pred = model.forward(&val_sequences[i], false);
-        let actual = val_targets[i];
-        let last_price = val_sequences[i].last().unwrap_or(&0.0);
-        let pred_denorm = pred * std + mean;
-        let actual_denorm = actual * std + mean;
-        let last_denorm = last_price * std + mean;
         
-        let direction_correct = (pred > *last_price) == (actual > *last_price);
-        let direction_indicator = if direction_correct { "✅" } else { "❌" };
+        for seq in &val_sequences {
+            val_predictions.push(model.forward(seq, false));
+        }
+
+        let final_train_loss = metrics::calculate_rmse(&train_predictions, &train_targets).powi(2);
+        let final_val_loss = metrics::calculate_rmse(&val_predictions, &val_targets).powi(2);
+        let train_directional_acc = metrics::calculate_directional_accuracy(&train_predictions, &train_targets, &train_sequences);
+        let val_directional_acc = metrics::calculate_directional_accuracy(&val_predictions, &val_targets, &val_sequences);
         
-        println!("      Sample {}: Last={:.2} → Pred={:.2}, Actual={:.2} (Error: {:.2}) {}",
-                i + 1, last_denorm, pred_denorm, actual_denorm, 
-                (pred_denorm - actual_denorm).abs(), direction_indicator);
+        let train_pred_denorm: Vec<f32> = train_predictions.iter().map(|x| x * closing_std + closing_mean).collect();
+        let train_targets_denorm: Vec<f32> = train_targets.iter().map(|x| x * closing_std + closing_mean).collect();
+        let val_pred_denorm: Vec<f32> = val_predictions.iter().map(|x| x * closing_std + closing_mean).collect();
+        let val_targets_denorm: Vec<f32> = val_targets.iter().map(|x| x * closing_std + closing_mean).collect();
+        
+        let train_mape = metrics::calculate_mape(&train_pred_denorm, &train_targets_denorm);
+        let val_mape = metrics::calculate_mape(&val_pred_denorm, &val_targets_denorm);
+        let train_rmse = metrics::calculate_rmse(&train_pred_denorm, &train_targets_denorm);
+        let val_rmse = metrics::calculate_rmse(&val_pred_denorm, &val_targets_denorm);
+
+        let training_metrics = TrainingMetrics {
+            asset: asset.clone(),
+            source: "investing".to_string(), // Hardcoded to match original command
+            final_loss: final_train_loss,
+            final_val_loss,
+            directional_accuracy: val_directional_acc,
+            mape: val_mape,
+            rmse: val_rmse,
+            epochs_trained: cli.epochs - patience,
+            training_time,
+            timestamp: Utc::now().to_rfc3339(),
+        };
+
+        println!("💾 Saving enhanced model for {} to PostgreSQL...", asset);
+        storage::save_model_to_postgres(&mut pg_client, &model, &cli, &asset, closing_mean, closing_std, opening_mean, opening_std, &training_metrics)?;
+
+        println!("\n✅ Training completed for {}!", asset);
+        println!("   📊 Final Results:");
+        println!("      🎯 Train Loss: {:.6}", final_train_loss);
+        println!("      🎯 Val Loss: {:.6}", final_val_loss);
+        println!("      📈 Train Dir Accuracy: {:.1}%", train_directional_acc * 100.0);
+        println!("      📈 Val Dir Accuracy: {:.1}%", val_directional_acc * 100.0);
+        println!("      📊 Train MAPE: {:.2}%", train_mape);
+        println!("      📊 Val MAPE: {:.2}%", val_mape);
+        println!("      📏 Train RMSE: {:.4}", train_rmse);
+        println!("      📏 Val RMSE: {:.4}", val_rmse);
+        println!("      ⏱️ Training Time: {:.1}s", training_time);
+        println!("      🔢 Data Stats: Closing Mean={:.2}, Closing Std={:.2}, Opening Mean={:.2}, Opening Std={:.2}", 
+                 closing_mean, closing_std, opening_mean, opening_std);
+
+        println!("\n🔮 Sample predictions for {} (last 5 validation samples):", asset);
+        let n_val = val_sequences.len();
+        for i in (n_val.saturating_sub(5))..n_val {
+            let pred = model.forward(&val_sequences[i], false);
+            let actual = val_targets[i];
+            let last_closing = val_sequences[i].first().unwrap_or(&0.0);
+            let pred_denorm = pred * closing_std + closing_mean;
+            let actual_denorm = actual * closing_std + closing_mean;
+            let last_denorm = last_closing * closing_std + closing_mean;
+            
+            let direction_correct = (pred > *last_closing) == (actual > *last_closing);
+            let direction_indicator = if direction_correct { "✅" } else { "❌" };
+            
+            println!("      Sample {}: Last Closing={:.2} → Pred={:.2}, Actual={:.2} (Error: {:.2}) {}",
+                    i + 1, last_denorm, pred_denorm, actual_denorm, 
+                    (pred_denorm - actual_denorm).abs(), direction_indicator);
+        }
+
+        overall_metrics.push((asset, val_directional_acc, val_mape, val_rmse));
     }
 
-    // Additional analysis
-    println!("\n📈 Performance Analysis:");
-    let improvement_vs_baseline = ((val_directional_acc - 0.5) / 0.5) * 100.0;
-    println!("      📊 Directional accuracy improvement over random: {:.1}%", improvement_vs_baseline);
+    let total_training_time = total_start_time.elapsed().as_secs_f64();
+    println!("\n📊 Summary for all assets:");
+    println!("   ⏱️ Total Training Time: {:.1}s", total_training_time);
+    println!("   🔢 Assets Processed: {}", overall_metrics.len());
     
-    if val_mape < 10.0 {
-        println!("      🎯 Excellent MAPE performance (< 10%)");
-    } else if val_mape < 20.0 {
-        println!("      👍 Good MAPE performance (< 20%)");
-    } else {
-        println!("      ⚠️ MAPE needs improvement (> 20%)");
+    let avg_directional_acc = overall_metrics.iter().map(|(_, acc, _, _)| acc).sum::<f32>() / overall_metrics.len() as f32;
+    let avg_mape = overall_metrics.iter().map(|(_, _, mape, _)| mape).sum::<f32>() / overall_metrics.len() as f32;
+    let avg_rmse = overall_metrics.iter().map(|(_, _, _, rmse)| rmse).sum::<f32>() / overall_metrics.len() as f32;
+
+    println!("   📈 Average Directional Accuracy: {:.1}%", avg_directional_acc * 100.0);
+    println!("   📊 Average MAPE: {:.2}%", avg_mape);
+    println!("   📏 Average RMSE: {:.4}", avg_rmse);
+
+    println!("\n📈 Per-Asset Performance:");
+    for (asset, acc, mape, rmse) in overall_metrics {
+        println!("      {}: Dir Acc={:.1}%, MAPE={:.2}%, RMSE={:.4}", asset, acc * 100.0, mape, rmse);
     }
 
     Ok(())
@@ -683,9 +730,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .init();
 
     let cli = Cli::parse();
-    info!("Starting Enhanced LSTM training with parameters:");
-    info!("  Asset: {}", cli.asset);
-    info!("  Source: {}", cli.source);
+    info!("Starting Enhanced LSTM training for all assets with parameters:");
     info!("  Sequence Length: {}", cli.seq_length);
     info!("  Hidden Size: {}", cli.hidden_size);
     info!("  Number of Layers: {}", cli.num_layers);
@@ -701,7 +746,20 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 
+
+// cargo run -- --source investing --seq-length 40 --hidden-size 64 --num-layers 2 --epochs 150 --batch-size 16 --dropout-rate 0.3 --learning-rate 0.0005
+
+// cargo run -- --seq-length 40 --hidden-size 64 --num-layers 2 --epochs 5 --batch-size 16 --dropout-rate 0.3 --learning-rate 0.0005
+
+
+
+// # Conservative configuration (stable)
+// cargo run -- --asset WEGE3 --source investing --seq-length 40 --hidden-size 64 --num-layers 2 --epochs 150 --batch-size 16 --dropout-rate 0.3 --learning-rate 0.0005
+
+// # Aggressive configuration (higher capacity)
+// cargo run -- --asset WEGE3 --source investing --seq-length 50 --hidden-size 256 --num-layers 3 --epochs 200 --batch-size 32 --dropout-rate 0.2 --learning-rate 0.001
  
+
 // # Configuração conservadora (mais estável)
 // cargo run -- --asset WEGE3 --source investing  --seq-length 40   --hidden-size 64   --num-layers 2   --epochs 150   --batch-size 16   --dropout-rate 0.3   --learning-rate 0.0005
 

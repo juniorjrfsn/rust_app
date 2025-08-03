@@ -246,9 +246,6 @@ fn save_to_toml(stock_data: &StockData, output_path: &str) -> Result<(), LSTMErr
     Ok(())
 }
 
-
-
-
 fn save_to_database(records: &[StockRecord], asset: &str, client: &mut Client) -> Result<(), LSTMError> {
     // Create table if it doesn't exist
     client.batch_execute(
@@ -266,20 +263,15 @@ fn save_to_database(records: &[StockRecord], asset: &str, client: &mut Client) -
         )",
     )?;
 
-    // Insert or update records
+    // Clear existing data for this asset
+    client.execute("DELETE FROM stock_records WHERE asset = $1", &[&asset])?;
+
+    // Insert new records
     for record in records {
         client.execute(
             "INSERT INTO stock_records (asset, date, closing, opening, high, low, volume, variation)
              VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-             ON CONFLICT ON CONSTRAINT stock_records_pkey
-             DO UPDATE SET
-                 closing = EXCLUDED.closing,
-                 opening = EXCLUDED.opening,
-                 high = EXCLUDED.high,
-                 low = EXCLUDED.low,
-                 volume = EXCLUDED.volume,
-                 variation = EXCLUDED.variation,
-                 created_at = CURRENT_TIMESTAMP",
+             ON CONFLICT ON CONSTRAINT stock_records_pkey DO NOTHING",
             &[
                 &asset,
                 &record.date,
@@ -296,9 +288,6 @@ fn save_to_database(records: &[StockRecord], asset: &str, client: &mut Client) -
     info!("Data successfully saved to PostgreSQL for asset: {}", asset);
     Ok(())
 }
-
-
-
 
 fn extract_command(cli: Cli) -> Result<(), LSTMError> {
     info!("Starting data extraction from {}", cli.source);
@@ -397,9 +386,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 
 // cargo run -- --source investing --db-url postgres://postgres:postgres@localhost:5432/lstm_db
-
-
-
 
 // Example usage:
 // cargo run -- --asset WEGE3 --source investing
