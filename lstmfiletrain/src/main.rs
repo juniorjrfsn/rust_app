@@ -1,5 +1,5 @@
 // projeto: lstmfiletrain
-// file: src/main.rs - Enhanced LSTM for Stock Price Prediction with PostgreSQL for All Assets
+// file: src/main.rs 
 
 use clap::Parser;
 use serde::{Deserialize, Serialize};
@@ -9,10 +9,12 @@ use env_logger;
 use thiserror::Error;
 use chrono::Utc;
 use postgres::{Client, NoTls};
-use postgres::types::Json;
 use rand::{rngs::ThreadRng};
 use rand_distr::{Distribution, Normal};
 use std::time::Instant;
+use crate::rna::{metrics, storage};
+
+mod rna;
 
 #[derive(Error, Debug)]
 #[allow(dead_code)]
@@ -64,7 +66,7 @@ struct StockData {
 #[derive(Debug, Serialize, Deserialize)]
 struct ModelWeights {
     asset: String,
-    source: String, // Kept for compatibility, set to "investing"
+    source: String,
     layers: Vec<LSTMLayerWeights>,
     w_final: Array1<f32>,
     b_final: f32,
@@ -97,7 +99,7 @@ struct LSTMLayerWeights {
 #[derive(Debug, Serialize, Deserialize)]
 struct TrainingMetrics {
     asset: String,
-    source: String, // Kept for compatibility, set to "investing"
+    source: String,
     final_loss: f32,
     final_val_loss: f32,
     directional_accuracy: f32,
@@ -303,8 +305,8 @@ mod model {
 
         pub fn to_weights(&self, cli: &Cli, closing_mean: f32, closing_std: f32, opening_mean: f32, opening_std: f32) -> ModelWeights {
             ModelWeights {
-                asset: String::new(), // Will be set in train_model
-                source: "investing".to_string(), // Hardcoded to match original command
+                asset: String::new(),
+                source: "investing".to_string(),
                 layers: self.layers.iter().map(|layer| layer.to_weights()).collect(),
                 w_final: self.w_final.clone(),
                 b_final: self.b_final,
@@ -367,7 +369,7 @@ mod data {
         let opening_prices: Vec<f32> = data.iter().map(|d| d.opening).collect();
         
         let (norm_closing, closing_mean, closing_std) = normalize_data(&closing_prices);
-        let (_norm_opening, _opening_mean, _opening_std) = normalize_data(&opening_prices);
+        let (norm_opening, opening_mean, opening_std) = normalize_data(&opening_prices);
         
         let mut sequences = Vec::new();
         let mut targets = Vec::new();
@@ -376,7 +378,7 @@ mod data {
             let mut sequence = Vec::new();
             for j in i..(i + seq_length) {
                 sequence.push(norm_closing[j]);
-                sequence.push(_norm_opening[j]);
+                sequence.push(norm_opening[j]);
                 if j >= 4 {
                     let ma5 = closing_prices[(j-4)..=j].iter().sum::<f32>() / 5.0;
                     sequence.push((ma5 - closing_mean) / closing_std);
@@ -402,121 +404,6 @@ mod data {
                 (seqs, tgts)
             })
             .collect()
-    }
-}
-
-mod metrics {
-    pub fn calculate_directional_accuracy(predictions: &[f32], targets: &[f32], sequences: &[Vec<f32>]) -> f32 {
-        let mut correct = 0;
-        let total = predictions.len();
-        for i in 0..total {
-            if let Some(&last_closing) = sequences[i].first() {
-                let pred_direction = predictions[i] > last_closing;
-                let actual_direction = targets[i] > last_closing;
-                if pred_direction == actual_direction {
-                    correct += 1;
-                }
-            }
-        }
-        correct as f32 / total as f32
-    }
-
-    pub fn calculate_mape(predictions: &[f32], targets: &[f32]) -> f32 {
-        let mut total_percentage_error = 0.0;
-        let mut count = 0;
-        
-        for (&pred, &actual) in predictions.iter().zip(targets.iter()) {
-            if actual.abs() > 1e-8 {
-                total_percentage_error += ((pred - actual) / actual).abs();
-                count += 1;
-            }
-        }
-        
-        if count > 0 {
-            (total_percentage_error / count as f32) * 100.0
-        } else {
-            0.0
-        }
-    }
-
-    pub fn calculate_rmse(predictions: &[f32], targets: &[f32]) -> f32 {
-        let mse: f32 = predictions.iter()
-            .zip(targets.iter())
-            .map(|(pred, actual)| (pred - actual).powi(2))
-            .sum::<f32>() / predictions.len() as f32;
-        mse.sqrt()
-    }
-}
-
-mod storage {
-    use super::{Cli, TrainingMetrics, LSTMError, Client, Json};
-    use log::info;
-
-    pub fn save_model_to_postgres(
-        pg_client: &mut Client,
-        model: &super::model::MultiLayerLSTM,
-        cli: &Cli,
-        asset: &str,
-        closing_mean: f32,
-        closing_std: f32,
-        opening_mean: f32,
-        opening_std: f32,
-        metrics: &TrainingMetrics
-    ) -> Result<(), LSTMError> {
-        pg_client.execute(
-            "CREATE TABLE IF NOT EXISTS lstm_weights_v3 (
-                asset TEXT NOT NULL,
-                source TEXT NOT NULL,
-                weights_json JSONB NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                PRIMARY KEY (asset, source)
-            )", &[])?;
-
-        pg_client.execute(
-            "CREATE TABLE IF NOT EXISTS training_metrics_v3 (
-                asset TEXT NOT NULL,
-                source TEXT NOT NULL,
-                final_loss REAL,
-                final_val_loss REAL,
-                directional_accuracy REAL,
-                mape REAL,
-                rmse REAL,
-                epochs_trained INTEGER,
-                training_time DOUBLE PRECISION,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                PRIMARY KEY (asset, source)
-            )", &[])?;
-
-        let mut weights = model.to_weights(cli, closing_mean, closing_std, opening_mean, opening_std);
-        weights.asset = asset.to_string();
-
-        pg_client.execute(
-            "INSERT INTO lstm_weights_v3 (asset, source, weights_json) 
-             VALUES ($1, $2, $3)
-             ON CONFLICT ON CONSTRAINT lstm_weights_v3_pkey 
-             DO UPDATE SET weights_json = $3, created_at = CURRENT_TIMESTAMP",
-            &[&asset, &weights.source, &Json(&weights)]
-        )?;
-
-        pg_client.execute(
-            "INSERT INTO training_metrics_v3 (asset, source, final_loss, final_val_loss, directional_accuracy, mape, rmse, epochs_trained, training_time) 
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-             ON CONFLICT ON CONSTRAINT training_metrics_v3_pkey 
-             DO UPDATE SET 
-                 final_loss = $3, 
-                 final_val_loss = $4, 
-                 directional_accuracy = $5, 
-                 mape = $6, 
-                 rmse = $7, 
-                 epochs_trained = $8, 
-                 training_time = $9, 
-                 created_at = CURRENT_TIMESTAMP",
-            &[&metrics.asset, &metrics.source, &metrics.final_loss, &metrics.final_val_loss,
-              &metrics.directional_accuracy, &metrics.mape, &metrics.rmse, &(metrics.epochs_trained as i32), &metrics.training_time]
-        )?;
-
-        info!("Enhanced model and metrics saved to PostgreSQL for asset {}", asset);
-        Ok(())
     }
 }
 
@@ -654,7 +541,7 @@ fn train_model(cli: Cli) -> Result<(), LSTMError> {
 
         let training_metrics = TrainingMetrics {
             asset: asset.clone(),
-            source: "investing".to_string(), // Hardcoded to match original command
+            source: "investing".to_string(),
             final_loss: final_train_loss,
             final_val_loss,
             directional_accuracy: val_directional_acc,
@@ -747,9 +634,27 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 
 
-// cargo run -- --source investing --seq-length 40 --hidden-size 64 --num-layers 2 --epochs 150 --batch-size 16 --dropout-rate 0.3 --learning-rate 0.0005
+// cd ~/Documentos/projetos/rust_app/lstmfiletrain
+// cargo run --release -- --seq-length 40 --hidden-size 64 --num-layers 2 --epochs 50 --batch-size 16 --dropout-rate 0.3 --learning-rate 0.0005
+
+
+
+
+
+
+
+// cd ~/Documentos/projetos/rust_app/lstmfilepredict
+// cargo run --release -- --asset SLCE3 --num-predictions 5 --verbose
+
+
+ 
 
 // cargo run -- --seq-length 40 --hidden-size 64 --num-layers 2 --epochs 5 --batch-size 16 --dropout-rate 0.3 --learning-rate 0.0005
+
+
+// cargo run -- --source investing --seq-length 40 --hidden-size 64 --num-layers 2 --epochs 150 --batch-size 16 --dropout-rate 0.3 --learning-rate 0.0005
+
+
 
 
 

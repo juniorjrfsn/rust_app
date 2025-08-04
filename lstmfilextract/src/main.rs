@@ -399,6 +399,22 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 // cargo run -- --source investing --db-url postgres://postgres:postgres@localhost:5432/lstm_db
 
 
+ 
+
+
+
+// # Uso básico
+// cargo run -- --source investing --db-url postgres://postgres:postgres@localhost:5432/lstm_db
+
+// # Processamento paralelo com configuração customizada
+// cargo run -- --source investing --config config.toml --parallel --verbose
+
+// # Validação sem salvar (dry run)
+// cargo run -- --source investing --dry-run --verbose
+
+// # Pular operações de banco
+// cargo run -- --source investing --skip-db --data-dir ./meus-dados
+
 
 
 // Example usage:

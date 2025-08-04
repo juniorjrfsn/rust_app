@@ -107,3 +107,13 @@ postgres'#  grant all privileges on database appphoenix_dev to postgres;
 postgres'# create database lstm_db;
 postgres'# grant all privileges on database lstm_db to postgres;
 postgres'# 
+
+
+lstmfiletrain/
+├── src/
+│   ├── main.rs           // Main logic, Cli, data, model
+│   ├── rna/
+│   │   ├── metrics.rs    // Metrics module
+│   │   ├── storage.rs    // Storage module
+│   │   └── mod.rs        // Module declarations
+├── Cargo.toml

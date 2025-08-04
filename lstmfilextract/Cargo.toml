@@ -37,6 +37,18 @@ edition = "2024"
     reqwest = { version = "0.12.22", features = ["blocking"] }
 
 
+    flate2 = "1.0"          # Para compressão
+    rayon = "1.7"           # Processamento paralelo
+    r2d2 = "0.8"            # Pool de conexões
+    r2d2_postgres = "0.18"  # Pool específico para PostgreSQL
+    indicatif = "0.18.0"      # Barra de progresso
+
+
+ 
+ 
+    sha2 = "0.10"
+    num_cpus = "1.16"
+
     [[bin]]
     name = "lstm"
     path = "src/main.rs"
