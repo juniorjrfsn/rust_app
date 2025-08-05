@@ -1,6 +1,10 @@
 // projeto : lstmfilextract
 // file : src/main.rs
  
+
+// projeto : lstmfilextract
+// file : src/main.rs
+ 
 use clap::{Parser};
 use std::fs::{File, OpenOptions};
 use std::path::Path;
@@ -396,15 +400,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 
-// cargo run -- --source investing --db-url postgres://postgres:postgres@localhost:5432/lstm_db
-
-
- 
-
-
 
 // # Uso básico
 // cargo run -- --source investing --db-url postgres://postgres:postgres@localhost:5432/lstm_db
+ 
+ 
+
 
 // # Processamento paralelo com configuração customizada
 // cargo run -- --source investing --config config.toml --parallel --verbose
