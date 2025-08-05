@@ -1,9 +1,9 @@
 asset = "ISAE4 Dados Históricos"
 source = "investing"
-total_records = 2621
+total_records = 2622
 date_range = [
     "02.01.2015",
-    "04.08.2025",
+    "05.08.2025",
 ]
 
 [[records]]
@@ -23594,3 +23594,12 @@ high = 21.8
 low = 20.99
 volume = 2850000.0
 variation = -0.0199
+
+[[records]]
+date = "05.08.2025"
+closing = 21.28
+opening = 21.2
+high = 21.44
+low = 21.11
+volume = 892200.0
+variation = 0.0052

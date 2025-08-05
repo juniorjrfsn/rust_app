@@ -202,14 +202,11 @@ fn load_all_models(client: &mut Client) -> Result<Vec<(String, rna::model::model
 // Single Asset:  
 // cargo run --release -- --asset WEGE --num-predictions 5 --verbose
 
- // cargo run --release -- --asset WEGE --num-predictions 7 --verbose
-
 // All Assets: 
 // cargo run --release -- --num-predictions 5 --verbose
   
 
- 
- 
+ // cd ~/Documentos/projetos/rust_app/lstmfilepredict
 
 
 // cargo run --release -- --asset SLCE3 --num-predictions 5 --verbose

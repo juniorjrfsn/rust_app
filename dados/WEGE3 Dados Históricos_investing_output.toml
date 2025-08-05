@@ -1,9 +1,9 @@
 asset = "WEGE3 Dados Históricos"
 source = "investing"
-total_records = 2630
+total_records = 2631
 date_range = [
     "02.01.2015",
-    "04.08.2025",
+    "05.08.2025",
 ]
 
 [[records]]
@@ -23675,3 +23675,12 @@ high = 37.79
 low = 37.02
 volume = 6620000.0
 variation = -0.003
+
+[[records]]
+date = "05.08.2025"
+closing = 37.16
+opening = 37.07
+high = 37.41
+low = 36.93
+volume = 3270000.0
+variation = 0.0023999999

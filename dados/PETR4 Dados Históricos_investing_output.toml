@@ -1,9 +1,9 @@
 asset = "PETR4 Dados Históricos"
 source = "investing"
-total_records = 2630
+total_records = 2631
 date_range = [
     "02.01.2015",
-    "04.08.2025",
+    "05.08.2025",
 ]
 
 [[records]]
@@ -23675,3 +23675,12 @@ high = 32.27
 low = 31.96
 volume = 15140000.0
 variation = -0.0016
+
+[[records]]
+date = "05.08.2025"
+closing = 32.34
+opening = 32.13
+high = 32.35
+low = 32.04
+volume = 11430000.0
+variation = 0.0056

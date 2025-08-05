@@ -1,9 +1,9 @@
 asset = "EGIE3 Dados Históricos"
 source = "investing"
-total_records = 2631
+total_records = 2632
 date_range = [
     "02.01.2015",
-    "04.08.2025",
+    "05.08.2025",
 ]
 
 [[records]]
@@ -23684,3 +23684,12 @@ high = 40.53
 low = 39.64
 volume = 465500.0
 variation = -0.0077
+
+[[records]]
+date = "05.08.2025"
+closing = 39.25
+opening = 40.09
+high = 40.16
+low = 39.23
+volume = 136800.0
+variation = -0.016

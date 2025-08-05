@@ -417,6 +417,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 // cargo run -- --source investing --skip-db --data-dir ./meus-dados
 
 
+ // cd lstmfilextract
 
 // Example usage:
 // cargo run -- --asset WEGE3 --source investing
@@ -432,7 +433,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
  
 
- // cd lstmfilextract
 
 // # 1. Extract data
 // cargo run -- extract --asset WEGE3 --source investing

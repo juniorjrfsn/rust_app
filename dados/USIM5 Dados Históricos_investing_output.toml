@@ -1,9 +1,9 @@
 asset = "USIM5 Dados Históricos"
 source = "investing"
-total_records = 2631
+total_records = 2632
 date_range = [
     "02.01.2015",
-    "04.08.2025",
+    "05.08.2025",
 ]
 
 [[records]]
@@ -23684,3 +23684,12 @@ high = 4.45
 low = 4.32
 volume = 10030000.0
 variation = 0.0
+
+[[records]]
+date = "05.08.2025"
+closing = 4.31
+opening = 4.39
+high = 4.44
+low = 4.3
+volume = 4450000.0
+variation = -0.0182

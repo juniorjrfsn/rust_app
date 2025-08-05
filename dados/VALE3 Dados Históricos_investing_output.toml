@@ -1,9 +1,9 @@
 asset = "VALE3 Dados Históricos"
 source = "investing"
-total_records = 2631
+total_records = 2632
 date_range = [
     "02.01.2015",
-    "04.08.2025",
+    "05.08.2025",
 ]
 
 [[records]]
@@ -23684,3 +23684,12 @@ high = 54.4
 low = 53.81
 volume = 16180000.0
 variation = 0.008
+
+[[records]]
+date = "05.08.2025"
+closing = 54.48
+opening = 54.17
+high = 54.93
+low = 54.15
+volume = 13520000.0
+variation = 0.0055
