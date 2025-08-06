@@ -1,10 +1,8 @@
 // projeto : lstmfilextract
 // file : src/main.rs
- 
 
-// projeto : lstmfilextract
-// file : src/main.rs
- 
+
+
 use clap::{Parser};
 use std::fs::{File, OpenOptions};
 use std::path::Path;
