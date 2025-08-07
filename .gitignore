@@ -35,6 +35,7 @@ cnn_reconhece_texto/target/
 lstmfilextract/target/
 lstmfiletrain/target/
 lstmfilepredict/target/
+lstmrnntrain/target/
  
 
 outros/chatbot/target/

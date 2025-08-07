@@ -30,6 +30,7 @@ font : Consolas, 'Courier New', monospace
     cargo new lstmfilextract --bin
     cargo new lstmfiletrain --bin
     cargo new lstmfilepredict --bin
+    cargo new lstmrnntrain --bin
 
     
     
@@ -62,6 +63,7 @@ font : Consolas, 'Courier New', monospace
     cd lstmfilextract
     cd lstmfiletrain
     cd lstmfilepredict
+    cd lstmrnntrain
 ```
 
 ### **Construir a aplicação**

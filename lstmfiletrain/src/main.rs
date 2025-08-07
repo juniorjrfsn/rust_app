@@ -1,341 +1,298 @@
 // projeto: lstmfiletrain
 // file: src/main.rs
+// Main entry point for training the LSTM model.
+
  
  
-
-
-use clap::Parser;
-use log::{info, warn};
-use postgres::{Client, NoTls};
-use std::error::Error;
-// Import TrainingError from its correct location within the crate
-use crate::neural::utils::TrainingError; 
-use crate::neural::data::DataLoader;
-use crate::neural::model::LstmPredictor;
-use crate::neural::metrics::TrainingMetrics;
-use crate::neural::storage::save_model_to_postgres;
-use crate::neural::utils; // For AdamOptimizer, metrics functions
+ 
+ 
+ // projeto: lstmfiletrain
+// file: src/main.rs
+// Main entry point for training the LSTM model.
 
 mod neural;
- 
 
-#[derive(Parser)]
-#[command(name = "lstm_train")]
-#[command(about = "Train LSTM model for stock price prediction")]
-struct Cli {
-    // Make asset optional and add a flag for all assets
-    #[arg(long, help = "Asset symbol (e.g., WEGE3). If omitted, --all-assets is assumed unless a list is provided via stdin/file (future enhancement).")]
-    asset: Option<String>,
+use clap::Parser;
+use chrono::Utc;
+use ndarray::Array2;
+use crate::neural::data::{connect_db, DataLoader};
+use crate::neural::metrics::TrainingMetrics;
+use crate::neural::model::LstmPredictor;
+use crate::neural::storage::save_model_to_postgres;
+use crate::neural::utils::{AdamOptimizer, TrainingError};
 
-    #[arg(long, default_value_t = false, help = "Train models for all assets found in the database")]
-    all_assets: bool,
-
-    #[arg(long, default_value_t = 20, help = "Sequence length")]
-    seq_length: usize,
-
-    #[arg(long, default_value_t = 50, help = "Hidden size")]
-    hidden_size: usize,
-
-    #[arg(long, default_value_t = 2, help = "Number of LSTM layers")]
-    num_layers: usize,
-
-    #[arg(long, default_value_t = 0.0001, help = "Learning rate")]
-    learning_rate: f32,
-
-    #[arg(long, default_value_t = 100, help = "Number of epochs")]
-    epochs: usize,
-
-    #[arg(long, default_value_t = 32, help = "Batch size (currently unused, processes full dataset per epoch)")]
-    batch_size: usize, // Note: Batch size is parsed but not used in current train_step
-
-    #[arg(long, default_value_t = 0.1, help = "Dropout rate")]
-    dropout_rate: f32,
-
-    #[arg(long, default_value = "postgres://postgres:postgres@localhost:5432/lstm_db", help = "Database URL")]
-    db_url: String,
-
-    #[arg(long, default_value_t = 0.01, help = "L2 Regularization weight")]
-    l2_weight: f32,
-
-    #[arg(long, default_value_t = 1.0, help = "Gradient clipping norm")]
-    clip_norm: f32,
+fn clean_asset_name(asset: &str) -> String {
+    // Remove common suffixes and clean up asset names
+    let cleaned = asset
+        .replace(" Dados Históricos", "")
+        .replace(" Historical Data", "")
+        .replace(" Preços Históricos", "")
+        .trim()
+        .to_string();
+    
+    // Limit to 50 characters to be safe
+    if cleaned.len() > 50 {
+        cleaned[..50].to_string()
+    } else {
+        cleaned
+    }
 }
 
-// Function to encapsulate the training logic for a single asset
-// Returns Result<(), TrainingError> to allow using ? with TrainingError
-fn train_single_asset(
-    cli: &Cli, // Pass the CLI struct to access parameters
-    client: &mut Client,
+#[derive(Parser, Debug)]
+#[command(author, version, about, long_about = None)]
+struct Cli {
+    #[arg(long, default_value_t = String::from("ISAE4"))]
+    asset: String,
+    #[arg(long)]
+    all_assets: bool,
+    #[arg(long, default_value_t = 40)]
+    seq_length: usize,
+    #[arg(long, default_value_t = 64)]
+    hidden_size: usize,
+    #[arg(long, default_value_t = 2)]
+    num_layers: usize,
+    #[arg(long, default_value_t = 50)]
+    epochs: usize,
+    #[arg(long, default_value_t = 16)]
+    batch_size: usize,
+    #[arg(long, default_value_t = 0.3)]
+    dropout_rate: f64,
+    #[arg(long, default_value_t = 0.0005)]
+    learning_rate: f64,
+    #[arg(long, default_value_t = 0.01)]
+    l2_weight: f64,
+    #[arg(long, default_value_t = 1.0)]
+    clip_norm: f64,
+    #[arg(long, default_value_t = String::from("postgresql://postgres:postgres@localhost:5432/lstm_db"))]
+    db_url: String,
+}
+
+fn main() -> Result<(), TrainingError> {
+    let cli = Cli::parse();
+
+    if cli.all_assets {
+        println!(
+            "🚀 [Main] Training for all assets at {}",
+            Utc::now().format("%Y-%m-%d %H:%M:%S")
+        );
+        // Load assets list first
+        let assets = {
+            let mut client = connect_db(&cli.db_url)?;
+            let mut loader = DataLoader::new(&mut client)?;
+            loader.load_all_assets()?
+        };
+        
+        // Process each asset with a fresh connection
+        for asset in &assets {
+            // Clean asset name to remove common suffixes and limit length
+            let clean_asset = clean_asset_name(asset);
+            println!("📌 [Main] Processing asset: {} (cleaned: {})", asset, clean_asset);
+            train_for_asset(&cli, &clean_asset)?;
+        }
+    } else {
+        println!(
+            "🚀 [Main] Starting training for asset: {} at {}",
+            cli.asset,
+            Utc::now().format("%Y-%m-%d %H:%M:%S")
+        );
+        train_for_asset(&cli, &cli.asset)?;
+    }
+
+    println!(
+        "✅ [Main] Training completed successfully at {}",
+        Utc::now().format("%Y-%m-%d %H:%M:%S")
+    );
+    Ok(())
+}
+
+fn train_for_asset(
+    cli: &Cli,
     asset: &str,
-    source: &str, // Source can be derived or fixed, e.g., "database"
-) -> Result<(), TrainingError> { // Changed return type to TrainingError
-    info!("Iniciando treinamento para o ativo: {}", asset);
+) -> Result<(), TrainingError> {
+    // Create a fresh connection and loader for this asset
+    let mut client = connect_db(&cli.db_url)?;
+    let mut loader = DataLoader::new(&mut client)?;
+    
+    println!("📥 [Main] Loading asset data for '{}'", asset);
+    let records = loader.load_asset_data(asset)?;
+    println!(
+        "✅ [Main] Asset data loaded successfully for '{}', {} records",
+        asset, records.len()
+    );
 
-    // Load data for the specific asset
-    let mut data_loader = DataLoader::new(client)?; // Pass &mut Client reference
-    let records = data_loader.load_asset_data(asset)?; // load_asset_data now uses LIKE
+    println!(
+        "🔧 [Main] Creating sequences with length {} for {} records",
+        cli.seq_length, records.len()
+    );
+    let (train_seqs, train_targets, feature_stats) =
+        loader.create_sequences(&records, cli.seq_length)?;
+    println!(
+        "✅ [Main] Sequences created successfully, {} sequences",
+        train_seqs.len()
+    );
 
-    if records.is_empty() {
-        warn!("Nenhum dado encontrado para o ativo: {}. Pulando.", asset);
-        return Ok(());
+    println!("🔄 [Main] Converting data to f64 and splitting into train/validation sets...");
+    let mut train_seqs: Vec<Array2<f64>> = train_seqs
+        .iter()
+        .map(|seq| seq.mapv(|x| x as f64))
+        .collect();
+    let mut train_targets: Vec<f64> = train_targets.iter().map(|&x| x as f64).collect();
+
+    let split_index = (train_seqs.len() as f64 * 0.8) as usize;
+    let mut val_seqs: Vec<Array2<f64>> = train_seqs.split_off(split_index);
+    let mut val_targets: Vec<f64> = train_targets.split_off(split_index);
+
+    println!("🔄 [Main] Normalizing data...");
+    for seq in &mut train_seqs {
+        for i in 0..seq.ncols() {
+            let col_mean = feature_stats.feature_means[i] as f64;
+            let col_std = feature_stats.feature_stds[i] as f64;
+            seq.column_mut(i).mapv_inplace(|x| (x - col_mean) / col_std);
+        }
     }
 
-    let (sequences, targets, feature_stats) = data_loader.create_sequences(&records, cli.seq_length)?;
-
-    // Split into train and validation
-    let train_size = (sequences.len() as f32 * 0.8) as usize;
-    if train_size == 0 || train_size >= sequences.len() {
-         return Err(TrainingError::DataProcessing(
-            format!("Dados insuficientes após divisão para o ativo: {}", asset)
-        ));
-    }
-    let (train_seqs, val_seqs) = sequences.split_at(train_size);
-    let (train_targets, val_targets) = targets.split_at(train_size);
-
-    // Check if validation set is empty
-    if val_seqs.is_empty() || val_targets.is_empty() {
-         return Err(TrainingError::DataProcessing(
-            format!("Conjunto de validação vazio para o ativo: {}", asset)
-        ));
+    for seq in &mut val_seqs {
+        for i in 0..seq.ncols() {
+            let col_mean = feature_stats.feature_means[i] as f64;
+            let col_std = feature_stats.feature_stds[i] as f64;
+            seq.column_mut(i).mapv_inplace(|x| (x - col_mean) / col_std);
+        }
     }
 
-    // Initialize model
+    let closing_mean = feature_stats.closing_mean as f64;
+    let closing_std = feature_stats.closing_std as f64;
+
+    for target in &mut train_targets {
+        *target = (*target - closing_mean) / closing_std;
+    }
+
+    for target in &mut val_targets {
+        *target = (*target - closing_mean) / closing_std;
+    }
+
+    println!(
+        "✅ [Main] Data normalized and split: {} train, {} validation sequences",
+        train_seqs.len(),
+        val_seqs.len()
+    );
+
+    println!(
+        "🛠️ [Main] Initializing LSTM model with hidden_size: {}, num_layers: {}",
+        cli.hidden_size, cli.num_layers
+    );
     let mut model = LstmPredictor::new(
         feature_stats.feature_names.len(),
         cli.hidden_size,
         cli.num_layers,
         cli.dropout_rate,
     )?;
-    let mut optimizer = utils::AdamOptimizer::new(model.num_parameters(), cli.learning_rate, 0.9, 0.999, 1e-8);
+    println!("✅ [Main] LSTM model initialized successfully");
 
-    // Training loop
-    let mut best_val_loss = f32::INFINITY;
-    let mut best_weights = None;
-    let mut best_metrics = None;
+    println!(
+        "🛠️ [Main] Initializing Adam optimizer with learning_rate: {}",
+        cli.learning_rate
+    );
+    let mut optimizer = AdamOptimizer::new(cli.learning_rate, 0.9, 0.999, 1e-8);
+    println!("✅ [Main] Adam optimizer initialized successfully");
 
     for epoch in 1..=cli.epochs {
-        // Perform training step on the entire training set (consider batching)
-        let train_loss = model.train_step(&train_seqs, &train_targets, &mut optimizer, cli.l2_weight, cli.clip_norm)?;
+        println!("🌱 [Main] Epoch {}/{}", epoch, cli.epochs);
 
-        // --- CORRECTED SECTION ---
-        // Predict on the actual validation set
-        let val_predictions: Result<Vec<f32>, TrainingError> = val_seqs // Use val_seqs, not train_seqs
+        println!("🎓 [Main] Performing training step...");
+        let train_loss = model.train_step(
+            &train_seqs,
+            &train_targets,
+            &mut optimizer,
+            cli.l2_weight,
+            cli.clip_norm,
+        )?;
+        println!("📉 [Main] Train Loss: {:.6}", train_loss);
+
+        println!("🔮 [Main] Performing validation...");
+        let val_predictions: Result<Vec<f64>, TrainingError> = val_seqs
             .iter()
-            .map(|seq| model.predict(seq)) // model.predict can return TrainingError
+            .map(|seq| model.predict(seq))
             .collect();
-        let val_predictions = val_predictions?; // Handle potential prediction errors
+        let val_predictions = val_predictions?;
 
-        // Calculate validation loss using validation predictions and targets
-        let val_loss = utils::mse_loss(&val_predictions, &val_targets);
-        // --- END CORRECTED SECTION ---
+        let val_loss = val_predictions
+            .iter()
+            .zip(val_targets.iter())
+            .map(|(p, t)| (p - t).powi(2))
+            .sum::<f64>()
+            / val_predictions.len() as f64;
+        println!("📊 [Main] Validation Loss: {:.6}", val_loss);
 
-        info!("Ativo {}: Epoch {}: Train Loss = {:.6}, Val Loss = {:.6}", asset, epoch, train_loss, val_loss);
+        let rmse = val_loss.sqrt();
+        let mae = val_predictions
+            .iter()
+            .zip(val_targets.iter())
+            .map(|(p, t)| (p - t).abs())
+            .sum::<f64>()
+            / val_predictions.len() as f64;
 
-        if val_loss < best_val_loss {
-            best_val_loss = val_loss;
-
-            // Get model weights
+        if epoch % 10 == 0 {
+            println!("💾 [Main] Saving model and metrics for epoch {}...", epoch);
             let mut weights = model.get_weights();
-            weights.asset = asset.to_string(); // Set asset in weights
+            weights.closing_mean = closing_mean;
+            weights.closing_std = closing_std;
+            weights.asset = asset.to_string();
             weights.seq_length = cli.seq_length;
-            weights.closing_mean = feature_stats.closing_mean;
-            weights.closing_std = feature_stats.closing_std;
 
-            // --- Use consistent timestamp ---
-            let current_timestamp = chrono::Utc::now().to_rfc3339();
-            // --- End timestamp ---
-
-            // Calculate metrics using validation predictions and targets
             let metrics = TrainingMetrics {
                 asset: asset.to_string(),
-                source: source.to_string(),
+                source: "database".to_string(),
                 train_loss,
                 val_loss,
-                rmse: val_loss.sqrt(),
-                mae: utils::mae_loss(&val_predictions, &val_targets),
-                mape: utils::mape_loss(&val_predictions, &val_targets),
-                directional_accuracy: utils::directional_accuracy(&val_predictions, &val_targets),
-                timestamp: current_timestamp, // Use consistent timestamp
+                rmse,
+                mae,
+                mape: 0.0, // Placeholder, requires implementation
+                directional_accuracy: 0.0, // Placeholder, requires implementation
+                timestamp: Utc::now().to_rfc3339(),
             };
 
-            best_weights = Some(weights);
-            best_metrics = Some(metrics);
-            // Note: Saving inside the loop is expensive. We save only the best model at the end.
-        }
-    }
-
-    // Save the best model and metrics found during training
-    if let (Some(weights), Some(metrics)) = (best_weights, best_metrics) {
-        info!("Salvando melhor modelo para o ativo {} com Val Loss = {:.6}", asset, best_val_loss);
-        // Pass &mut Client reference
-        save_model_to_postgres(client, &weights, &metrics)?;
-    } else {
-        warn!("Nenhum modelo melhor encontrado para salvar para o ativo {}", asset);
-    }
-
-    info!("✅ Treinamento concluído para o ativo {}", asset);
-    Ok(())
-}
-
-
-fn main() -> Result<(), Box<dyn Error>> {
-    env_logger::init();
-    let cli = Cli::parse();
-    let mut client = Client::connect(&cli.db_url, NoTls)?;
-
-    // --- CORRECTED VARIABLE DECLARATION AND LOGIC ---
-    // Determine assets_to_train based on CLI arguments
-    let assets_to_train: Vec<String> = if cli.all_assets {
-        info!("Modo: Treinar todos os ativos");
-        let all_assets_full = DataLoader::new(&mut client)?.load_all_assets()?;
-        if all_assets_full.is_empty() {
-            warn!("Nenhum ativo encontrado no banco de dados.");
-            return Ok(());
-        }
-        // Extract symbols
-        let extracted_symbols: Vec<String> = all_assets_full
-            .into_iter()
-            .filter_map(|full_name| {
-                full_name.split_whitespace().next().map(|s| s.to_string())
-            })
-            .collect();
-        if extracted_symbols.is_empty() {
-             warn!("Nenhum símbolo de ativo pôde ser extraído dos nomes encontrados.");
-             return Ok(());
-        }
-        extracted_symbols // Return the list directly
-
-    } else if let Some(asset) = cli.asset.as_ref() {
-        info!("Modo: Treinar ativo específico: {}", asset);
-        vec![asset.clone()] // Return a vector with one element
-
-    } else {
-        // Default behavior if neither --asset nor --all-assets is provided
-        info!("Nenhum ativo especificado explicitamente. Treinando todos os ativos.");
-        let all_assets_full = DataLoader::new(&mut client)?.load_all_assets()?;
-         if all_assets_full.is_empty() {
-            warn!("Nenhum ativo encontrado no banco de dados.");
-            return Ok(());
-        }
-        let extracted_symbols: Vec<String> = all_assets_full
-            .into_iter()
-            .filter_map(|full_name| {
-                full_name.split_whitespace().next().map(|s| s.to_string())
-            })
-            .collect();
-         if extracted_symbols.is_empty() {
-             warn!("Nenhum símbolo de ativo pôde ser extraído dos nomes encontrados.");
-             return Ok(());
-        }
-        extracted_symbols // Return the list directly
-    };
-    // --- END CORRECTED VARIABLE DECLARATION AND LOGIC ---
-
-    let source = "database";
-
-    info!("Iniciando treinamento para {} ativo(s): {:?}", assets_to_train.len(), assets_to_train);
-
-    let mut success_count = 0;
-    let mut failure_count = 0;
-
-    for asset in &assets_to_train {
-        // Pass &mut client reference and handle TrainingError
-        match train_single_asset(&cli, &mut client, asset, source) {
-            Ok(()) => {
-                success_count += 1;
-                info!("Treinamento bem-sucedido para: {}", asset);
-            }
-            Err(e) => {
-                failure_count += 1;
-                // Log the TrainingError
-                eprintln!("Erro de treinamento para {}: {}", asset, e);
-                // Consider logging to a file or database
+            // Create a fresh connection for saving since we consumed the previous one
+            let mut save_client = connect_db(&cli.db_url)?;
+            if let Err(e) = save_model_to_postgres(&mut save_client, &weights, &metrics) {
+                println!("⚠️ [Main] Warning: Could not save model: {}", e);
+            } else {
+                println!(
+                    "✅ [Main] Model and metrics saved successfully for epoch {}",
+                    epoch
+                );
             }
         }
     }
 
-    info!(
-        "🏁 Processo de treinamento finalizado. Sucessos: {}, Falhas: {}",
-        success_count, failure_count
-    );
-
-    if failure_count > 0 {
-        // Optionally return an error if any training failed, or just log and exit(0)
-        // For now, we'll log and exit successfully, as some assets might fail legitimately (e.g., insufficient data)
-         warn!("{} ativo(s) falharam durante o treinamento.", failure_count);
-         // If you want the main program to exit with an error code if any training failed:
-         // return Err(format!("{} ativo(s) falharam durante o treinamento.", failure_count).into());
-    }
-
     Ok(())
 }
-
-
-
 
 
 // cd ~/Documentos/projetos/rust_app/lstmfiletrain
+// cargo run --release -- --asset ISAE4 --seq-length 20 --hidden-size 32 --num-layers 2 --epochs 10 --learning-rate 0.001
+ // cargo run --release -- --all-assets --seq-length 20 --hidden-size 32 --num-layers 2 --epochs 10 --batch-size 16 --dropout-rate 0.3 --learning-rate 0.001 --l2-weight 0.01 --clip-norm 1.0 
+// cargo run --release -- --all-assets --seq-length 20 --hidden-size 32 --num-layers 2 --epochs 10 --batch-size 16 --dropout-rate 0.3 --learning-rate 0.001 --l2-weight 0.01 --clip-norm 1.0 --db-url postgres://postgres:postgres@localhost:5432/lstm_db
 
-// cargo run --release -- --all-assets --seq-length 20 --hidden-size 50 --num-layers 2 --learning-rate 0.0001 --epochs 100 --batch-size 32 --dropout-rate 0.1 --l2-weight 0.01 --clip-norm 1.0 --db-url postgres://postgres:postgres@localhost:5432/lstm_db
- 
+ // cargo run --release -- --all-assets --seq-length 20 --hidden-size 32 --num-layers 2 --epochs 10 --batch-size 16 --dropout-rate 0.3 --learning-rate 0.001 --l2-weight 0.01 --clip-norm 1.0 --db-url postgres://postgres:postgres@localhost:5432/lstm_db
+ // cargo run --release -- --all-assets --seq-length 20 --hidden-size 32 --num-layers 2 --epochs 10 --batch-size 16 --dropout-rate 0.3 --learning-rate 0.001 --l2-weight 0.01 --clip-norm 1.0 --db-url postgresql://postgres:postgres@localhost:5432/lstm_db
 
- 
-// cargo run --release -- --asset WEGE3 --source investing --seq-length 20 --hidden-size 50 --num-layers 2 --learning-rate 0.0001 --epochs 100 --batch-size 32 --db-url postgres://postgres:postgres@localhost:5432/lstm_db
-
- 
-
-
-// cargo run --release -- --seq-length 40 --hidden-size 64 --num-layers 2 --epochs 50 --batch-size 16 --dropout-rate 0.3 --learning-rate 0.0005
-
-
- // cargo run --release -- --all-assets --seq-length 20 --hidden-size 50 --num-layers 2 --learning-rate 0.0001 --epochs 100 --batch-size 32 --dropout-rate 0.1 --l2-weight 0.01 --clip-norm 1.0 --db-url postgres://postgres:postgres@localhost:5432/lstm_db
- 
- 
+ // cargo run --release -- --all-assets --seq-length 20 --hidden-size 32 --num-layers 2 --epochs 10 --batch-size 16 --dropout-rate 0.3 --learning-rate 0.001 --l2-weight 0.01 --clip-norm 1.0
+ // rm -rf target Cargo.lock
+//  cargo run --release -- --all-assets --seq-length 20 --hidden-size 32 --num-layers 2 --epochs 10 --batch-size 16 --dropout-rate 0.3 --learning-rate 0.001 --l2-weight 0.01 --clip-norm 1.0 --db-url postgresql://postgres:postgres@localhost:5432/lstm_db
 
 
+// rm -rf target Cargo.lock
+// cargo run --release -- --all-assets --seq-length 20 --hidden-size 32 --num-layers 2 --epochs 10 --batch-size 16 --dropout-rate 0.3 --learning-rate 0.001 --l2-weight 0.01 --clip-norm 1.0 --db-url postgresql://postgres:postgres@localhost:5432/lstm_db
 
 
-// # Conservative configuration (stable)
-// cargo run -- --asset WEGE3 --source investing --seq-length 40 --hidden-size 64 --num-layers 2 --epochs 150 --batch-size 16 --dropout-rate 0.3 --learning-rate 0.0005
-
-// # Aggressive configuration (higher capacity)
-// cargo run -- --asset WEGE3 --source investing --seq-length 50 --hidden-size 256 --num-layers 3 --epochs 200 --batch-size 32 --dropout-rate 0.2 --learning-rate 0.001
- 
-
-// # Configuração conservadora (mais estável)
-// cargo run -- --asset WEGE3 --source investing  --seq-length 40   --hidden-size 64   --num-layers 2   --epochs 150   --batch-size 16   --dropout-rate 0.3   --learning-rate 0.0005
-
-// # Configuração agressiva (mais capacidade)
-// cargo run -- --asset WEGE3 --source investing --seq-length 50  --hidden-size 256  --num-layers 3   --epochs 2    --batch-size 32   --dropout-rate 0.2  --learning-rate 0.001
-
-// Exemplo de uso:
-// cargo run -- --asset WEGE3 --source investing --seq-length 20 --hidden-size 64 --epochs 2 --learning-rate 0.001
-
-
-// cargo run -- --asset WEGE3 --source investing --seq-length 50 --hidden-size 256 --num-layers 3 --epochs 2 --batch-size 32 --dropout-rate 0.2 --learning-rate 0.001
-
-
-
-// Uso:
-// cargo run -- --asset WEGE3 --source investing --seq-length 20 --hidden-size 50 --epochs 100
- 
- 
-  
-
-// Example usage:
-// cargo run -- --asset WEGE3 --source investing --seq-length 20 --hidden-size 50 --learning-rate 0.001 --epochs 100 --batch-size 32
-// cargo run -- --asset WEGE3 --source investing --seq-length 30 --hidden-size 64 --learning-rate 0.0005 --epochs 200 --batch-size 16 --skip-training-data
+// cargo run --release -- --asset ISAE4 --seq-length 40 --epochs 10
 
  
-// cargo run -- --asset WEGE3 --source investing --seq-length 20 --hidden-size 50 --learning-rate 0.001 --epochs 100
-
-
 
 // cd lstmfiletrain
-// cargo run -- --asset WEGE3 --source investing
+ 
 
-// # 2. Train the LSTM model
-// cargo run -- --asset WEGE3 --source investing --seq-length 20 --hidden-size 50
+ 
 
 // rm -rf target Cargo.lock
 // rm -rf ~/.cargo/registry/cache/*

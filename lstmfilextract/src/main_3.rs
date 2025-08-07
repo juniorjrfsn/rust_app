@@ -1,6 +1,8 @@
 // projeto : lstmfilextract
 // file : src/main.rs
 
+
+
 use clap::{Parser};
 use std::fs::{File, OpenOptions};
 use std::path::Path;
@@ -36,7 +38,7 @@ enum LSTMError {
 
 #[derive(Parser)]
 #[command(name = "lstm_extract")]
-#[command(about = "Extract and convert CSV data to TOML format and dual PostgreSQL databases")]
+#[command(about = "Extract and convert CSV data to TOML format and PostgreSQL database")]
 #[command(version = "1.0.0")]
 struct Cli {
     #[arg(long, help = "Data source (e.g., investing)")]
@@ -45,10 +47,8 @@ struct Cli {
     data_dir: String,
     #[arg(long, help = "Skip TOML output generation")]
     skip_toml: bool,
-    #[arg(long, help = "LSTM Database URL (e.g., postgres://postgres:postgres@localhost:5432/lstm_db)")]
-    lstm_db_url: String,
-    #[arg(long, help = "RNN Database URL (e.g., postgres://postgres:postgres@localhost:5432/rnn_db)")]
-    rnn_db_url: String,
+    #[arg(long, help = "Database URL (e.g., postgres://postgres:postgres@localhost:5432/lstm_db)")]
+    db_url: String,
     #[arg(long, help = "Date format pattern", default_value = "%d.%m.%Y")]
     date_format: String,
 }
@@ -248,7 +248,10 @@ fn save_to_toml(stock_data: &StockData, output_path: &str) -> Result<(), LSTMErr
     Ok(())
 }
 
-fn save_to_database(records: &[StockRecord], asset: &str, client: &mut Client, db_name: &str) -> Result<(), LSTMError> {
+
+
+
+fn save_to_database(records: &[StockRecord], asset: &str, client: &mut Client) -> Result<(), LSTMError> {
     // Create table if it doesn't exist
     client.batch_execute(
         "CREATE TABLE IF NOT EXISTS stock_records (
@@ -292,31 +295,12 @@ fn save_to_database(records: &[StockRecord], asset: &str, client: &mut Client, d
         )?;
     }
     
-    info!("Data successfully saved to {} for asset: {}", db_name, asset);
+    info!("Data successfully saved to PostgreSQL for asset: {}", asset);
     Ok(())
 }
 
-fn save_to_both_databases(records: &[StockRecord], asset: &str, lstm_client: &mut Client, rnn_client: &mut Client) -> Result<(), LSTMError> {
-    // Save to LSTM database
-    match save_to_database(records, asset, lstm_client, "LSTM database") {
-        Ok(()) => info!("✅ Successfully saved to LSTM database for asset: {}", asset),
-        Err(e) => {
-            error!("❌ Failed to save to LSTM database for asset {}: {}", asset, e);
-            return Err(e);
-        }
-    }
-    
-    // Save to RNN database
-    match save_to_database(records, asset, rnn_client, "RNN database") {
-        Ok(()) => info!("✅ Successfully saved to RNN database for asset: {}", asset),
-        Err(e) => {
-            error!("❌ Failed to save to RNN database for asset {}: {}", asset, e);
-            return Err(e);
-        }
-    }
-    
-    Ok(())
-}
+
+
 
 fn extract_command(cli: Cli) -> Result<(), LSTMError> {
     info!("Starting data extraction from {}", cli.source);
@@ -342,29 +326,12 @@ fn extract_command(cli: Cli) -> Result<(), LSTMError> {
         return Err(LSTMError::InvalidCsv { msg: "No CSV files found in directory".into() });
     }
 
-    // Connect to both databases
-    info!("Connecting to LSTM database: {}", cli.lstm_db_url);
-    let mut lstm_client = Client::connect(&cli.lstm_db_url, NoTls)
-        .map_err(|e| {
-            error!("Failed to connect to LSTM database: {}", e);
-            e
-        })?;
-    
-    info!("Connecting to RNN database: {}", cli.rnn_db_url);
-    let mut rnn_client = Client::connect(&cli.rnn_db_url, NoTls)
-        .map_err(|e| {
-            error!("Failed to connect to RNN database: {}", e);
-            e
-        })?;
-
-    info!("✅ Successfully connected to both databases");
+    let mut client = Client::connect(&cli.db_url, NoTls)?;
 
     for entry in entries {
         let file_path = entry.path();
         let file_name = file_path.file_stem().unwrap().to_str().unwrap();
         let asset = file_name.split('_').next().unwrap_or(file_name).to_string();
-
-        info!("Processing file: {} for asset: {}", file_path.display(), asset);
 
         let parsed_data = parse_csv_data(file_path.to_str().unwrap(), &cli.date_format)?;
         let mut records = parsed_data.valid_records;
@@ -390,21 +357,20 @@ fn extract_command(cli: Cli) -> Result<(), LSTMError> {
             save_to_toml(&stock_data, &output_file_path)?;
         }
 
-        // Save to both databases
-        save_to_both_databases(&records, &asset, &mut lstm_client, &mut rnn_client)?;
+        save_to_database(&records, &asset, &mut client)?;
 
         all_records.extend(records);
         total_skipped += parsed_data.skipped_count;
         total_errors += parsed_data.error_count;
 
-        info!("✅ Processed {} records for asset {}", stock_data.total_records, asset);
+        info!("Processed {} records for asset {}", stock_data.total_records, asset);
     }
 
     println!("✅ Extraction complete! {} total records processed", all_records.len());
     if !cli.skip_toml {
         println!("   📄 TOML files generated in {}", cli.data_dir);
     }
-    println!("   🗄️  Data saved to both LSTM and RNN databases");
+    println!("   🗄️  Database updated");
     if total_skipped > 0 || total_errors > 0 {
         println!("   ⚠️  Skipped {} records, {} errors", total_skipped, total_errors);
     }
@@ -431,22 +397,50 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 }
 
-// Exemplos de uso atualizados:
 
-// # Uso básico com ambos os bancos
-// cargo run -- --source investing --lstm-db-url postgres://postgres:postgres@localhost:5432/lstm_db --rnn-db-url postgres://postgres:postgres@localhost:5432/rnn_db
 
-// # Com diretório customizado
-// cargo run -- --source investing --data-dir ./meus-dados --lstm-db-url postgres://postgres:postgres@localhost:5432/lstm_db --rnn-db-url postgres://postgres:postgres@localhost:5432/rnn_db
+// # Uso básico
+// cargo run -- --source investing --db-url postgres://postgres:postgres@localhost:5432/lstm_db
+ 
+ 
 
-// # Pular TOML e salvar apenas nos bancos
-// cargo run -- --source investing --skip-toml --lstm-db-url postgres://postgres:postgres@localhost:5432/lstm_db --rnn-db-url postgres://postgres:postgres@localhost:5432/rnn_db
 
-// # Com formato de data customizado
-// cargo run -- --source investing --date-format "%Y-%m-%d" --lstm-db-url postgres://postgres:postgres@localhost:5432/lstm_db --rnn-db-url postgres://postgres:postgres@localhost:5432/rnn_db
+// # Processamento paralelo com configuração customizada
+// cargo run -- --source investing --config config.toml --parallel --verbose
 
-// # Exemplo básico
-// cargo run -- --source investing   --lstm-db-url postgres://postgres:postgres@localhost:5432/lstm_db   --rnn-db-url postgres://postgres:postgres@localhost:5432/rnn_db
+// # Validação sem salvar (dry run)
+// cargo run -- --source investing --dry-run --verbose
 
-// # Com configurações adicionais
-// cargo run -- --source investing   --data-dir ./dados   --lstm-db-url postgres://postgres:postgres@localhost:5432/lstm_db   --rnn-db-url postgres://postgres:postgres@localhost:5432/rnn_db   --date-format "%d.%m.%Y"
+// # Pular operações de banco
+// cargo run -- --source investing --skip-db --data-dir ./meus-dados
+
+
+ // cd lstmfilextract
+
+// Example usage:
+// cargo run -- --asset WEGE3 --source investing
+// cargo run -- --asset WEGE3 --source investing --skip-toml
+// cargo run -- --asset WEGE3 --source investing --date-format "%Y-%m-%d"
+
+// Example usage:
+// cargo run -- --asset WEGE3 --source investing
+// cargo run -- --asset WEGE3 --source investing --skip-toml
+// cargo run -- --asset WEGE3 --source investing --date-format "%Y-%m-%d"
+
+// cargo run -- --asset WEGE3 --source investing
+
+ 
+
+
+// # 1. Extract data
+// cargo run -- extract --asset WEGE3 --source investing
+
+// # 2. Train the LSTM model
+// cargo run -- train --asset WEGE3 --source investing --seq-length 20 --hidden-size 50
+
+// # 3. Generate predictions
+// cargo run -- predict --asset WEGE3 --source investing --num-predictions 20
+
+
+// rm -rf target Cargo.lock
+// rm -rf ~/.cargo/registry/cache/*

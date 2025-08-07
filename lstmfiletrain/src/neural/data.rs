@@ -1,18 +1,18 @@
 // projeto: lstmfiletrain
 // file: src/neural/data.rs
+// Handles data loading and processing from the database.
 
-// Importações necessárias
-use postgres::Client;
+
+
+ 
 use chrono::NaiveDate;
-use serde::{Serialize, Deserialize};
-use ndarray::{Array1, Array2, Axis};
-// Adiciona println! e info! para logging/debugging
 use log::info;
-
-// Importa TrainingError do local correto dentro do crate
+use ndarray::{Array1, Array2, Axis};
+use postgres::{Client, NoTls};
+use serde::{Serialize, Deserialize};
+use crate::neural::storage::ensure_tables_exist;
 use crate::neural::utils::TrainingError;
 
-// Estrutura para representar um registro de ações
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct StockRecord {
     pub date: NaiveDate,
@@ -24,7 +24,6 @@ pub struct StockRecord {
     pub variation: f32,
 }
 
-// Estrutura para armazenar estatísticas das features
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FeatureStats {
     pub feature_means: Vec<f32>,
@@ -34,34 +33,36 @@ pub struct FeatureStats {
     pub closing_std: f32,
 }
 
-// Carregador de dados com conexão ao banco
 pub struct DataLoader<'a> {
     client: &'a mut Client,
 }
 
 impl<'a> DataLoader<'a> {
-    // Constrói um novo DataLoader a partir de um cliente PostgreSQL
     pub fn new(client: &'a mut Client) -> Result<Self, TrainingError> {
-        Ok(DataLoader { client })
+        println!("🔧 [DataLoader] Initializing new DataLoader...");
+        println!("🔍 [DataLoader] Ensuring database tables exist...");
+        ensure_tables_exist(client)?;
+        let loader = DataLoader { client };
+        println!("✅ [DataLoader] DataLoader initialized successfully.");
+        Ok(loader)
     }
 
-    // Carrega dados de um ativo específico do banco de dados
-    pub fn load_asset_data(&mut self, asset: &str) -> Result<Vec<StockRecord>, TrainingError> {
-        println!("    📥 DataLoader: Procurando dados para '{}' usando LIKE '%{}%'", asset, asset);
-        // Note: The query uses 'LIKE' to match assets stored as 'WEGE3 Dados Históricos'
-        let query = "SELECT date, opening, closing, high, low, volume, variation FROM stock_records WHERE asset LIKE $1 ORDER BY date ASC";
-        let rows = self.client.query(query, &[&format!("%{}%", asset)])
-            .map_err(|e| {
-                let err_msg = format!("Erro ao carregar dados do ativo {}: {}", asset, e);
-                eprintln!("    ❌ DataLoader Erro: {}", err_msg);
-                info!("{}", err_msg); // Mantém log::info também
-                TrainingError::DatabaseError(e.to_string())
-            })?;
+    pub fn load_all_assets(&mut self) -> Result<Vec<String>, TrainingError> {
+        println!("📥 [DataLoader] Loading all distinct assets...");
+        let rows = self.client.query("SELECT DISTINCT asset FROM stock_records", &[])?;
+        let assets: Vec<String> = rows.into_iter().map(|row| row.get(0)).collect();
+        println!("✅ [DataLoader] Found {} distinct assets", assets.len());
+        Ok(assets)
+    }
 
-        println!("    ✅ DataLoader: {} linhas encontradas para '{}'", rows.len(), asset);
+    pub fn load_asset_data(&mut self, asset: &str) -> Result<Vec<StockRecord>, TrainingError> {
+        println!("📥 [DataLoader] Loading data for asset '{}'", asset);
+        let query = "SELECT date, opening, closing, high, low, volume, variation FROM stock_records WHERE asset LIKE $1 ORDER BY date ASC";
+        let rows = self.client.query(query, &[&format!("%{}%", asset)])?;
+
+        println!("✅ [DataLoader] Found {} rows for '{}'", rows.len(), asset);
         if rows.is_empty() {
-             println!("    ⚠️  DataLoader: Nenhum dado encontrado para '{}' após a consulta.", asset);
-             // Retornar um vetor vazio é aceitável, o chamador verifica isso.
+            println!("⚠️ [DataLoader] No data found for '{}'.", asset);
         }
 
         let mut records = Vec::new();
@@ -77,73 +78,43 @@ impl<'a> DataLoader<'a> {
                         volume: row.get(5),
                         variation: row.get(6),
                     });
-                     // Printa amostra dos primeiros registros para debug
-                     if i < 3 {
-                         let r = records.last().unwrap();
-                         println!("      Dado amostra {}: {} - Abertura: {}, Fechamento: {}", i+1, r.date, r.opening, r.closing);
-                     }
+                    if i < 3 {
+                        let r = records.last().unwrap();
+                        println!(
+                            "📋 [DataLoader] Sample data {}: {} - Open: {}, Close: {}",
+                            i + 1,
+                            r.date,
+                            r.opening,
+                            r.closing
+                        );
+                    }
                 }
                 Err(e) => {
-                    let err_msg = format!("Erro ao parsear data '{}' para o ativo {}: {}", row.get::<_, &str>(0), asset, e);
-                    eprintln!("    ❌ DataLoader Erro: {}", err_msg);
+                    let err_msg = format!("Error parsing date '{}' for {}: {}", row.get::<_, &str>(0), asset, e);
+                    println!("❌ [DataLoader] Error: {}", err_msg);
                     info!("{}", err_msg);
-                    // Em vez de falhar todo o processo, podemos pular registros inválidos
-                    // ou parar se for um problema crítico. Aqui, vamos retornar um erro.
-                    return Err(TrainingError::DataProcessing(e.to_string()));
+                    return Err(TrainingError::DataProcessing(err_msg));
                 }
             }
         }
 
-        println!("    ✅ DataLoader: {} registros processados com sucesso para '{}'", records.len(), asset);
-        info!("Sucesso: Carregados {} registros para o ativo {}", records.len(), asset);
+        println!("✅ [DataLoader] Processed {} records for '{}'", records.len(), asset);
+        info!("Success: Loaded {} records for {}", records.len(), asset);
         Ok(records)
     }
 
-    // NOVO: Carrega uma lista de todos os ativos únicos presentes na tabela
-    pub fn load_all_assets(&mut self) -> Result<Vec<String>, TrainingError> {
-        println!("  📋 DataLoader: Carregando lista de todos os ativos...");
-        let query = "SELECT DISTINCT asset FROM stock_records";
-        let rows = self.client.query(query, &[])
-            .map_err(|e| {
-                let err_msg = format!("Erro ao carregar lista de ativos: {}", e);
-                eprintln!("  ❌ DataLoader Erro: {}", err_msg);
-                info!("{}", err_msg);
-                TrainingError::DatabaseError(e.to_string())
-            })?;
-
-        let assets: Vec<String> = rows.iter()
-            .map(|row| row.get(0))
-            .collect();
-
-        println!("  ✅ DataLoader: Encontrados {} ativos únicos", assets.len());
-        if assets.is_empty() {
-            println!("  ⚠️  DataLoader: Nenhum ativo encontrado no banco de dados.");
-        } else {
-             println!("  📋 DataLoader: Primeiros 5 ativos encontrados: {:?}", &assets[..std::cmp::min(5, assets.len())]);
-        }
-        info!("Sucesso: Encontrados {} ativos únicos", assets.len());
-        Ok(assets)
-    }
-
-
-    // Cria sequências de dados para treinamento a partir dos registros
     pub fn create_sequences(
-        &self,
+        &mut self,
         records: &[StockRecord],
         seq_length: usize,
     ) -> Result<(Vec<Array2<f32>>, Vec<f32>, FeatureStats), TrainingError> {
-        println!("    🔧 Criando sequências com comprimento {} para {} registros...", seq_length, records.len());
-        // Verifica se há dados suficientes
-        if records.len() <= seq_length {
-            let err_msg = format!("Dados insuficientes: {} registros, necessário mais que {}", records.len(), seq_length);
-            println!("    ❌ {}", err_msg);
+        println!("🔧 [DataLoader] Creating sequences with length {} for {} records", seq_length, records.len());
+        if records.len() < seq_length + 1 {
+            let err_msg = format!("Not enough records ({}) for sequence length {}", records.len(), seq_length);
+            println!("❌ [DataLoader] {}", err_msg);
             return Err(TrainingError::DataProcessing(err_msg));
         }
 
-        // Extrai todas as features em um vetor plano
-        let features: Vec<f32> = records.iter()
-            .flat_map(|r| vec![r.opening, r.closing, r.high, r.low, r.volume, r.variation])
-            .collect();
         let feature_names = vec![
             "opening".to_string(),
             "closing".to_string(),
@@ -153,96 +124,77 @@ impl<'a> DataLoader<'a> {
             "variation".to_string(),
         ];
         let num_features = feature_names.len();
+        println!("📊 [DataLoader] Number of features: {}", num_features);
 
-        // Verifica consistência dos dados
-        if features.len() % num_features != 0 {
-            let err_msg = format!("Número incorreto de features: {} (deve ser múltiplo de {})", features.len(), num_features);
-            println!("    ❌ {}", err_msg);
-            return Err(TrainingError::DataProcessing(err_msg));
+        let mut feature_matrix = Array2::zeros((records.len(), num_features));
+        for (i, record) in records.iter().enumerate() {
+            feature_matrix[[i, 0]] = record.opening;
+            feature_matrix[[i, 1]] = record.closing;
+            feature_matrix[[i, 2]] = record.high;
+            feature_matrix[[i, 3]] = record.low;
+            feature_matrix[[i, 4]] = record.volume;
+            feature_matrix[[i, 5]] = record.variation;
         }
 
-        // Cria a matriz de features
-        let feature_matrix = Array2::from_shape_vec((records.len(), num_features), features)
-            .map_err(|e| {
-                let err_msg = format!("Failed to create feature matrix: {}", e);
-                println!("    ❌ {}", err_msg);
-                info!("Erro ao criar matriz de features: {}", e);
-                TrainingError::DataProcessing(err_msg)
-            })?;
-
-        println!("    ✅ Matriz de features criada: {:?} (linhas x colunas)", feature_matrix.dim());
-
-        // Calcula as médias das features
         let feature_means = match feature_matrix.mean_axis(Axis(0)) {
             Some(means) => {
                 let means_vec = means.to_vec();
-                println!("    📊 Médias das features calculadas: {:?}", means_vec);
+                println!("📊 [DataLoader] Feature means: {:?}", means_vec);
                 means_vec
-            },
+            }
             None => {
-                let msg = format!("Aviso: Nenhuma média calculada, usando zeros para {} features", num_features);
-                println!("    ⚠️  {}", msg);
+                let msg = format!("Warning: No means calculated, using zeros for {} features", num_features);
+                println!("⚠️ [DataLoader] {}", msg);
                 info!("{}", msg);
                 Array1::zeros(num_features).to_vec()
-            },
+            }
         };
 
-        // Calcula os desvios padrão das features (CORRIGIDO)
-        // std_axis retorna diretamente o Array, não um Option
         let feature_stds = feature_matrix.std_axis(Axis(0), 0.0).to_vec();
-        println!("    📊 Desvios padrão das features calculados: {:?}", feature_stds);
+        println!("📊 [DataLoader] Feature standard deviations: {:?}", feature_stds);
 
-        // Extrai estatísticas específicas do preço de fechamento
-        let closing_mean = feature_means[num_features - 1]; // Assumindo 'closing' é a última
-        let closing_std = feature_stds[num_features - 1];
-        println!("    📊 Estatísticas do Fechamento - Média: {:.4}, Desvio Padrão: {:.4}", closing_mean, closing_std);
+        let closing_mean = feature_means[1];
+        let closing_std = feature_stds[1];
+        println!(
+            "📊 [DataLoader] Closing stats - Mean: {:.4}, Std: {:.4}",
+            closing_mean, closing_std
+        );
 
-        // Verificação de segurança para desvio padrão
         if closing_std.abs() < 1e-8 {
-            let err_msg = "Desvio padrão do preço de fechamento é muito próximo de zero".to_string();
-            println!("    ❌ {}", err_msg);
+            let err_msg = "Closing price standard deviation is too close to zero".to_string();
+            println!("❌ [DataLoader] {}", err_msg);
             return Err(TrainingError::DataProcessing(err_msg));
         }
 
-        // Cria as sequências e targets
         let mut sequences = Vec::new();
         let mut targets = Vec::new();
         let num_sequences = records.len() - seq_length;
-        println!("    🔢 Número de sequências a serem criadas: {}", num_sequences);
+        println!("🔢 [DataLoader] Number of sequences to create: {}", num_sequences);
 
         for i in 0..num_sequences {
             let seq_slice = feature_matrix.slice(ndarray::s![i..i + seq_length, ..]).to_owned();
             let target = records[i + seq_length].closing;
-            
-            // --- CORREÇÃO: Clonar para debug antes de mover ---
-            // Printa amostra das primeiras sequências para debug (antes de mover)
             if i < 2 {
-                 println!("      Sequência amostra {}: Target = {:.4}", i+1, target);
-                 // Clona o slice para debug (ou faz o debug antes de mover)
-                 let debug_slice = seq_slice.clone(); 
-                 // Printa o último passo da sequência para ver os inputs
-                 // Ajusta o acesso ao slice para pegar a última linha corretamente
-                 if debug_slice.dim().0 > 0 { // Verifica se há linhas
-                    let last_row_index = debug_slice.dim().0 - 1;
-                    let last_step_data = debug_slice.slice(ndarray::s![last_row_index, ..]).to_vec();
-                    // Garante que pegamos apenas os dados das features
+                println!("📋 [DataLoader] Sample sequence {}: Target = {:.4}", i + 1, target);
+                if seq_slice.dim().0 > 0 {
+                    let last_step_data = seq_slice.slice(ndarray::s![seq_slice.dim().0 - 1, ..]).to_vec();
                     if last_step_data.len() >= num_features {
-                        let last_step_features: Vec<f32> = last_step_data[0..num_features].to_vec();
-                        println!("        Último passo da sequência {}: {:?}", i+1, last_step_features);
+                        println!(
+                            "📋 [DataLoader] Last step of sequence {}: {:?}",
+                            i + 1,
+                            &last_step_data[..num_features]
+                        );
                     } else {
-                         println!("        ⚠️  Dados insuficientes no último passo da sequência {}", i+1);
+                        println!("⚠️ [DataLoader] Insufficient data in last step of sequence {}", i + 1);
                     }
-                 } else {
-                      println!("        ⚠️  Sequência {} está vazia", i+1);
-                 }
+                } else {
+                    println!("⚠️ [DataLoader] Sequence {} is empty", i + 1);
+                }
             }
-            // --- FIM CORREÇÃO ---
-            
-            sequences.push(seq_slice); // Move o seq_slice original para o vetor
+            sequences.push(seq_slice);
             targets.push(target);
         }
 
-        // Cria o objeto de estatísticas
         let feature_stats = FeatureStats {
             feature_means,
             feature_stds,
@@ -251,8 +203,21 @@ impl<'a> DataLoader<'a> {
             closing_std,
         };
 
-        println!("    ✅ Criadas {} sequências com comprimento {}", sequences.len(), seq_length);
-        info!("Sucesso: Criadas {} sequências com comprimento {}", sequences.len(), seq_length);
+        println!(
+            "✅ [DataLoader] Created {} sequences of length {}",
+            sequences.len(),
+            seq_length
+        );
+        info!("Success: Created {} sequences", sequences.len());
         Ok((sequences, targets, feature_stats))
     }
+}
+
+pub fn connect_db(db_url: &str) -> Result<Client, TrainingError> {
+    println!("🔧 [Data] Connecting to database...");
+    let mut client = Client::connect(db_url, NoTls)?;
+    println!("🔍 [Data] Ensuring database tables exist...");
+    ensure_tables_exist(&mut client)?;
+    println!("✅ [Data] Database connection established and tables verified.");
+    Ok(client)
 }
