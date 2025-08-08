@@ -2,6 +2,13 @@
 // file: src/neural/storage.rs
 // Model and metrics storage logic for PostgreSQL
 
+
+
+
+// projeto: lstmrnntrain
+// file: src/neural/storage.rs
+// Model and metrics storage logic for PostgreSQL
+
 use postgres::Client;
 use crate::neural::model::ModelWeights;
 use crate::neural::metrics::TrainingMetrics;
@@ -14,10 +21,11 @@ pub fn save_model_to_postgres(
 ) -> Result<(), TrainingError> {
     println!("💾 [Storage] Saving model weights and metrics to PostgreSQL");
     
-    let transaction = client.transaction()?;
+    let mut transaction = client.transaction()?;
     
-    // Serialize weights
-    let weights_data = bincode::serialize(weights)?;
+    // Serialize weights using serde_json as a fallback for complex structures
+    let weights_data = serde_json::to_string(weights)
+        .map_err(|e| TrainingError::Serialization(format!("Failed to serialize weights: {}", e)))?;
     
     // Insert model weights
     let weights_query = "
@@ -104,9 +112,10 @@ pub fn load_model_from_postgres(
             format!("No model found for asset '{}' and type '{}': {}", asset, model_type, e)
         ))?;
     
-    // Deserialize weights
-    let weights_data: Vec<u8> = weights_row.get("weights_data");
-    let mut weights: ModelWeights = bincode::deserialize(&weights_data)?;
+    // Deserialize weights using serde_json
+    let weights_data: String = weights_row.get("weights_data");
+    let mut weights: ModelWeights = serde_json::from_str(&weights_data)
+        .map_err(|e| TrainingError::Serialization(format!("Failed to deserialize weights: {}", e)))?;
     
     // Update metadata from database
     weights.closing_mean = weights_row.get("closing_mean");
@@ -230,7 +239,7 @@ pub fn delete_old_models(
 ) -> Result<usize, TrainingError> {
     println!("🧹 [Storage] Cleaning up old models for asset: {}", asset);
     
-    let transaction = client.transaction()?;
+    let mut transaction = client.transaction()?;
     
     // Get models to keep (best N by validation loss)
     let keep_query = "
@@ -246,38 +255,54 @@ pub fn delete_old_models(
         LIMIT $2
     ";
     
-    let keep_rows = transaction.query(keep_query, &[&asset, &(keep_best_n as i32)])?;
-    let keep_weight_ids: Vec<i32> = keep_rows.iter().map(|row| row.get("weight_id")).collect();
-    let keep_metric_ids: Vec<i32> = keep_rows.iter().map(|row| row.get("metric_id")).collect();
+     
     
+   
+    
+ 
+
+    let keep_rows = transaction.query(keep_query, &[&asset, &(keep_best_n as i32)])?;
+    let _keep_weight_ids: Vec<i32> = keep_rows.iter().map(|row| row.get("weight_id")).collect();
+    let _keep_metric_ids: Vec<i32> = keep_rows.iter().map(|row| row.get("metric_id")).collect(); // Prefixed with underscore
+
     let mut deleted_count = 0;
     
     if !keep_weight_ids.is_empty() {
-        // Delete old weights
-        let delete_weights_query = format!(
-            "DELETE FROM model_weights WHERE asset = $1 AND id NOT IN ({})",
-            keep_weight_ids.iter().map(|_| "?").collect::<Vec<_>>().join(",")
-        ).replace("?", &(1..=keep_weight_ids.len()).map(|i| format!("${}", i + 1)).collect::<Vec<_>>().join(","));
+        // Delete old weights - using a simpler approach
+        let delete_weights_query = "
+            DELETE FROM model_weights 
+            WHERE asset = $1 AND id NOT IN (
+                SELECT w.id FROM model_weights w
+                JOIN training_metrics m ON (
+                    w.asset = m.asset AND 
+                    w.model_type = m.model_type AND 
+                    w.epoch = m.epoch
+                )
+                WHERE w.asset = $1
+                ORDER BY m.val_loss ASC
+                LIMIT $2
+            )
+        ";
         
-        let mut params: Vec<&(dyn postgres::types::ToSql + Sync)> = vec![&asset];
-        for id in &keep_weight_ids {
-            params.push(id);
-        }
-        
-        deleted_count += transaction.execute(&delete_weights_query, &params)?;
+        deleted_count += transaction.execute(delete_weights_query, &[&asset, &(keep_best_n as i32)])?;
         
         // Delete old metrics
-        let delete_metrics_query = format!(
-            "DELETE FROM training_metrics WHERE asset = $1 AND id NOT IN ({})",
-            keep_metric_ids.iter().map(|_| "?").collect::<Vec<_>>().join(",")
-        ).replace("?", &(1..=keep_metric_ids.len()).map(|i| format!("${}", i + 1)).collect::<Vec<_>>().join(","));
+        let delete_metrics_query = "
+            DELETE FROM training_metrics 
+            WHERE asset = $1 AND id NOT IN (
+                SELECT m.id FROM training_metrics m
+                JOIN model_weights w ON (
+                    w.asset = m.asset AND 
+                    w.model_type = m.model_type AND 
+                    w.epoch = m.epoch
+                )
+                WHERE m.asset = $1
+                ORDER BY m.val_loss ASC
+                LIMIT $2
+            )
+        ";
         
-        let mut params: Vec<&(dyn postgres::types::ToSql + Sync)> = vec![&asset];
-        for id in &keep_metric_ids {
-            params.push(id);
-        }
-        
-        deleted_count += transaction.execute(&delete_metrics_query, &params)?;
+        deleted_count += transaction.execute(delete_metrics_query, &[&asset, &(keep_best_n as i32)])?;
     }
     
     transaction.commit()?;
@@ -376,12 +401,12 @@ mod tests {
             timestamp: Utc::now().to_rfc3339(),
         };
         
-        // Test serialization
-        let serialized = bincode::serialize(&weights);
+        // Test serialization with serde_json
+        let serialized = serde_json::to_string(&weights);
         assert!(serialized.is_ok());
         
         // Test deserialization
-        let deserialized: Result<ModelWeights, _> = bincode::deserialize(&serialized.unwrap());
+        let deserialized: Result<ModelWeights, _> = serde_json::from_str(&serialized.unwrap());
         assert!(deserialized.is_ok());
         
         let restored_weights = deserialized.unwrap();

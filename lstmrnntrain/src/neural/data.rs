@@ -2,11 +2,13 @@
 // file: src/neural/data.rs
 // Data loading and preprocessing functionality
 
+
+
+
 use chrono::{DateTime, Utc};
-use ndarray::{Array1, Array2};
+use ndarray::{Array1, Array2, Axis, Dim};
 use postgres::{Client, NoTls, Row};
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 use crate::neural::utils::TrainingError;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -59,11 +61,12 @@ impl DataLoader {
         ";
         
         let rows = self.get_client().query(query, &[])?;
+        println!("DEBUG: Raw rows: {:?}", rows);
         let assets: Vec<String> = rows.iter()
             .map(|row| row.get::<_, String>(0))
             .collect();
         
-        println!("✅ [DataLoader] Found {} unique assets", assets.len());
+        println!("✅ [DataLoader] Found {} unique assets: {:?}", assets.len(), assets);
         Ok(assets)
     }
 
@@ -73,11 +76,11 @@ impl DataLoader {
         let query = "
             SELECT id, asset, date, opening, high, low, closing, adj_closing, volume, created_at
             FROM stock_data 
-            WHERE asset = $1 
+            WHERE asset LIKE $1 
             ORDER BY date ASC
         ";
         
-        let rows = self.get_client().query(query, &[&asset])?;
+        let rows = self.get_client().query(query, &[&format!("{}%", asset)])?;
         let records: Result<Vec<StockRecord>, _> = rows.iter()
             .map(|row| self.row_to_stock_record(row))
             .collect();
@@ -87,7 +90,7 @@ impl DataLoader {
         
         if records.is_empty() {
             return Err(TrainingError::DataProcessing(
-                format!("No data found for asset: {}", asset)
+                format!("No data found for asset pattern: {}%", asset)
             ));
         }
 
@@ -123,24 +126,19 @@ impl DataLoader {
 
         println!("🔧 [DataLoader] Creating sequences with length: {}", seq_length);
         
-        // Extract features and compute statistics
         let features = self.extract_features(records)?;
         let feature_stats = self.compute_feature_stats(&features, records)?;
         
-        // Create sequences
         let mut sequences = Vec::new();
         let mut targets = Vec::new();
 
         for i in 0..records.len() - seq_length {
-            // Create sequence of features
             let mut sequence = Array2::zeros((seq_length, features.ncols()));
             for t in 0..seq_length {
                 sequence.slice_mut(ndarray::s![t, ..])
                     .assign(&features.slice(ndarray::s![i + t, ..]));
             }
             sequences.push(sequence);
-            
-            // Target is the next closing price
             targets.push(records[i + seq_length].closing);
         }
 
@@ -150,14 +148,12 @@ impl DataLoader {
 
     fn extract_features(&self, records: &[StockRecord]) -> Result<Array2<f32>, TrainingError> {
         let n_records = records.len();
-        let n_features = 8; // Basic features + technical indicators
+        let n_features = 8;
         
         let mut features = Array2::zeros((n_records, n_features));
         
         for (i, record) in records.iter().enumerate() {
             let mut feature_idx = 0;
-            
-            // Basic price features
             features[[i, feature_idx]] = record.opening;
             feature_idx += 1;
             features[[i, feature_idx]] = record.high;
@@ -169,25 +165,21 @@ impl DataLoader {
             features[[i, feature_idx]] = record.volume as f32;
             feature_idx += 1;
             
-            // Price change (if not first record)
             if i > 0 {
                 let price_change = record.closing - records[i-1].closing;
                 features[[i, feature_idx]] = price_change;
             }
             feature_idx += 1;
             
-            // High-Low spread
             features[[i, feature_idx]] = record.high - record.low;
             feature_idx += 1;
             
-            // Opening gap
             if i > 0 {
                 let gap = record.opening - records[i-1].closing;
                 features[[i, feature_idx]] = gap;
             }
         }
 
-        // Add technical indicators
         self.add_technical_indicators(&mut features, records)?;
         
         Ok(features)
@@ -199,37 +191,36 @@ impl DataLoader {
         records: &[StockRecord]
     ) -> Result<(), TrainingError> {
         let n_records = records.len();
-        
-        // Simple moving averages
         let window_sizes = [5, 10, 20];
         
+        let mut new_features = features.to_owned();
         for &window in &window_sizes {
+            let mut sma_column = Array1::zeros(n_records);
             for i in window..n_records {
                 let sum: f32 = records[i-window+1..=i]
                     .iter()
                     .map(|r| r.closing)
                     .sum();
-                let sma = sum / window as f32;
-                
-                // You could expand features array to include these
-                // For now, we'll modify existing features or use ratios
-                if features.ncols() > 7 {
-                    // Store ratio of current price to SMA
-                    let ratio = records[i].closing / sma;
-                    // This is a simplified approach - you might want to expand the feature matrix
-                }
+                sma_column[i] = sum / window as f32;
             }
+            let sma_column_2d = sma_column
+                .to_shape((n_records, 1))
+                .map_err(|e| TrainingError::Shape(e.to_string()))?;
+            new_features = ndarray::stack(Axis(1), &[new_features.view(), sma_column_2d.view()])
+                .map_err(|e| TrainingError::Shape(e.to_string()))?
+                .into_dimensionality::<Dim<[usize; 2]>>()
+                .map_err(|e| TrainingError::Shape(e.to_string()))?;
         }
 
-        // RSI calculation (simplified)
-        self.calculate_rsi(features, records, 14)?;
-
+        self.calculate_rsi(&mut new_features, records, 14)?;
+        *features = new_features;
+        
         Ok(())
     }
 
     fn calculate_rsi(
         &self,
-        _features: &mut Array2<f32>,
+        features: &mut Array2<f32>,
         records: &[StockRecord],
         period: usize,
     ) -> Result<(), TrainingError> {
@@ -237,29 +228,39 @@ impl DataLoader {
             return Ok(());
         }
 
-        for i in period..records.len() {
+        let n_records = records.len();
+        let mut rsi_column = Array1::zeros(n_records);
+        
+        for i in period..n_records {
+            let slice = &records[i-period..=i];
             let mut gains = 0.0;
             let mut losses = 0.0;
+            let mut count = 0;
             
-            for j in i-period+1..=i {
-                let change = records[j].closing - records[j-1].closing;
-                if change > 0.0 {
-                    gains += change;
+            for j in 1..slice.len() {
+                let diff = slice[j].closing - slice[j-1].closing;
+                if diff > 0.0 {
+                    gains += diff;
                 } else {
-                    losses -= change;
+                    losses -= diff;
                 }
+                count += 1;
             }
             
-            let avg_gain = gains / period as f32;
-            let avg_loss = losses / period as f32;
-            
-            let rs = if avg_loss != 0.0 { avg_gain / avg_loss } else { 0.0 };
-            let _rsi = 100.0 - (100.0 / (1.0 + rs));
-            
-            // Store RSI in features if you have space
-            // features[[i, rsi_column]] = rsi;
+            let avg_gain = if count > 0 { gains / count as f32 } else { 0.0 };
+            let avg_loss = if count > 0 { losses / count as f32 } else { 1e-10 };
+            let rs = avg_gain / avg_loss;
+            rsi_column[i] = 100.0 - (100.0 / (1.0 + rs));
         }
-
+        
+        let rsi_column_2d = rsi_column
+            .to_shape((n_records, 1))
+            .map_err(|e| TrainingError::Shape(e.to_string()))?;
+        *features = ndarray::stack(Axis(1), &[features.view(), rsi_column_2d.view()])
+            .map_err(|e| TrainingError::Shape(e.to_string()))?
+            .into_dimensionality::<Dim<[usize; 2]>>()
+            .map_err(|e| TrainingError::Shape(e.to_string()))?;
+        
         Ok(())
     }
 
@@ -268,30 +269,38 @@ impl DataLoader {
         features: &Array2<f32>,
         records: &[StockRecord],
     ) -> Result<FeatureStats, TrainingError> {
-        let feature_names = vec![
+        let n_records = records.len();
+        let n_features = features.ncols();
+        
+        let mut feature_names = vec![
             "opening".to_string(),
             "high".to_string(),
             "low".to_string(),
             "closing".to_string(),
             "volume".to_string(),
             "price_change".to_string(),
-            "hl_spread".to_string(),
-            "opening_gap".to_string(),
+            "high_low_diff".to_string(),
+            "gap".to_string(),
+            "sma_5".to_string(),
+            "sma_10".to_string(),
+            "sma_20".to_string(),
+            "rsi_14".to_string(),
         ];
-
+        
+        feature_names.truncate(n_features);
+        
         let mut feature_means = Vec::new();
         let mut feature_stds = Vec::new();
         let mut min_values = Vec::new();
         let mut max_values = Vec::new();
-
-        for col in 0..features.ncols() {
+        
+        for col in 0..n_features {
             let column = features.column(col);
-            let mean = column.mean().unwrap_or(0.0);
+            let mean = column.sum() / n_records as f32;
             let variance = column.iter()
                 .map(|&x| (x - mean).powi(2))
-                .sum::<f32>() / column.len() as f32;
+                .sum::<f32>() / n_records as f32;
             let std = variance.sqrt().max(1e-8);
-            
             let min_val = column.iter().fold(f32::INFINITY, |a, &b| a.min(b));
             let max_val = column.iter().fold(f32::NEG_INFINITY, |a, &b| a.max(b));
 
@@ -301,12 +310,10 @@ impl DataLoader {
             max_values.push(max_val);
         }
 
-        // Compute closing price statistics
-        let closing_prices: Vec<f32> = records.iter().map(|r| r.closing).collect();
-        let closing_mean = closing_prices.iter().sum::<f32>() / closing_prices.len() as f32;
-        let closing_variance = closing_prices.iter()
-            .map(|&x| (x - closing_mean).powi(2))
-            .sum::<f32>() / closing_prices.len() as f32;
+        let closing_mean = records.iter().map(|r| r.closing).sum::<f32>() / n_records as f32;
+        let closing_variance = records.iter()
+            .map(|r| (r.closing - closing_mean).powi(2))
+            .sum::<f32>() / n_records as f32;
         let closing_std = closing_variance.sqrt().max(1e-8);
 
         println!("📊 [DataLoader] Feature statistics computed:");
@@ -330,7 +337,6 @@ impl DataLoader {
         seq_length: usize,
         feature_stats: &FeatureStats,
     ) -> Result<Array2<f64>, TrainingError> {
-        // Load the most recent data for prediction
         let query = "
             SELECT id, asset, date, opening, high, low, closing, adj_closing, volume, created_at
             FROM stock_data 
@@ -344,7 +350,6 @@ impl DataLoader {
             .map(|row| self.row_to_stock_record(row))
             .collect::<Result<Vec<_>, _>>()?;
 
-        // Reverse to get chronological order
         records.reverse();
 
         if records.len() < seq_length {
@@ -354,7 +359,6 @@ impl DataLoader {
             ));
         }
 
-        // Extract features and normalize
         let features = self.extract_features(&records)?;
         let mut normalized_features = Array2::zeros((seq_length, features.ncols()));
 
@@ -383,7 +387,6 @@ pub fn connect_db(db_url: &str) -> Result<Client, TrainingError> {
 pub fn ensure_tables_exist(client: &mut Client) -> Result<(), TrainingError> {
     println!("🔧 [Database] Ensuring required tables exist");
 
-    // Create stock_data table if it doesn't exist
     let stock_data_sql = "
         CREATE TABLE IF NOT EXISTS stock_data (
             id SERIAL PRIMARY KEY,
@@ -405,13 +408,12 @@ pub fn ensure_tables_exist(client: &mut Client) -> Result<(), TrainingError> {
 
     client.batch_execute(stock_data_sql)?;
 
-    // Create model_weights table
     let model_weights_sql = "
         CREATE TABLE IF NOT EXISTS model_weights (
             id SERIAL PRIMARY KEY,
             asset VARCHAR(100) NOT NULL,
             model_type VARCHAR(20) NOT NULL,
-            weights_data BYTEA NOT NULL,
+            weights_data TEXT NOT NULL,
             closing_mean DOUBLE PRECISION NOT NULL,
             closing_std DOUBLE PRECISION NOT NULL,
             seq_length INTEGER NOT NULL,
@@ -428,7 +430,6 @@ pub fn ensure_tables_exist(client: &mut Client) -> Result<(), TrainingError> {
 
     client.batch_execute(model_weights_sql)?;
 
-    // Create training_metrics table
     let metrics_sql = "
         CREATE TABLE IF NOT EXISTS training_metrics (
             id SERIAL PRIMARY KEY,
@@ -491,8 +492,6 @@ mod tests {
             },
         ];
 
-        // This would require a proper DataLoader instance with a database connection
-        // For now, this is a structural test
         assert_eq!(records.len(), 2);
         assert_eq!(records[0].asset, "TEST");
     }

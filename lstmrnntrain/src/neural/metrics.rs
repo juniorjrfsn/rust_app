@@ -2,6 +2,9 @@
 // file: src/neural/metrics.rs
 // Training metrics definitions and calculations
 
+
+
+
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
@@ -168,7 +171,7 @@ pub fn calculate_regression_metrics(predictions: &[f64], targets: &[f64]) -> Reg
     // Additional metrics
     let max_error = predictions.iter().zip(targets.iter())
         .map(|(p, t)| (p - t).abs())
-        .fold(0.0, |acc, x| acc.max(x));
+        .fold(0.0_f64, |acc, x| acc.max(x));
 
     let median_ae = {
         let mut abs_errors: Vec<f64> = predictions.iter().zip(targets.iter())
@@ -217,27 +220,24 @@ impl RegressionMetrics {
         println!("   ├── MAE: {:.6}", self.mae);
         println!("   ├── MAPE: {:.2}%", self.mape);
         println!("   ├── Max Error: {:.6}", self.max_error);
-        println!("   ├── Median AE: {:.6}", self.median_ae);
-        println!("   ├── Direction Acc: {:.2}%", self.directional_accuracy * 100.0);
         println!("   └── R²: {:.6}", self.r_squared);
     }
 
-    pub fn is_better_than(&self, other: &RegressionMetrics, primary_metric: &str) -> bool {
-        match primary_metric.to_lowercase().as_str() {
+    pub fn is_better_than(&self, other: &Self, metric: &str) -> bool {
+        match metric.to_lowercase().as_str() {
             "rmse" => self.rmse < other.rmse,
             "mae" => self.mae < other.mae,
             "mape" => self.mape < other.mape,
-            "r2" | "r_squared" => self.r_squared > other.r_squared,
             "directional_accuracy" => self.directional_accuracy > other.directional_accuracy,
+            "r_squared" | "r2" => self.r_squared > other.r_squared,
             _ => self.rmse < other.rmse, // Default to RMSE
         }
     }
 }
 
-/// Performance comparison utilities
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct ModelComparison {
-    pub models: HashMap<String, Vec<RegressionMetrics>>,
+    models: HashMap<String, Vec<RegressionMetrics>>,
 }
 
 impl ModelComparison {
@@ -251,38 +251,35 @@ impl ModelComparison {
         self.models.entry(model_name).or_insert_with(Vec::new).push(metrics);
     }
 
-    pub fn compare_models(&self, metric: &str) {
-        println!("🏆 [Comparison] Model Performance Comparison ({})", metric);
+    pub fn print_comparison(&self, metric: &str) {
+        println!("📊 [Comparison] Model Performance Comparison ({})", metric);
         println!("   {:<15} {:<12} {:<12} {:<12}", "Model", "Best", "Average", "Std Dev");
-        println!("   {}", "─".repeat(55));
 
-        let mut model_stats: Vec<(String, f64, f64, f64)> = Vec::new();
-
+        let mut model_stats = Vec::new();
         for (model_name, metrics_list) in &self.models {
-            if metrics_list.is_empty() { continue; }
-
-            let values: Vec<f64> = metrics_list.iter().map(|m| match metric.to_lowercase().as_str() {
-                "rmse" => m.rmse,
-                "mae" => m.mae,
-                "mape" => m.mape,
-                "r2" | "r_squared" => m.r_squared,
-                "directional_accuracy" => m.directional_accuracy,
-                _ => m.rmse,
-            }).collect();
-
-            let best = if metric.to_lowercase().as_str() == "r2" || 
-                         metric.to_lowercase().as_str() == "r_squared" ||
-                         metric.to_lowercase().as_str() == "directional_accuracy" {
-                values.iter().fold(f64::NEG_INFINITY, |a, &b| a.max(b))
-            } else {
-                values.iter().fold(f64::INFINITY, |a, &b| a.min(b))
+            let values = match metric.to_lowercase().as_str() {
+                "rmse" => metrics_list.iter().map(|m| m.rmse).collect::<Vec<f64>>(),
+                "mae" => metrics_list.iter().map(|m| m.mae).collect::<Vec<f64>>(),
+                "mape" => metrics_list.iter().map(|m| m.mape).collect::<Vec<f64>>(),
+                "directional_accuracy" => metrics_list.iter().map(|m| m.directional_accuracy).collect::<Vec<f64>>(),
+                "r_squared" | "r2" => metrics_list.iter().map(|m| m.r_squared).collect::<Vec<f64>>(),
+                _ => metrics_list.iter().map(|m| m.rmse).collect::<Vec<f64>>(),
             };
 
-            let average = values.iter().sum::<f64>() / values.len() as f64;
-            let variance = values.iter().map(|x| (x - average).powi(2)).sum::<f64>() / values.len() as f64;
-            let std_dev = variance.sqrt();
+            if !values.is_empty() {
+                let best = if metric.to_lowercase().as_str() == "r_squared" || 
+                           metric.to_lowercase().as_str() == "directional_accuracy" {
+                    values.iter().fold(f64::NEG_INFINITY, |a, &b| a.max(b))
+                } else {
+                    values.iter().fold(f64::INFINITY, |a, &b| a.min(b))
+                };
 
-            model_stats.push((model_name.clone(), best, average, std_dev));
+                let average = values.iter().sum::<f64>() / values.len() as f64;
+                let variance = values.iter().map(|x| (x - average).powi(2)).sum::<f64>() / values.len() as f64;
+                let std_dev = variance.sqrt();
+
+                model_stats.push((model_name.clone(), best, average, std_dev));
+            }
         }
 
         // Sort by best performance
@@ -415,7 +412,6 @@ mod tests {
     fn test_early_stopping() {
         let mut early_stopping = EarlyStopping::new(3, 0.001, "min".to_string());
         
-        // Should not stop initially
         assert!(!early_stopping.should_stop(1.0, 1));
         assert!(!early_stopping.should_stop(0.9, 2)); // Improvement
         assert!(!early_stopping.should_stop(0.91, 3)); // No significant improvement

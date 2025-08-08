@@ -2,17 +2,15 @@
 // file: src/main.rs
 // Main entry point for multi-model deep learning training system
 
-
-
-// projeto: lstmrnntrain
-// file: src/main.rs
-// Sistema principal de treinamento de redes neurais profundas para previsão financeira
+ 
+ 
+ 
 
 mod neural;
 
 use clap::Parser;
 use chrono::Utc;
-use log::{info, warn, error, debug};
+use log::{info, error, debug};
 use ndarray::Array2;
 use std::time::Instant;
 
@@ -22,7 +20,7 @@ use crate::neural::model::{ModelType, NeuralNetwork};
 use crate::neural::storage::save_model_to_postgres;
 use crate::neural::utils::{AdamOptimizer, TrainingError, LearningRateScheduler};
 
-/// Limpa e normaliza nomes de ativos removendo sufixos comuns
+/// Cleans and normalizes asset names by removing common suffixes
 fn clean_asset_name(asset: &str) -> String {
     let cleaned = asset
         .replace(" Dados Históricos", "")
@@ -34,7 +32,7 @@ fn clean_asset_name(asset: &str) -> String {
         .trim()
         .to_string();
     
-    // Limitar a 80 caracteres para compatibilidade com banco
+    // Limit to 80 characters for database compatibility
     if cleaned.len() > 80 {
         cleaned[..80].to_string()
     } else {
@@ -47,79 +45,79 @@ fn clean_asset_name(asset: &str) -> String {
     name = "lstmrnntrain",
     author = "AI Trading Systems",
     version = "2.0.0",
-    about = "Sistema de treinamento de redes neurais para previsão de preços de ativos financeiros",
-    long_about = "Sistema avançado que suporta múltiplos modelos (LSTM, RNN, MLP, CNN) para análise e previsão de séries temporais financeiras com otimizações de performance e regularização."
+    about = "Neural network training system for financial asset price prediction",
+    long_about = "Advanced system supporting multiple models (LSTM, RNN, MLP, CNN) for financial time series analysis and prediction with performance optimizations and regularization."
 )]
 struct Cli {
-    /// Ativo específico para treinar (ex: PETR4, VALE3)
+    /// Specific asset to train (e.g., PETR4, VALE3)
     #[arg(long, default_value_t = String::from("PETR4"))]
     asset: String,
 
-    /// Treinar modelos para todos os ativos disponíveis
+    /// Train models for all available assets
     #[arg(long)]
     all_assets: bool,
 
-    /// Tipo de modelo de rede neural
+    /// Neural network model type
     #[arg(long, value_enum, default_value = "lstm")]
     model_type: ModelTypeArg,
 
-    /// Comprimento da sequência de entrada
-    #[arg(long, default_value_t = 40, help = "Número de dias históricos para predição")]
+    /// Input sequence length
+    #[arg(long, default_value_t = 40, help = "Number of historical days for prediction")]
     seq_length: usize,
 
-    /// Tamanho da camada oculta
-    #[arg(long, default_value_t = 128, help = "Número de neurônios nas camadas ocultas")]
+    /// Hidden layer size
+    #[arg(long, default_value_t = 128, help = "Number of neurons in hidden layers")]
     hidden_size: usize,
 
-    /// Número de camadas do modelo
-    #[arg(long, default_value_t = 3, help = "Número de camadas profundas")]
+    /// Number of model layers
+    #[arg(long, default_value_t = 3, help = "Number of deep layers")]
     num_layers: usize,
 
-    /// Número de épocas de treinamento
-    #[arg(long, default_value_t = 100, help = "Iterações completas sobre o dataset")]
+    /// Number of training epochs
+    #[arg(long, default_value_t = 100, help = "Complete iterations over the dataset")]
     epochs: usize,
 
-    /// Tamanho do lote para treinamento
-    #[arg(long, default_value_t = 64, help = "Número de amostras por lote")]
+    /// Batch size for training
+    #[arg(long, default_value_t = 64, help = "Number of samples per batch")]
     batch_size: usize,
 
-    /// Taxa de dropout para regularização
-    #[arg(long, default_value_t = 0.3, help = "Taxa de dropout (0.0-1.0)")]
+    /// Dropout rate for regularization
+    #[arg(long, default_value_t = 0.3, help = "Dropout rate (0.0-1.0)")]
     dropout_rate: f64,
 
-    /// Taxa de aprendizado inicial
-    #[arg(long, default_value_t = 0.001, help = "Learning rate para Adam optimizer")]
+    /// Initial learning rate
+    #[arg(long, default_value_t = 0.001, help = "Learning rate for Adam optimizer")]
     learning_rate: f64,
 
-    /// Peso da regularização L2
-    #[arg(long, default_value_t = 0.01, help = "Peso da regularização L2")]
+    /// L2 regularization weight
+    #[arg(long, default_value_t = 0.01, help = "L2 regularization weight")]
     l2_weight: f64,
 
-    /// Norma máxima para gradient clipping
-    #[arg(long, default_value_t = 1.0, help = "Máximo para gradient clipping")]
+    /// Maximum norm for gradient clipping
+    #[arg(long, default_value_t = 1.0, help = "Maximum norm for gradient clipping")]
     clip_norm: f64,
 
     /// Early stopping patience
-    #[arg(long, default_value_t = 15, help = "Épocas sem melhoria para parar")]
+    #[arg(long, default_value_t = 15, help = "Epochs without improvement to stop")]
     patience: usize,
 
-    /// Razão de divisão treino/validação
-    #[arg(long, default_value_t = 0.8, help = "Proporção dos dados para treinamento")]
+    /// Train/validation split ratio
+    #[arg(long, default_value_t = 0.8, help = "Proportion of data for training")]
     train_split: f64,
 
-    /// URL de conexão com PostgreSQL
+    /// PostgreSQL connection URL
     #[arg(long, default_value_t = String::from("postgresql://postgres:postgres@localhost:5432/rnn_db"))]
     db_url: String,
 
-    /// Modo verboso de logging
+    /// Verbose logging mode
     #[arg(long)]
     verbose: bool,
 
-    /// Salvar checkpoints periodicamente
-    #[arg(long, default_value_t = 10, help = "Frequência de salvamento (épocas)")]
+    /// Save checkpoints periodically
+    #[arg(long, default_value_t = 10, help = "Save frequency (epochs)")]
     save_freq: usize,
 
-    /// Usar scheduler de learning rate
+    /// Use learning rate scheduler
     #[arg(long)]
     use_scheduler: bool,
 }
@@ -146,36 +144,36 @@ impl From<ModelTypeArg> for ModelType {
 fn main() -> Result<(), TrainingError> {
     let cli = Cli::parse();
     
-    // Configurar logging
+    // Setup logging
     setup_logging(cli.verbose);
     
     let start_time = Instant::now();
     let model_type = ModelType::from(cli.model_type.clone());
     
-    info!("🚀 Sistema de Deep Learning iniciado");
-    info!("📊 Modelo: {:?} | Sequência: {} | Hidden: {} | Camadas: {}", 
+    info!("🚀 Deep Learning System started");
+    info!("📊 Model: {:?} | Sequence: {} | Hidden: {} | Layers: {}", 
           model_type, cli.seq_length, cli.hidden_size, cli.num_layers);
-    info!("🕐 Iniciado em: {}", Utc::now().format("%Y-%m-%d %H:%M:%S"));
+    info!("🕐 Started at: {}", Utc::now().format("%Y-%m-%d %H:%M:%S"));
 
-    // Verificar e configurar banco de dados
+    // Setup database
     setup_database(&cli.db_url)?;
 
     let result = if cli.all_assets {
         train_all_assets(&cli, model_type)
     } else {
         let clean_asset = clean_asset_name(&cli.asset);
-        info!("🎯 Treinando ativo único: {} (limpo: {})", cli.asset, clean_asset);
+        info!("🎯 Training single asset: {} (cleaned: {})", cli.asset, clean_asset);
         train_single_asset(&cli, &clean_asset, model_type)
     };
 
     let elapsed = start_time.elapsed();
     match result {
         Ok(_) => {
-            info!("✅ Treinamento concluído com sucesso em {:.2}s", elapsed.as_secs_f64());
-            info!("🏁 Finalizado em: {}", Utc::now().format("%Y-%m-%d %H:%M:%S"));
+            info!("✅ Training completed successfully in {:.2}s", elapsed.as_secs_f64());
+            info!("🏁 Finished at: {}", Utc::now().format("%Y-%m-%d %H:%M:%S"));
         }
         Err(e) => {
-            error!("❌ Erro durante treinamento: {}", e);
+            error!("❌ Error during training: {}", e);
             std::process::exit(1);
         }
     }
@@ -197,158 +195,117 @@ fn setup_logging(verbose: bool) {
 }
 
 fn setup_database(db_url: &str) -> Result<(), TrainingError> {
-    info!("🔧 Configurando banco de dados");
+    info!("🔧 Setting up database");
     let mut client = connect_db(db_url)?;
     ensure_tables_exist(&mut client)?;
-    info!("✅ Banco de dados configurado");
+    info!("✅ Database configured");
     Ok(())
 }
 
 fn train_all_assets(cli: &Cli, model_type: ModelType) -> Result<(), TrainingError> {
-    info!("🔄 Iniciando treinamento para todos os ativos");
+    info!("🔄 Starting training for all assets");
     
-    // Carregar lista de ativos
+    // Load list of assets
     let assets = {
         let mut client = connect_db(&cli.db_url)?;
         let mut loader = DataLoader::new(&mut client)?;
         loader.load_all_assets()?
     };
     
-    info!("📋 Encontrados {} ativos únicos", assets.len());
+    info!("📋 Found {} unique assets", assets.len());
     
     let mut successful_trains = 0;
     let mut failed_trains = 0;
     
     for (idx, asset) in assets.iter().enumerate() {
-        let clean_asset = clean_asset_name(asset);
-        info!("📌 Processando [{}/{}]: {} → {}", 
-              idx + 1, assets.len(), asset, clean_asset);
-        
-        match train_single_asset(cli, &clean_asset, model_type) {
-            Ok(_) => {
-                successful_trains += 1;
-                info!("✅ Sucesso para {}", clean_asset);
-            }
+        info!("🔄 Training asset {}/{}: {}", idx + 1, assets.len(), asset);
+        match train_single_asset(cli, asset, model_type) {
+            Ok(_) => successful_trains += 1,
             Err(e) => {
                 failed_trains += 1;
-                warn!("❌ Falha para {}: {}", clean_asset, e);
-                continue;
+                error!("❌ Failed training for asset {}: {}", asset, e);
             }
         }
     }
     
-    info!("📊 Resumo do treinamento:");
-    info!("   ├── Sucessos: {}", successful_trains);
-    info!("   ├── Falhas: {}", failed_trains);
-    info!("   └── Total: {}", assets.len());
-    
+    info!("✅ Training complete: {} successful, {} failed", successful_trains, failed_trains);
     Ok(())
 }
 
-fn train_single_asset(
-    cli: &Cli,
-    asset: &str,
-    model_type: ModelType,
-) -> Result<(), TrainingError> {
-    info!("🔧 Inicializando treinamento para: {}", asset);
+fn train_single_asset(cli: &Cli, asset: &str, model_type: ModelType) -> Result<(), TrainingError> {
     let training_start = Instant::now();
+    info!("📊 Starting training for asset: {}", asset);
     
-    // Conectar ao banco e carregar dados
+    // Initialize database connection and data loader
     let mut client = connect_db(&cli.db_url)?;
     let mut loader = DataLoader::new(&mut client)?;
     
-    debug!("📥 Carregando dados históricos");
+    // Load and preprocess data
     let records = loader.load_asset_data(asset)?;
-    info!("✅ Carregados {} registros históricos", records.len());
-
-    // Validar quantidade mínima de dados
-    let min_required = cli.seq_length + 50; // Margem de segurança
-    if records.len() < min_required {
-        return Err(TrainingError::DataProcessing(
-            format!("Dados insuficientes: {} registros, necessário pelo menos {}", 
-                    records.len(), min_required)
-        ));
-    }
-
-    // Criar sequências temporais
-    debug!("🔧 Criando sequências de tamanho {}", cli.seq_length);
-    let (train_seqs, train_targets, feature_stats) = 
-        loader.create_sequences(&records, cli.seq_length)?;
-    info!("✅ Criadas {} sequências temporais", train_seqs.len());
-
-    // Pré-processamento e divisão dos dados
-    debug!("🔄 Pré-processando dados");
-    let (train_data, val_data) = preprocess_data(
-        train_seqs, train_targets, &feature_stats, cli.train_split
-    )?;
+    let (sequences, targets, feature_stats) = loader.create_sequences(&records, cli.seq_length)?;
     
-    info!("✅ Dados divididos - Treino: {} | Validação: {}", 
-          train_data.0.len(), val_data.0.len());
-
-    // Inicializar modelo
-    info!("🛠️ Inicializando modelo {:?}", model_type);
+    // Split and normalize data
+    let ((train_seqs, train_targets), (val_seqs, val_targets)) = 
+        preprocess_data(sequences, targets, &feature_stats, cli.train_split)?;
+    
+    // Initialize model and optimizer
     let mut model = NeuralNetwork::new(
         model_type,
         feature_stats.feature_names.len(),
         cli.hidden_size,
         cli.num_layers,
         cli.dropout_rate,
+        cli.seq_length, // Added the missing seq_length parameter
     )?;
-    info!("✅ Modelo criado com {} parâmetros", model.num_parameters());
-
-    // Configurar otimizador e scheduler
-    let mut optimizer = AdamOptimizer::new(cli.learning_rate, 0.9, 0.999, 1e-8);
     
+    let mut optimizer = AdamOptimizer::new(cli.learning_rate, 0.9, 0.999, 1e-8);
     let scheduler = if cli.use_scheduler {
         Some(LearningRateScheduler::StepDecay {
             initial_rate: cli.learning_rate,
             decay_rate: 0.5,
-            step_size: cli.epochs / 4,
+            step_size: 10,
         })
     } else {
         None
     };
-
-    // Inicializar tracker de métricas
-    let mut metrics_tracker = MetricsTracker::new();
     
-    // Loop de treinamento
-    info!("🎓 Iniciando treinamento por {} épocas", cli.epochs);
+    let mut metrics_tracker = MetricsTracker::new();
     let mut best_val_loss = f64::INFINITY;
     
+    // Training loop
     for epoch in 1..=cli.epochs {
         let epoch_start = Instant::now();
         
-        // Atualizar learning rate se necessário
-        if let Some(ref sched) = scheduler {
-            let new_lr = sched.get_rate(epoch - 1);
+        // Update learning rate if scheduler is used
+        if let Some(scheduler) = &scheduler {
+            let new_lr = scheduler.get_rate(epoch);
             optimizer.set_learning_rate(new_lr);
-            debug!("📈 Learning rate atualizado para: {:.6}", new_lr);
+            debug!("🔄 Epoch {}: Learning rate set to {}", epoch, new_lr);
         }
-
-        // Passo de treinamento
-        let train_loss = model.train_step(
-            &train_data.0,
-            &train_data.1,
+        
+        // Train
+        let train_loss = model.train(
+            &train_seqs,
+            &train_targets,
             &mut optimizer,
             cli.batch_size,
             cli.l2_weight,
             cli.clip_norm,
         )?;
 
-        // Validação
-        let (val_loss, val_metrics) = model.validate(&val_data.0, &val_data.1)?;
+        // Validate
+        let (val_loss, val_metrics) = model.validate(&val_seqs, &val_targets)?;
         
         let epoch_time = epoch_start.elapsed().as_secs_f64();
         
-        // Logging de progresso
+        // Log progress
         if epoch % 5 == 0 || epoch <= 10 {
-            info!("📈 Época {}/{}: Train={:.6} | Val={:.6} | RMSE={:.6} | R²={:.4} | {:.1}s", 
+            info!("📈 Epoch {}/{}: Train={:.6} | Val={:.6} | RMSE={:.6} | R²={:.4} | {:.1}s", 
                   epoch, cli.epochs, train_loss, val_loss, val_metrics.rmse, 
                   val_metrics.r_squared, epoch_time);
         }
 
-        // Criar métricas para tracker
+        // Create metrics for tracker
         let metrics = TrainingMetrics {
             asset: asset.to_string(),
             model_type: format!("{:?}", model_type),
@@ -367,14 +324,14 @@ fn train_single_asset(
         // Early stopping check
         let should_stop = metrics_tracker.add_metrics(metrics.clone(), cli.patience);
         
-        // Salvar modelo se melhorou ou na frequência especificada
+        // Save model if improved or at specified frequency
         if val_loss < best_val_loss || epoch % cli.save_freq == 0 {
             if val_loss < best_val_loss {
                 best_val_loss = val_loss;
-                info!("🎯 Nova melhor perda de validação: {:.6}", best_val_loss);
+                info!("🎯 New best validation loss: {:.6}", best_val_loss);
             }
             
-            debug!("💾 Salvando modelo na época {}", epoch);
+            debug!("💾 Saving model at epoch {}", epoch);
             save_model_and_metrics(
                 &cli.db_url, 
                 &model, 
@@ -391,16 +348,16 @@ fn train_single_asset(
 
         // Early stopping
         if should_stop {
-            info!("⏹️ Early stopping acionado na época {}", epoch);
+            info!("⏹️ Early stopping triggered at epoch {}", epoch);
             break;
         }
     }
 
     let training_time = training_start.elapsed().as_secs_f64();
     
-    // Resumo final
+    // Final summary
     metrics_tracker.print_summary();
-    info!("⏱️ Treinamento de '{}' concluído em {:.2}s", asset, training_time);
+    info!("⏱️ Training of '{}' completed in {:.2}s", asset, training_time);
     
     Ok(())
 }
@@ -412,9 +369,9 @@ fn preprocess_data(
     split_ratio: f64,
 ) -> Result<((Vec<Array2<f64>>, Vec<f64>), (Vec<Array2<f64>>, Vec<f64>)), TrainingError> {
     
-    debug!("🔄 Convertendo dados para f64 e normalizando");
+    debug!("🔄 Converting data to f64 and normalizing");
     
-    // Converter para f64 e normalizar
+    // Convert to f64 and normalize
     let mut train_seqs: Vec<Array2<f64>> = train_seqs
         .iter()
         .map(|seq| {
@@ -426,7 +383,7 @@ fn preprocess_data(
         
     let mut train_targets: Vec<f64> = train_targets.iter().map(|&x| x as f64).collect();
 
-    // Normalizar targets
+    // Normalize targets
     let closing_mean = feature_stats.closing_mean as f64;
     let closing_std = feature_stats.closing_std as f64;
     
@@ -434,12 +391,12 @@ fn preprocess_data(
         *target = (*target - closing_mean) / closing_std;
     }
 
-    // Dividir dados
+    // Split data
     let split_index = (train_seqs.len() as f64 * split_ratio) as usize;
     let val_seqs: Vec<Array2<f64>> = train_seqs.split_off(split_index);
     let val_targets: Vec<f64> = train_targets.split_off(split_index);
 
-    debug!("✅ Dados normalizados e divididos");
+    debug!("✅ Data normalized and split");
     Ok(((train_seqs, train_targets), (val_seqs, val_targets)))
 }
 
@@ -468,11 +425,11 @@ fn save_model_and_metrics(
     epoch: usize,
 ) -> Result<(), TrainingError> {
     
-    debug!("💾 Salvando modelo e métricas");
+    debug!("💾 Saving model and metrics");
     let mut save_client = connect_db(db_url)?;
     let mut weights = model.get_weights();
     
-    // Configurar metadados do modelo
+    // Configure model metadata
     weights.asset = asset.to_string();
     weights.model_type = model_type;
     weights.closing_mean = feature_stats.closing_mean as f64;
@@ -497,11 +454,58 @@ fn save_model_and_metrics(
     };
 
     save_model_to_postgres(&mut save_client, &weights, &metrics)?;
-    debug!("✅ Modelo e métricas salvos com sucesso");
+    debug!("✅ Model and metrics saved successfully");
     Ok(())
 }
 
-// Exemplos de uso:
+// Example usage commands:
+// cargo run --release -- --model-type lstm --asset ISAE4 --seq-length 30 --epochs 50 --verbose
+// cargo run --release -- --model-type rnn --all-assets --seq-length 20 --epochs 30 --batch-size 64  
+// cargo run --release -- --model-type mlp --asset PETR4 --hidden-size 128 --epochs 100
+// cargo run --release -- --model-type cnn --all-assets --seq-length 40 --num-layers 3
+
+
+// cargo run --release -- --model-type rnn --asset PETR4 --seq-length 20 --epochs 30 --batch-size 64 --verbose 
+// cargo run --release -- --model-type rnn --asset PETR4 --seq-length 20 --epochs 50 --batch-size 32 --hidden-size 64 --num-layers 2 --dropout-rate 0.2 --learning-rate 0.001 --patience 15 --use-scheduler --verbose
+ 
+
+// cargo run --release -- --model-type rnn --all-assets --seq-length 20 --epochs 30 --batch-size 64
+// cargo run --release -- --model-type rnn --all-assets --seq-length 20 --epochs 30 --batch-size 64 --verbose
+
+// cargo run --release -- --model-type rnn --asset PETR4 --seq-length 20 --epochs 30 --batch-size 64 --verbose
+
+
+//# 1. Treinar RNN com um asset específico e verbose ativado
+//cargo run --release -- --model-type rnn --asset PETR4 --seq-length 20 --epochs 30 --batch-size 32 --verbose
+
+//# 2. Treinar RNN com todos os assets e mais detalhes
+//cargo run --release -- --model-type rnn --all-assets --seq-length 20 --epochs 30 --batch-size 64 --verbose --patience 10
+
+//# 3. Treinar RNN com scheduler de learning rate
+//cargo run --release -- --model-type rnn --asset VALE3 --seq-length 20 --epochs 50 --batch-size 32 --use-scheduler --verbose
+//
+//# 4. Treinar RNN com parâmetros otimizados
+// cargo run --release -- --model-type rnn --all-assets  --seq-length 20   --epochs 50   --batch-size 32   --hidden-size 64   --num-layers 2    --dropout-rate 0.2   --learning-rate 0.001   --l2-weight 0.01   --patience 15  --use-scheduler  --verbose
+
+
+
+
+
+
+//# 5. Comparar RNN com outros modelos
+//echo "=== Treinando RNN ==="
+//cargo run --release -- --model-type rnn --asset PETR4 --epochs 30 --verbose
+
+//echo "=== Treinando LSTM ==="
+//cargo run --release -- --model-type lstm --asset PETR4 --epochs 30 --verbose
+
+//echo "=== Treinando MLP ==="
+//cargo run --release -- --model-type mlp --asset PETR4 --epochs 30 --verbose
+
+
+
+
+
 // cargo run --release -- --model-type lstm --asset PETR4 --seq-length 40 --epochs 100 --verbose
 // cargo run --release -- --model-type rnn --all-assets --seq-length 30 --epochs 50 --batch-size 128 --use-scheduler
 // cargo run --release -- --model-type mlp --asset VALE3 --hidden-size 256 --num-layers 4 --patience 20
@@ -510,5 +514,19 @@ fn save_model_and_metrics(
 // Example usage commands:
 // cargo run --release -- --model-type lstm --asset ISAE4 --seq-length 30 --epochs 50 --verbose
 // cargo run --release -- --model-type rnn --all-assets --seq-length 20 --epochs 30 --batch-size 64
+// cargo run --release -- --model-type mlp --asset PETR4 --hidden-size 128 --epochs 100
+// cargo run --release -- --model-type cnn --all-assets --seq-length 40 --num-layers 3
+
+
+// # Single asset training with RNN
+// cargo run --release -- --model-type rnn --asset PETR4 --seq-length 20 --epochs 30 --batch-size 64
+
+// # All assets training
+// cargo run --release -- --model-type rnn --all-assets --seq-length 20 --epochs 30 --batch-size 64
+
+// # With verbose logging
+// cargo run --release -- --model-type lstm --asset VALE3 --seq-length 30 --epochs 50 --verbose
+
+// # Different model types
 // cargo run --release -- --model-type mlp --asset PETR4 --hidden-size 128 --epochs 100
 // cargo run --release -- --model-type cnn --all-assets --seq-length 40 --num-layers 3
