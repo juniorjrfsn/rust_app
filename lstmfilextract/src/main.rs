@@ -41,7 +41,7 @@ enum LSTMError {
 struct Cli {
     #[arg(long, help = "Data source (e.g., investing)")]
     source: String,
-    #[arg(long, default_value = "../dados", help = "Data directory path")]
+    #[arg(long, default_value = "../../dados", help = "Data directory path")]
     data_dir: String,
     #[arg(long, help = "Skip TOML output generation")]
     skip_toml: bool,
@@ -386,8 +386,10 @@ fn extract_command(cli: Cli) -> Result<(), LSTMError> {
         };
 
         if !cli.skip_toml {
+            println!(" ⚠️  pasta {}, ", cli.data_dir);
             let output_file_path = format!("{}/{}_{}_output.toml", cli.data_dir, asset, cli.source);
             save_to_toml(&stock_data, &output_file_path)?;
+            
         }
 
         // Save to both databases
