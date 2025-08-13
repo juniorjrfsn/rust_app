@@ -31,6 +31,9 @@ font : Consolas, 'Courier New', monospace
     cargo new lstmfiletrain --bin
     cargo new lstmfilepredict --bin
     cargo new lstmrnntrain --bin
+    cargo new lstm_rnn_trainer --bin
+
+    
 
     
     
@@ -64,6 +67,7 @@ font : Consolas, 'Courier New', monospace
     cd lstmfiletrain
     cd lstmfilepredict
     cd lstmrnntrain
+    cd lstm_rnn_trainer
 ```
 
 ### **Construir a aplicação**

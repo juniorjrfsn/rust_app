@@ -41,7 +41,7 @@ enum LSTMError {
 struct Cli {
     #[arg(long, help = "Data source (e.g., investing)")]
     source: String,
-    #[arg(long, default_value = "../../dados", help = "Data directory path")]
+    #[arg(long, default_value = "../../dados/ativos", help = "Data directory path")]
     data_dir: String,
     #[arg(long, help = "Skip TOML output generation")]
     skip_toml: bool,
