@@ -45,7 +45,8 @@ edition = "2024"
  
     sha2 = "0.10"
     num_cpus = "1.16"
-
+    # Console colors and formatting
+    colored = "2.0"
     [[bin]]
         name = "lstm"
         path = "src/main.rs"
