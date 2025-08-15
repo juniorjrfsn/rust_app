@@ -452,3 +452,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 // # Com configurações adicionais
 // cargo run -- --source investing   --data-dir ./dados   --lstm-db-url postgres://postgres:postgres@localhost:5432/lstm_db   --rnn-db-url postgres://postgres:postgres@localhost:5432/rnn_db   --date-format "%d.%m.%Y"
+
+
+
+// cd lstmfilextract

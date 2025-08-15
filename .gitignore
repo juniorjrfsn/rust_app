@@ -36,6 +36,8 @@ lstmfilextract/target/
 lstmfiletrain/target/
 lstmfilepredict/target/
 lstmrnntrain/target/
+lstm_cnn_train/target/
+lstm_cnn_predictor/target/
  
 
 outros/chatbot/target/

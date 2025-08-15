@@ -1,0 +1,572 @@
+junior@junior-MS-7C09:~/Documentos/projetos/rust_app/lstm_cnn_train$ cargo run
+    Updating crates.io index
+     Locking 686 packages to latest Rust 1.88.0 compatible versions
+      Adding matchit v0.8.4 (available: v0.8.6)
+      Adding unicode-width v0.2.0 (available: v0.2.1)
+  Downloaded clap v4.5.45
+  Downloaded moddef v0.3.0
+  Downloaded glob v0.3.3
+  Downloaded avif-serialize v0.8.6
+  Downloaded thiserror-impl v2.0.14
+  Downloaded macerator-macros v0.1.3
+  Downloaded slab v0.4.11
+  Downloaded macerator v0.2.9
+  Downloaded whoami v1.6.1
+  Downloaded uuid v1.18.0
+  Downloaded thiserror v2.0.14
+  Downloaded clap_derive v4.5.45
+  Downloaded clap_builder v4.5.44
+  Downloaded cc v1.2.32
+  Downloaded syn v2.0.105
+  Downloaded reqwest v0.12.23
+  Downloaded 16 crates (1.0MiB) in 0.80s
+    Blocking waiting for file lock on package cache
+   Compiling proc-macro2 v1.0.97
+   Compiling unicode-ident v1.0.18
+   Compiling libc v0.2.175
+   Compiling cfg-if v1.0.1
+   Compiling serde v1.0.219
+   Compiling autocfg v1.5.0
+   Compiling memchr v2.7.5
+   Compiling libm v0.2.15
+   Compiling log v0.4.27
+   Compiling num-traits v0.2.19
+   Compiling foldhash v0.1.5
+   Compiling zerocopy v0.8.26
+   Compiling equivalent v1.0.2
+   Compiling allocator-api2 v0.2.21
+   Compiling quote v1.0.40
+   Compiling once_cell v1.21.3
+   Compiling fnv v1.0.7
+   Compiling crossbeam-utils v0.8.21
+   Compiling syn v2.0.105
+   Compiling itoa v1.0.15
+   Compiling lock_api v0.4.13
+   Compiling smallvec v1.15.1
+   Compiling scopeguard v1.2.0
+   Compiling pin-project-lite v0.2.16
+   Compiling futures-core v0.3.31
+   Compiling strsim v0.11.1
+   Compiling cfg_aliases v0.2.1
+   Compiling getrandom v0.3.3
+   Compiling ident_case v1.0.1
+   Compiling aho-corasick v1.1.3
+   Compiling ryu v1.0.20
+   Compiling futures-io v0.3.31
+   Compiling regex-syntax v0.8.5
+   Compiling serde_json v1.0.142
+   Compiling rand_core v0.9.3
+   Compiling parking_lot_core v0.9.11
+   Compiling ppv-lite86 v0.2.21
+   Compiling fastrand v2.3.0
+   Compiling rand_chacha v0.9.0
+   Compiling paste v1.0.15
+   Compiling unicode-xid v0.2.6
+   Compiling rand v0.9.2
+   Compiling regex-automata v0.4.9
+   Compiling parking_lot v0.12.4
+   Compiling parking v2.2.1
+   Compiling portable-atomic v1.11.1
+   Compiling hashbrown v0.15.5
+   Compiling darling_core v0.21.1
+   Compiling either v1.15.0
+   Compiling option-ext v0.2.0
+   Compiling heck v0.5.0
+   Compiling thiserror v2.0.14
+   Compiling dirs-sys v0.5.0
+   Compiling crossbeam-epoch v0.9.18
+   Compiling web-time v1.1.0
+   Compiling embassy-futures v0.1.1
+   Compiling rustversion v1.0.22
+   Compiling crossbeam-deque v0.8.6
+   Compiling dirs v6.0.0
+   Compiling version_check v0.9.5
+   Compiling arrayvec v0.7.6
+   Compiling cubecl-common v0.6.0
+   Compiling rayon-core v1.13.0
+   Compiling futures-lite v2.6.1
+   Compiling serde_derive v1.0.219
+   Compiling bytemuck_derive v1.10.1
+   Compiling derive_more-impl v2.0.1
+   Compiling derive-new v0.7.0
+   Compiling regex v1.11.1
+   Compiling darling_macro v0.21.1
+   Compiling bytemuck v1.23.2
+   Compiling thiserror-impl v2.0.14
+   Compiling sanitize-filename v0.6.0
+   Compiling concurrent-queue v2.5.0
+   Compiling darling v0.21.1
+   Compiling prettyplease v0.2.36
+   Compiling event-listener v5.4.1
+   Compiling profiling-procmacros v1.0.17
+   Compiling unicode-width v0.2.0
+   Compiling winnow v0.7.12
+   Compiling profiling v1.0.17
+   Compiling derive_more v2.0.1
+   Compiling event-listener-strategy v0.5.4
+   Compiling cubecl-macros-internal v0.6.0
+   Compiling variadics_please v1.1.0
+   Compiling cubecl-runtime v0.6.0
+   Compiling spin v0.10.0
+   Compiling libloading v0.8.8
+   Compiling shlex v1.3.0
+   Compiling float-ord v0.3.2
+   Compiling cubecl-macros v0.6.0
+   Compiling toml_writer v1.0.2
+   Compiling toml_parser v1.0.2
+   Compiling cc v1.2.32
+   Compiling async-channel v2.5.0
+   Compiling rayon v1.11.0
+   Compiling strum_macros v0.26.4
+   Compiling vcpkg v0.2.15
+   Compiling bitflags v2.9.1
+   Compiling half v2.6.0
+   Compiling indexmap v2.10.0
+   Compiling toml_datetime v0.7.0
+   Compiling serde_spanned v1.0.0
+   Compiling toml v0.9.5
+   Compiling pkg-config v0.3.32
+   Compiling md5 v0.8.0
+   Compiling naga v25.0.1
+   Compiling cubecl-ir v0.6.0
+   Compiling strum v0.26.3
+   Compiling khronos-egl v6.0.0
+   Compiling termcolor v1.4.1
+   Compiling bytes v1.10.1
+   Compiling bit-vec v0.8.0
+   Compiling ash v0.38.0+1.3.281
+   Compiling bit-set v0.8.0
+   Compiling codespan-reporting v0.12.0
+   Compiling gpu-descriptor-types v0.2.0
+   Compiling spirv v0.3.0+sdk-1.3.268.0
+   Compiling gpu-alloc-types v0.3.0
+   Compiling wgpu-hal v25.0.2
+   Compiling mio v1.0.4
+   Compiling rustc-hash v1.1.0
+   Compiling hexf-parse v0.2.1
+   Compiling gpu-alloc v0.6.0
+   Compiling gpu-descriptor v0.3.2
+   Compiling wgpu-types v25.0.0
+   Compiling synstructure v0.13.2
+   Compiling num-integer v0.1.46
+   Compiling ordered-float v4.6.0
+   Compiling glow v0.16.0
+   Compiling static_assertions v1.1.0
+   Compiling cubecl-core v0.6.0
+   Compiling renderdoc-sys v1.1.0
+   Compiling raw-window-handle v0.6.2
+   Compiling wgpu-core v25.0.2
+   Compiling futures-sink v0.3.31
+   Compiling tinyvec_macros v0.1.1
+   Compiling litrs v0.4.2
+   Compiling document-features v0.2.11
+   Compiling cubecl-std v0.6.0
+   Compiling tinyvec v1.9.0
+   Compiling zerofrom-derive v0.1.6
+   Compiling wgpu v25.0.2
+   Compiling unicode-normalization v0.1.24
+   Compiling cubecl-reduce v0.6.0
+   Compiling cubecl-random v0.6.0
+   Compiling yoke-derive v0.8.0
+   Compiling darling_core v0.20.11
+   Compiling zerofrom v0.1.6
+   Compiling cubecl-wgpu v0.6.0
+   Compiling typenum v1.18.0
+   Compiling stable_deref_trait v1.2.0
+   Compiling slab v0.4.11
+   Compiling cubecl-matmul v0.6.0
+   Compiling futures-macro v0.3.31
+   Compiling yoke v0.8.0
+   Compiling generic-array v0.14.7
+   Compiling socket2 v0.6.0
+   Compiling futures-task v0.3.31
+   Compiling semver v1.0.26
+   Compiling pin-utils v0.1.0
+   Compiling futures-util v0.3.31
+   Compiling tokio v1.47.1
+   Compiling darling_macro v0.20.11
+   Compiling darling v0.20.11
+   Compiling zerovec-derive v0.11.1
+   Compiling cubecl-convolution v0.6.0
+   Compiling simd-adler32 v0.3.7
+   Compiling zerovec v0.11.4
+   Compiling num-bigint v0.4.6
+   Compiling burn-common v0.18.0
+   Compiling serde_bytes v0.11.17
+   Compiling displaydoc v0.2.5
+   Compiling equator-macro v0.4.2
+   Compiling rand_distr v0.5.1
+   Compiling tracing-core v0.1.34
+   Compiling thiserror v1.0.69
+   Compiling byteorder v1.5.0
+   Compiling colored v3.0.0
+   Compiling percent-encoding v2.3.1
+   Compiling equator v0.4.2
+   Compiling num-rational v0.4.2
+   Compiling rustc_version v0.4.1
+   Compiling thiserror-impl v1.0.69
+   Compiling crossbeam-channel v0.5.15
+   Compiling adler2 v2.0.1
+   Compiling signal-hook v0.3.18
+   Compiling anyhow v1.0.99
+   Compiling crc32fast v1.5.0
+   Compiling minimal-lexical v0.2.1
+   Compiling miniz_oxide v0.8.9
+   Compiling nom v7.1.3
+   Compiling aligned-vec v0.6.4
+   Compiling crypto-common v0.1.6
+   Compiling block-buffer v0.10.4
+   Compiling openssl-sys v0.9.109
+   Compiling libsqlite3-sys v0.35.0
+   Compiling wgpu-core-deps-windows-linux-android v25.0.0
+   Compiling ahash v0.8.12
+   Compiling signal-hook-registry v1.4.6
+   Compiling subtle v2.6.1
+   Compiling built v0.7.7
+   Compiling digest v0.10.7
+   Compiling rav1e v0.7.1
+   Compiling v_frame v0.3.9
+   Compiling tinystr v0.8.1
+   Compiling tokio-util v0.7.16
+   Compiling http v1.3.1
+   Compiling bstr v1.12.0
+   Compiling num-complex v0.4.6
+   Compiling matrixmultiply v0.3.10
+   Compiling rustix v1.0.8
+   Compiling litemap v0.8.0
+   Compiling writeable v0.6.1
+   Compiling base64 v0.22.1
+   Compiling gix-trace v0.1.13
+   Compiling icu_locale_core v2.0.0
+   Compiling gix-validate v0.10.0
+   Compiling flate2 v1.1.2
+   Compiling av1-grain v0.2.4
+   Compiling thread-tree v0.3.3
+   Compiling zerotrie v0.2.2
+   Compiling potential_utf v0.1.2
+   Compiling gix-utils v0.3.0
+   Compiling futures-channel v0.3.31
+   Compiling maybe-rayon v0.1.1
+   Compiling hashlink v0.10.0
+   Compiling num-derive v0.4.2
+   Compiling arg_enum_proc_macro v0.3.4
+   Compiling itertools v0.12.1
+   Compiling scheduled-thread-pool v0.2.7
+   Compiling simd_helpers v0.1.0
+   Compiling getrandom v0.2.16
+   Compiling num_cpus v1.17.0
+   Compiling icu_normalizer_data v2.0.0
+   Compiling home v0.5.11
+   Compiling icu_properties_data v2.0.1
+   Compiling bitstream-io v2.6.0
+   Compiling powerfmt v0.2.0
+   Compiling fallible-iterator v0.3.0
+   Compiling noop_proc_macro v0.3.0
+   Compiling weezl v0.1.10
+   Compiling rawpointer v0.2.1
+   Compiling linux-raw-sys v0.9.4
+   Compiling new_debug_unreachable v1.0.6
+   Compiling imgref v1.11.0
+   Compiling quick-error v2.0.1
+   Compiling fallible-streaming-iterator v0.1.9
+   Compiling loop9 v0.1.5
+   Compiling cubecl v0.6.0
+   Compiling burn-tensor v0.18.0
+   Compiling deranged v0.4.0
+   Compiling rusqlite v0.37.0
+   Compiling burn-ir v0.18.0
+   Compiling gix-path v0.10.20
+   Compiling rand_core v0.6.4
+   Compiling r2d2 v0.8.10
+   Compiling gix-features v0.42.1
+   Compiling icu_collections v2.0.0
+   Compiling icu_provider v2.0.0
+   Compiling http-body v1.0.1
+   Compiling fdeflate v0.3.7
+   Compiling zune-inflate v0.2.54
+   Compiling avif-serialize v0.8.6
+   Compiling jpeg-decoder v0.3.2
+   Compiling httparse v1.10.1
+   Compiling bitflags v1.3.2
+   Compiling lebe v0.5.2
+   Compiling rustix v0.38.44
+   Compiling num-conv v0.1.0
+   Compiling cpufeatures v0.2.17
+   Compiling hashbrown v0.14.5
+   Compiling rgb v0.8.52
+   Compiling openssl v0.10.73
+   Compiling lazy_static v1.5.0
+   Compiling color_quant v1.1.0
+   Compiling toml_datetime v0.6.11
+   Compiling byteorder-lite v0.1.0
+   Compiling num_threads v0.1.7
+   Compiling bit_field v0.10.2
+   Compiling foreign-types-shared v0.1.1
+   Compiling time-core v0.1.4
+   Compiling zune-core v0.4.12
+   Compiling unicode-properties v0.1.3
+   Compiling unicode-bidi v0.3.18
+   Compiling time v0.3.41
+   Compiling zune-jpeg v0.4.20
+   Compiling image-webp v0.2.3
+   Compiling stringprep v0.1.5
+   Compiling foreign-types v0.3.2
+   Compiling exr v1.73.0
+   Compiling dashmap v6.1.0
+   Compiling toml_edit v0.22.27
+   Compiling gif v0.13.3
+   Compiling tiff v0.9.1
+   Compiling ravif v0.11.20
+   Compiling sha2 v0.10.9
+   Compiling png v0.17.16
+   Compiling gix-fs v0.15.0
+   Compiling rand_chacha v0.3.1
+   Compiling ndarray v0.16.1
+   Compiling tempfile v3.20.0
+   Compiling hmac v0.12.1
+   Compiling md-5 v0.10.6
+   Compiling macerator v0.2.9
+   Compiling rstest_macros v0.25.0
+   Compiling rmp v0.8.14
+   Compiling tracing v0.1.41
+   Compiling qoi v0.4.1
+   Compiling strum_macros v0.27.2
+   Compiling openssl-macros v0.1.1
+   Compiling itertools v0.13.0
+   Compiling uuid v1.18.0
+   Compiling csv-core v0.1.12
+   Compiling siphasher v1.0.1
+   Compiling overload v0.1.1
+   Compiling instability v0.3.9
+   Compiling native-tls v0.2.14
+   Compiling fallible-iterator v0.2.0
+   Compiling utf8parse v0.2.2
+   Compiling atomic-waker v1.1.2
+   Compiling tower-service v0.3.3
+   Compiling virtue v0.0.18
+   Compiling linux-raw-sys v0.4.15
+   Compiling try-lock v0.2.5
+   Compiling want v0.3.1
+   Compiling postgres-protocol v0.6.8
+   Compiling strum v0.27.2
+   Compiling anstyle-parse v0.2.7
+   Compiling h2 v0.4.12
+   Compiling phf_shared v0.11.3
+   Compiling nu-ansi-term v0.46.0
+   Compiling bincode_derive v2.0.1
+   Compiling csv v1.3.1
+   Compiling r2d2_sqlite v0.31.0
+   Compiling rmp-serde v1.3.0
+   Compiling image v0.25.6
+   Compiling gix-tempfile v17.1.0
+   Compiling icu_properties v2.0.1
+   Compiling rand v0.8.5
+   Compiling icu_normalizer v2.0.0
+   Compiling proc-macro-crate v3.3.0
+   Compiling sharded-slab v0.1.7
+   Compiling burn-fusion v0.18.0
+   Compiling serde_rusqlite v0.40.0
+   Compiling hashbrown v0.13.2
+   Compiling signal-hook-mio v0.2.4
+   Compiling tracing-log v0.2.0
+   Compiling macerator-macros v0.1.3
+   Compiling castaway v0.2.4
+   Compiling thread_local v1.1.9
+   Compiling typeid v1.0.3
+   Compiling unty v0.0.4
+   Compiling burn-ndarray v0.18.0
+   Compiling colorchoice v1.0.4
+   Compiling anstyle v1.0.11
+   Compiling relative-path v1.9.3
+   Compiling moddef v0.3.0
+   Compiling indoc v2.0.6
+   Compiling anstyle-query v1.1.4
+   Compiling openssl-probe v0.1.6
+   Compiling unicode-width v0.1.14
+   Compiling unicode-segmentation v1.12.0
+   Compiling is_terminal_polyfill v1.70.1
+   Compiling glob v0.3.3
+   Compiling unicode-truncate v1.1.0
+   Compiling burn-cubecl-fusion v0.18.0
+   Compiling anstream v0.6.20
+   Compiling bincode v2.0.1
+   Compiling burn-dataset v0.18.0
+   Compiling tracing-subscriber v0.3.19
+   Compiling compact_str v0.8.1
+   Compiling text_placeholder v0.5.1
+   Compiling crossterm v0.28.1
+   Compiling hyper v1.6.0
+   Compiling idna_adapter v1.2.1
+   Compiling postgres-types v0.2.9
+   Compiling phf v0.11.3
+   Compiling burn-autodiff v0.18.0
+   Compiling askama_parser v0.14.0
+   Compiling form_urlencoded v1.2.1
+   Compiling wrapcenum-derive v0.4.1
+   Compiling lru v0.12.5
+   Compiling basic-toml v0.1.10
+   Compiling nvml-wrapper-sys v0.9.0
+   Compiling burn-derive v0.18.0
+   Compiling async-trait v0.1.88
+   Compiling itertools v0.14.0
+   Compiling sync_wrapper v1.0.2
+   Compiling socket2 v0.5.10
+   Compiling atomic_float v1.1.0
+   Compiling data-encoding v2.9.0
+   Compiling whoami v1.6.1
+   Compiling tower-layer v0.3.3
+   Compiling ipnet v2.11.0
+   Compiling rustc-hash v2.1.1
+   Compiling seq-macro v0.3.6
+   Compiling cassowary v0.3.0
+   Compiling utf8_iter v1.0.4
+   Compiling bytesize v1.3.3
+   Compiling futures-timer v3.0.3
+   Compiling ratatui v0.29.0
+   Compiling systemstat v0.2.5
+   Compiling rstest v0.25.0
+   Compiling idna v1.0.3
+   Compiling hyper-util v0.1.16
+   Compiling askama_derive v0.14.0
+   Compiling tower v0.5.2
+   Compiling tokio-postgres v0.7.13
+   Compiling burn-core v0.18.0
+   Compiling nvml-wrapper v0.11.0
+   Compiling burn-cubecl v0.18.0
+   Compiling tracing-appender v0.2.3
+   Compiling tokio-native-tls v0.3.1
+   Compiling http-body-util v0.1.3
+   Compiling serde_with_macros v3.14.0
+   Compiling num-iter v0.1.45
+   Compiling sysinfo v0.36.1
+   Compiling iri-string v0.7.8
+   Compiling zeroize v1.8.1
+   Compiling clap_lex v0.7.5
+   Compiling rustls-pki-types v1.12.0
+   Compiling clap_builder v4.5.44
+   Compiling tower-http v0.6.6
+   Compiling burn-wgpu v0.18.0
+   Compiling serde_with v3.14.0
+   Compiling num v0.4.3
+   Compiling hyper-tls v0.6.0
+   Compiling erased-serde v0.4.6
+   Compiling askama v0.14.0
+   Compiling burn-train v0.18.0
+   Compiling postgres v0.19.10
+   Compiling url v2.5.4
+   Compiling serde_urlencoded v0.7.1
+   Compiling rand_distr v0.4.3
+   Compiling console v0.16.0
+   Compiling plotly_derive v0.13.5
+   Compiling env_filter v0.1.3
+   Compiling clap_derive v4.5.45
+   Compiling serde_repr v0.1.20
+   Compiling approx v0.5.1
+   Compiling noisy_float v0.2.0
+   Compiling crossbeam-queue v0.3.12
+   Compiling encoding_rs v0.8.35
+   Compiling dyn-clone v1.0.20
+   Compiling take_mut v0.2.2
+   Compiling iana-time-zone v0.1.63
+   Compiling unit-prefix v0.5.1
+   Compiling jiff v0.2.15
+   Compiling mime v0.3.17
+   Compiling chrono v0.4.41
+   Compiling reqwest v0.12.23
+   Compiling indicatif v0.18.0
+   Compiling clap v4.5.45
+   Compiling serde_bson v0.0.1
+   Compiling plotly v0.13.5
+   Compiling crossbeam v0.8.4
+   Compiling ndarray-stats v0.6.0
+   Compiling burn v0.18.0
+   Compiling smartcore v0.4.2
+   Compiling ndarray-rand v0.15.0
+   Compiling r2d2_postgres v0.18.2
+   Compiling env_logger v0.11.8
+   Compiling lstm_cnn_train v0.1.0 (/home/junior/Documentos/projetos/rust_app/lstm_cnn_train)
+warning: unused imports: `Array3` and `Axis`
+ --> src/main.rs:8:31
+  |
+8 | use ndarray::{Array1, Array2, Array3, Axis};
+  |                               ^^^^^^  ^^^^
+  |
+  = note: `#[warn(unused_imports)]` on by default
+
+warning: value assigned to `total_loss` is never read
+   --> src/main.rs:336:17
+    |
+336 |         let mut total_loss = 0.0;
+    |                 ^^^^^^^^^^
+    |
+    = help: maybe it is overwritten before being read?
+    = note: `#[warn(unused_assignments)]` on by default
+
+warning: unused variable: `i`
+   --> src/main.rs:342:18
+    |
+342 |             for (i, (input, &target)) in training_data.iter().zip(targets.iter()).enumerate() {
+    |                  ^ help: if this is intentional, prefix it with an underscore: `_i`
+    |
+    = note: `#[warn(unused_variables)]` on by default
+
+warning: variant `TrainingError` is never constructed
+  --> src/main.rs:24:5
+   |
+16 | enum MLError {
+   |      ------- variant in this enum
+...
+24 |     TrainingError { msg: String },
+   |     ^^^^^^^^^^^^^
+   |
+   = note: `MLError` has a derived impl for the trait `Debug`, but this is intentionally ignored during dead code analysis
+   = note: `#[warn(dead_code)]` on by default
+
+warning: field `sequence_length` is never read
+   --> src/main.rs:111:5
+    |
+105 | struct LSTMCNNModel {
+    |        ------------ field in this struct
+...
+111 |     sequence_length: usize,
+    |     ^^^^^^^^^^^^^^^
+
+warning: `lstm_cnn_train` (bin "lstm") generated 5 warnings (run `cargo fix --bin "lstm"` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1m 46s
+     Running `target/debug/lstm`
+[2025-08-14T17:35:18Z INFO  lstm] 🚀 Starting LSTM+CNN Deep Learning Training
+[2025-08-14T17:35:18Z INFO  lstm] Loading consolidated data from: ../../dados/consolidado/consolidated_stock_data.json
+[2025-08-14T17:35:18Z INFO  lstm] ✅ Successfully loaded data:
+[2025-08-14T17:35:18Z INFO  lstm]   Total assets: 14
+[2025-08-14T17:35:18Z INFO  lstm]   Total records: 39257
+[2025-08-14T17:35:18Z INFO  lstm]   Export timestamp: 2025-08-14T16:42:42.899893818+00:00
+[2025-08-14T17:35:18Z INFO  lstm] Training on asset: CMIG4 Dados Históricos (3876 records)
+[2025-08-14T17:35:19Z INFO  lstm] Created 3846 sequences of length 30 with 6 features each
+[2025-08-14T17:35:19Z INFO  lstm] Training set size: 3076
+[2025-08-14T17:35:19Z INFO  lstm] Validation set size: 770
+[2025-08-14T17:35:19Z INFO  lstm] Initializing LSTM+CNN model with parameters:
+[2025-08-14T17:35:19Z INFO  lstm]   Input size: 6
+[2025-08-14T17:35:19Z INFO  lstm]   Hidden size: 128
+[2025-08-14T17:35:19Z INFO  lstm]   Sequence length: 30
+[2025-08-14T17:35:19Z INFO  lstm]   Learning rate: 0.001
+[2025-08-14T17:35:19Z INFO  lstm] Starting training for 100 epochs with 3076 samples
+[2025-08-14T17:43:04Z INFO  lstm] Epoch 1/100: Average Loss = 0.056127
+[2025-08-14T19:00:24Z INFO  lstm] Epoch 11/100: Average Loss = 0.055272
+[2025-08-14T20:17:44Z INFO  lstm] Epoch 21/100: Average Loss = 0.055272
+[2025-08-14T21:35:00Z INFO  lstm] Epoch 31/100: Average Loss = 0.055272
+[2025-08-14T22:52:15Z INFO  lstm] Epoch 41/100: Average Loss = 0.055273
+[2025-08-15T00:08:30Z INFO  lstm] Epoch 51/100: Average Loss = 0.055273
+[2025-08-15T01:24:30Z INFO  lstm] Epoch 61/100: Average Loss = 0.055273
+[2025-08-15T02:40:48Z INFO  lstm] Epoch 71/100: Average Loss = 0.055273
+[2025-08-15T03:55:47Z INFO  lstm] Epoch 81/100: Average Loss = 0.055273
+[2025-08-15T05:10:47Z INFO  lstm] Epoch 91/100: Average Loss = 0.055273
+[2025-08-15T06:18:14Z INFO  lstm] Training completed. Final accuracy: 3.29%
+[2025-08-15T06:20:06Z INFO  lstm] Validation accuracy: 3.77%
+[2025-08-15T06:20:06Z INFO  lstm] Saving model weights to: ../../dados/consolidado/lstm_cnn_weights.json
+[2025-08-15T06:20:06Z INFO  lstm] ✅ Model weights saved successfully
+🎉 Training completed successfully!
+📊 Final Results:
+  Training accuracy: 3.29%
+  Validation accuracy: 3.77%
+  Model weights saved to: ../../dados/consolidado/lstm_cnn_weights.json
+junior@junior-MS-7C09:~/Documentos/projetos/rust_app/lstm_cnn_train$ 
