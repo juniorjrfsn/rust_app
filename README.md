@@ -34,6 +34,8 @@ font : Consolas, 'Courier New', monospace
     cargo new lstm_rnn_trainer --bin 
     cargo new lstm_cnn_train --bin 
     cargo new lstm_cnn_predictor --bin 
+    cargo new rust_cuda_example --bin 
+    
  
 ```
 
@@ -68,6 +70,8 @@ font : Consolas, 'Courier New', monospace
     cd lstm_rnn_trainer
     cd lstm_cnn_train
     cd lstm_cnn_predictor
+    cd rust_cuda_example
+
 ```
 
 ### **Construir a aplicação**

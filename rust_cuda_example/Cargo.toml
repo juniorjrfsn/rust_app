@@ -1,0 +1,52 @@
+[package]
+    name = "rust_cuda_example"
+    version = "0.1.0"
+    edition = "2024"
+
+[dependencies]  
+    cudarc = { version = "0.17.2", features = ["cuda-12000", "f16", "nvrtc", "driver"] }
+ 
+    half = "2.3" 
+    rayon = "1.7"
+
+    wgpu = "26.0.1"
+    bytemuck = "1.14"
+    pollster = "0.4.0"
+
+[dev-dependencies]
+    # Para testes, se necessário
+
+    [[bin]]
+    name = "rust_cuda_example"
+    path = "src/main.rs"
+
+
+
+
+
+
+
+    # Alternativa: usar wgpu para computação GPU multiplataforma
+    # wgpu = "0.17"
+    # bytemuck = "1.14"
+    # pollster = "0.3"
+
+
+    # # Ubuntu/Debian
+    # wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.0-1_all.deb
+    # sudo dpkg -i cuda-keyring_1.0-1_all.deb
+    # sudo apt-get update
+    # sudo apt-get -y install cuda-toolkit-12-0
+
+    # # Adicionar ao PATH
+    # echo 'export PATH=/usr/local/cuda/bin:$PATH' >> ~/.bashrc
+    # echo 'export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH' >> ~/.bashrc
+    # source ~/.bashrc
+ 
+
+
+ 
+    # wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.0-1_all.deb
+    # sudo dpkg -i cuda-keyring_1.0-1_all.deb
+    # sudo apt-get update
+    # sudo apt-get -y install cuda-toolkit-12-0

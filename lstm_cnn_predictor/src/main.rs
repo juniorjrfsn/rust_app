@@ -1,11 +1,6 @@
 // projeto: lstm_cnn_predictor
 // file: src/main.rs
 
-
-
- // projeto: lstm_cnn_predictor
-// file: src/main.rs
-
 use std::collections::HashMap;
 use std::fs;
 use std::path::Path;

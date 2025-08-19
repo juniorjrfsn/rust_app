@@ -2,10 +2,6 @@
 // file: src/main.rs
 
 
-
-// projeto: lstm_rnn_trainer
-// file: src/main.rs
-
 use candle_core::{Device, Result, Tensor, DType};
 use candle_nn::{Linear, Module, VarBuilder, VarMap, Optimizer, AdamW, ParamsAdamW, loss, rnn::{lstm, LSTMConfig, LSTM}, RNN, Activation};
 use serde::{Deserialize, Serialize};
