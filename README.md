@@ -35,6 +35,9 @@ font : Consolas, 'Courier New', monospace
     cargo new lstm_cnn_train --bin 
     cargo new lstm_cnn_predictor --bin 
     cargo new rust_cuda_example --bin 
+    cargo new cnncheckin --bin 
+
+    
     
  
 ```
@@ -71,6 +74,7 @@ font : Consolas, 'Courier New', monospace
     cd lstm_cnn_train
     cd lstm_cnn_predictor
     cd rust_cuda_example
+    cd cnncheckin
 
 ```
 
