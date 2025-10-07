@@ -1,111 +1,176 @@
-use minifb::{Key, Window, WindowOptions};
-use nokhwa::{
-    utils::{CameraIndex, RequestedFormat, RequestedFormatType, Resolution},
-    pixel_format::RgbFormat,
-    query, // Import query at crate root
-    Camera,
-};
+// projeto: cnncheckin
+// file: cnncheckin/src/main.rs
+// Sistema modular de reconhecimento facial com CNN
+ 
+ 
+ // projeto: cnncheckin
+// file: cnncheckin/src/main.rs
+// Sistema modular de reconhecimento facial com CNN
+
+mod camera;
+mod cnn_model;
+mod database;
+mod face_detector;
+mod image_processor;
+mod config;
+mod utils;
+
+use clap::{Parser, Subcommand};
 use std::error::Error;
-use std::time::Duration;
+use std::io;
 
-fn main() -> Result<(), Box<dyn Error>> {
-    println!("Iniciando acesso à webcam...");
+#[derive(Parser)]
+#[command(name = "cnncheckin")]
+#[command(about = "Sistema de reconhecimento facial com CNN")]
+struct Cli {
+    #[command(subcommand)]
+    command: Commands,
+}
 
-    // List available cameras using query()
-    let cameras = query()?;
-    println!("Câmeras detectadas: {}", cameras.len());
+#[derive(Subcommand)]
+enum Commands {
+    /// Capturar imagens da webcam
+    Capture {
+        /// Número de fotos para treino por pessoa
+        #[arg(short, long, default_value = "10")]
+        count: u32,
+    },
+    /// Treinar modelo CNN
+    Train {
+        /// Diretório com imagens de treino
+        #[arg(short, long, default_value = "../../dados/fotos_treino")]
+        input_dir: String,
+    },
+    /// Reconhecer faces
+    Recognize {
+        /// Usar webcam em tempo real
+        #[arg(short, long)]
+        realtime: bool,
+    },
+    /// Gerenciar banco de dados
+    Database {
+        #[command(subcommand)]
+        action: DatabaseCommands,
+    },
+}
 
-    for (i, cam) in cameras.iter().enumerate() {
-        println!("{}: {} - {}", i, cam.human_name(), cam.device_path());
-    }
+#[derive(Subcommand)]
+enum DatabaseCommands {
+    /// Criar tabelas
+    Setup,
+    /// Listar modelos salvos
+    List,
+    /// Exportar modelo
+    Export {
+        #[arg(short, long)]
+        model_id: i32,
+    },
+}
 
-    if cameras.is_empty() {
-        return Err("Nenhuma câmera encontrada".into());
-    }
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn Error>> {
+    env_logger::init();
+    
+    let cli = Cli::parse();
 
-    let camera_index = CameraIndex::Index(0);
-    println!("Tentando abrir: {}", cameras[0].human_name());
-
-    // Try different format preferences
-    let formats_to_try = [
-        RequestedFormatType::None,
-        RequestedFormatType::HighestResolution(Resolution::new(640, 480)),
-        RequestedFormatType::HighestFrameRate(30),
-    ];
-
-    let mut camera = None;
-
-    for format in formats_to_try {
-        println!("Tentando formato: {:?}", format);
-
-        let requested_format = RequestedFormat::new::<RgbFormat>(format);
-
-        match Camera::new(camera_index.clone(), requested_format) {
-            Ok(mut cam) => {
-                if let Ok(_) = cam.open_stream() {
-                    println!("Sucesso com formato: {:?}", format);
-                    camera = Some(cam);
-                    break;
+    match cli.command {
+        Commands::Capture { count } => {
+            println!("Modo Captura de Imagens");
+            println!("Pressione ENTER para comecar a capturar {} fotos por pessoa", count);
+            
+            let mut input = String::new();
+            io::stdin().read_line(&mut input)?;
+            
+            camera::capture_training_images(count).await?;
+        },
+        
+        Commands::Train { input_dir } => {
+            println!("Modo Treinamento CNN");
+            
+            // Verificar se há imagens suficientes
+            let image_count = image_processor::count_training_images(&input_dir)?;
+            if image_count < 20 {
+                println!("Aviso: Encontradas apenas {} imagens. Recomendado: pelo menos 20", image_count);
+                println!("Deseja continuar? (s/N): ");
+                
+                let mut input = String::new();
+                io::stdin().read_line(&mut input)?;
+                
+                if !input.trim().to_lowercase().starts_with('s') {
+                    return Ok(());
                 }
             }
-            Err(e) => {
-                println!("Falhou com formato {:?}: {}", format, e);
-            }
-        }
-    }
-
-    let mut camera = camera.ok_or("Não foi possível abrir nenhuma câmera com os formatos testados")?;
-
-    // Get camera resolution
-    let (width, height) = {
-        let res = camera.resolution();
-        (res.width() as usize, res.height() as usize)
-    };
-
-    println!("Resolução: {}x{}", width, height);
-
-    // Create window with minifb
-    let mut window = Window::new(
-        "Webcam Feed",
-        width,
-        height,
-        WindowOptions::default(),
-    )?;
-
-    window.set_target_fps(30);
-    println!("Pressione ESC para sair.");
-
-    // Buffer for rendering frames
-    let mut rgb_buffer = vec![0u32; width * height];
-
-    while window.is_open() && !window.is_key_down(Key::Escape) {
-        match camera.frame() {
-            Ok(frame) => {
-                match frame.decode_image::<RgbFormat>() {
-                    Ok(rgb_data) => {
-                        // Convert RGB data to minifb buffer format
-                        for (i, chunk) in rgb_data.chunks_exact(3).enumerate() {
-                            if i < rgb_buffer.len() {
-                                let r = chunk[0] as u32;
-                                let g = chunk[1] as u32;
-                                let b = chunk[2] as u32;
-                                rgb_buffer[i] = (r << 16) | (g << 8) | b;
-                            }
-                        }
-
-                        if let Err(e) = window.update_with_buffer(&rgb_buffer, width, height) {
-                            eprintln!("Erro ao atualizar janela: {}", e);
-                        }
-                    }
-                    Err(e) => {
-                        eprintln!("Erro ao decodificar imagem: {}", e);
-                        std::thread::sleep(Duration::from_millis(50));
-                    }
+            
+            let model = cnn_model::train_model(&input_dir).await?;
+            
+            // Salvar modelo no banco de dados
+            println!("Salvando modelo no banco de dados...");
+            let db = database::Database::new().await?;
+            let model_id = db.save_model(&model).await?;
+            
+            println!("Modelo salvo com ID: {}", model_id);
+        },
+        
+        Commands::Recognize { realtime } => {
+            println!("Modo Reconhecimento Facial");
+            
+            // Perguntar que tipo de reconhecimento
+            println!("Selecione o tipo de reconhecimento:");
+            println!("1) Aprendizado (adicionar novas faces)");
+            println!("2) Reconhecimento (identificar faces conhecidas)");
+            print!("Opcao (1-2): ");
+            
+            let mut input = String::new();
+            io::stdin().read_line(&mut input)?;
+            
+            match input.trim() {
+                "1" => {
+                    println!("Modo Aprendizado ativado");
+                    face_detector::learning_mode(realtime).await?;
+                },
+                "2" => {
+                    println!("Modo Reconhecimento ativado");
+                    
+                    // Carregar modelo do banco
+                    let db = database::Database::new().await?;
+                    let latest_model = db.load_latest_model().await?;
+                    
+                    face_detector::recognition_mode(latest_model, realtime).await?;
+                },
+                _ => {
+                    println!("Opcao invalida");
+                    return Ok(());
                 }
             }
-            Err(e) => {
-                eprintln!("Erro ao capturar frame: {}", e);
-                std::thread::sleep(Duration::from_millis(100));
+        },
+        
+        Commands::Database { action } => {
+            let db = database::Database::new().await?;
+            
+            match action {
+                DatabaseCommands::Setup => {
+                    println!("Configurando banco de dados...");
+                    db.setup_tables().await?;
+                    println!("Tabelas criadas com sucesso!");
+                },
+                
+                DatabaseCommands::List => {
+                    println!("Modelos salvos:");
+                    let models = db.list_models().await?;
+                    for model in models {
+                        println!("ID: {:?}, Data: {}, Acuracia: {:.2}%", 
+                                model.id, model.created_at, model.accuracy * 100.0);
+                    }
+                },
+                
+                DatabaseCommands::Export { model_id } => {
+                    println!("Exportando modelo ID: {}", model_id);
+                    let model = db.load_model(model_id).await?;
+                    
+                    let filename = format!("modelo_{}.json", model_id);
+                    model.save_to_file(&filename)?;
+                    println!("Modelo exportado para: {}", filename);
+                }
             }
         }
     }
@@ -113,4 +178,25 @@ fn main() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-// cargo run --release
+#[cfg(test)]
+mod tests {
+    use super::*;
+    
+    #[tokio::test]
+    async fn test_database_connection() {
+        let db_result = database::Database::new().await;
+        assert!(db_result.is_ok(), "Falha na conexao com banco de dados");
+    }
+    
+    #[test]
+    fn test_config_load() {
+        let config = config::Config::load();
+        assert!(config.is_ok(), "Falha ao carregar configuracao");
+    }
+}
+
+// Next Steps After Compilation
+// Once it compiles successfully:
+
+// Test basic functionality: cargo run -- database setup
+// Test image capture: cargo run -- capture --count 5
