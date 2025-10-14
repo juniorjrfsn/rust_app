@@ -1,25 +1,20 @@
-// projeto: cnncheckin
-// file: cnncheckin/src/main.rs
-// Sistema modular de reconhecimento facial com CNN
- 
 
-mod camera;
+
+
+
 mod config;
 mod database;
-mod error;
-mod image;
-mod model;
-mod recognition;
-mod training;
+mod cnn_model;
 mod utils;
 
 use clap::{Parser, Subcommand};
-use error::Result;
+use config::Config;
+use database::Database;
+use cnn_model::{train_model, recognition_mode, learning_mode};
+use utils::WebcamCapture;
 
 #[derive(Parser)]
-#[command(name = "cnncheckin")]
-#[command(about = "Sistema de reconhecimento facial com CNN", long_about = None)]
-#[command(version)]
+#[command(name = "cnncheckin", about = "Sistema de reconhecimento facial com CNN", version)]
 struct Cli {
     #[command(subcommand)]
     command: Commands,
@@ -27,298 +22,94 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
-    /// Inicializar configuração e banco de dados
     Init,
-    
-    /// Capturar imagens da webcam para treinamento
-    Capture {
-        /// Número de fotos por pessoa
-        #[arg(short, long, default_value = "10")]
-        count: u32,
-        
-        /// Nome da pessoa (opcional, será solicitado durante captura se não fornecido)
-        #[arg(short, long)]
-        person: Option<String>,
-    },
-    
-    /// Treinar modelo de reconhecimento facial
-    Train {
-        /// Diretório com imagens de treino
-        #[arg(short, long)]
-        data_dir: Option<String>,
-        
-        /// Número de épocas
-        #[arg(short, long)]
-        epochs: Option<usize>,
-        
-        /// Salvar modelo automaticamente após treino
-        #[arg(long)]
-        auto_save: bool,
-    },
-    
-    /// Reconhecer faces
-    Recognize {
-        /// Modo tempo real (webcam)
-        #[arg(short, long)]
-        realtime: bool,
-        
-        /// ID do modelo a usar (usa o mais recente se não especificado)
-        #[arg(short, long)]
-        model_id: Option<i32>,
-    },
-    
-    /// Aprender novas faces
-    Learn {
-        /// Modo tempo real (webcam)
-        #[arg(short, long)]
-        realtime: bool,
-    },
-    
-    /// Gerenciar modelos
-    Model {
-        #[command(subcommand)]
-        action: ModelCommands,
-    },
-    
-    /// Gerenciar banco de dados
-    Database {
-        #[command(subcommand)]
-        action: DatabaseCommands,
-    },
-}
-
-#[derive(Subcommand)]
-enum ModelCommands {
-    /// Listar modelos salvos
-    List,
-    
-    /// Exportar modelo
-    Export {
-        #[arg(short, long)]
-        model_id: i32,
-        
-        #[arg(short, long)]
-        output: String,
-    },
-    
-    /// Importar modelo
-    Import {
-        #[arg(short, long)]
-        input: String,
-    },
-    
-    /// Deletar modelo
-    Delete {
-        #[arg(short, long)]
-        model_id: i32,
-    },
-    
-    /// Comparar modelos
-    Compare,
+    Capture { #[arg(short, long, default_value = "10")] count: u32, #[arg(short, long)] person: Option<String> },
+    Train { #[arg(short, long)] data_dir: Option<String>, #[arg(short, long)] epochs: Option<usize> },
+    Recognize { #[arg(short, long)] realtime: bool, #[arg(short, long)] model_id: Option<i32> },
+    Learn { #[arg(short, long)] realtime: bool },
+    Database { #[command(subcommand)] action: DatabaseCommands },
 }
 
 #[derive(Subcommand)]
 enum DatabaseCommands {
-    /// Configurar tabelas
     Setup,
-    
-    /// Estatísticas
+    List,
     Stats,
-    
-    /// Backup
-    Backup {
-        #[arg(short, long)]
-        output: String,
-    },
-    
-    /// Restaurar backup
-    Restore {
-        #[arg(short, long)]
-        input: String,
-    },
+    Export { #[arg(short, long)] model_id: i32 },
 }
 
 #[tokio::main]
-async fn main() -> Result<()> {
-    // Inicializar logger
-    env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info"))
-        .init();
-    
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    env_logger::init();
     let cli = Cli::parse();
-    
+
     match cli.command {
         Commands::Init => {
-            commands::init().await?;
+            let config = Config::load()?;
+            config.ensure_directories()?;
+            config.validate()?;
+            let db = Database::new().await?;
+            db.setup_tables().await?;
+            println!("✅ Sistema inicializado!");
+            Ok(())
         }
-        
         Commands::Capture { count, person } => {
-            commands::capture(count, person).await?;
+            let config = Config::load()?;
+            let mut capture = WebcamCapture::new(&config.camera)?;
+            capture.capture_dataset(count, person).await?;
+            Ok(())
         }
-        
-        Commands::Train { data_dir, epochs, auto_save } => {
-            commands::train(data_dir, epochs, auto_save).await?;
-        }
-        
-        Commands::Recognize { realtime, model_id } => {
-            commands::recognize(realtime, model_id).await?;
-        }
-        
-        Commands::Learn { realtime } => {
-            commands::learn(realtime).await?;
-        }
-        
-        Commands::Model { action } => {
-            commands::model(action).await?;
-        }
-        
-        Commands::Database { action } => {
-            commands::database(action).await?;
-        }
-    }
-    
-    Ok(())
-}
-
-mod commands {
-    use super::*;
-    use crate::config::Config;
-    use crate::database::Database;
-    
-    pub async fn init() -> Result<()> {
-        println!("🚀 Inicializando CNN CheckIn...");
-        
-        // Criar configuração padrão
-        let config = Config::load_or_create()?;
-        config.ensure_directories()?;
-        config.validate()?;
-        
-        println!("✅ Configuração criada/carregada");
-        
-        // Configurar banco de dados
-        let db = Database::connect().await?;
-        db.setup_tables().await?;
-        
-        println!("✅ Banco de dados configurado");
-        println!("\n📋 Sistema pronto para uso!");
-        println!("💡 Próximos passos:");
-        println!("   1. Capture imagens: cnncheckin capture");
-        println!("   2. Treine o modelo: cnncheckin train");
-        println!("   3. Reconheça faces: cnncheckin recognize --realtime");
-        
-        Ok(())
-    }
-    
-    pub async fn capture(count: u32, person: Option<String>) -> Result<()> {
-        let config = Config::load()?;
-        let mut session = training::CaptureSession::new(config).await?;
-        session.capture_dataset(count, person).await?;
-        Ok(())
-    }
-    
-    pub async fn train(
-        data_dir: Option<String>,
-        epochs: Option<usize>,
-        auto_save: bool,
-    ) -> Result<()> {
-        let config = Config::load()?;
-        let data_dir = data_dir.unwrap_or_else(|| config.paths.training_dir.clone());
-        
-        let mut trainer = training::ModelTrainer::new(config)?;
-        
-        if let Some(epochs) = epochs {
-            trainer.set_epochs(epochs);
-        }
-        
-        let trained_model = trainer.train(&data_dir).await?;
-        
-        if auto_save {
-            let db = Database::connect().await?;
-            let model_id = db.save_model(&trained_model).await?;
+        Commands::Train { data_dir, epochs } => {
+            let config = Config::load()?;
+            let data_dir = data_dir.unwrap_or(config.paths.training_dir);
+            let model = train_model(&data_dir, epochs.unwrap_or(config.model.epochs)).await?;
+            let db = Database::new().await?;
+            let model_id = db.save_model(&model).await?;
             println!("✅ Modelo salvo com ID: {}", model_id);
+            Ok(())
         }
-        
-        Ok(())
-    }
-    
-    pub async fn recognize(realtime: bool, model_id: Option<i32>) -> Result<()> {
-        let config = Config::load()?;
-        let db = Database::connect().await?;
-        
-        let model = if let Some(id) = model_id {
-            db.load_model(id).await?
-        } else {
-            db.load_latest_model().await?
-        };
-        
-        let mut recognizer = recognition::FaceRecognizer::new(config, db).await?;
-        recognizer.load_model(model).await?;
-        
-        if realtime {
-            recognizer.recognize_realtime().await?;
-        } else {
-            recognizer.recognize_single_shot().await?;
+        Commands::Recognize { realtime, model_id } => {
+            let config = Config::load()?;
+            let db = Database::new().await?;
+            let model = match model_id {
+                Some(id) => db.load_model(id).await?,
+                None => db.load_latest_model().await?,
+            };
+            recognition_mode(model, realtime, &config).await?;
+            Ok(())
         }
-        
-        Ok(())
-    }
-    
-    pub async fn learn(realtime: bool) -> Result<()> {
-        let config = Config::load()?;
-        let db = Database::connect().await?;
-        
-        let model = db.load_latest_model().await?;
-        
-        let mut recognizer = recognition::FaceRecognizer::new(config, db).await?;
-        recognizer.load_model(model).await?;
-        
-        if realtime {
-            recognizer.learn_realtime().await?;
-        } else {
-            recognizer.learn_single_shot().await?;
+        Commands::Learn { realtime } => {
+            let config = Config::load()?;
+            let db = Database::new().await?;
+            let model = db.load_latest_model().await?;
+            learning_mode(model, realtime, &config).await?;
+            Ok(())
         }
-        
-        Ok(())
-    }
-    
-    pub async fn model(action: ModelCommands) -> Result<()> {
-        use crate::model::ModelManager;
-        
-        let db = Database::connect().await?;
-        let manager = ModelManager::new(db);
-        
-        match action {
-            ModelCommands::List => manager.list_models().await?,
-            ModelCommands::Export { model_id, output } => {
-                manager.export_model(model_id, &output).await?
+        Commands::Database { action } => {
+            let db = Database::new().await?;
+            match action {
+                DatabaseCommands::Setup => {
+                    db.setup_tables().await?;
+                    println!("✅ Tabelas configuradas");
+                }
+                DatabaseCommands::List => {
+                    let models = db.list_models().await?;
+                    for model in models {
+                        println!("ID: {}, Acurácia: {:.2}%, Classes: {}", model.id.unwrap(), model.accuracy * 100.0, model.num_classes);
+                    }
+                }
+                DatabaseCommands::Stats => {
+                    let stats = db.get_stats().await?;
+                    println!("📊 Estatísticas: {} modelos, {} pessoas, {} check-ins hoje", stats.models, stats.persons, stats.checkins_today);
+                }
+                DatabaseCommands::Export { model_id } => {
+                    let model = db.load_model(model_id).await?;
+                    model.save_to_file(&format!("model_{}.json", model_id))?;
+                    println!("✅ Modelo exportado");
+                }
             }
-            ModelCommands::Import { input } => manager.import_model(&input).await?,
-            ModelCommands::Delete { model_id } => manager.delete_model(model_id).await?,
-            ModelCommands::Compare => manager.compare_models().await?,
+            Ok(())
         }
-        
-        Ok(())
-    }
-    
-    pub async fn database(action: DatabaseCommands) -> Result<()> {
-        let db = Database::connect().await?;
-        
-        match action {
-            DatabaseCommands::Setup => {
-                db.setup_tables().await?;
-                println!("✅ Tabelas configuradas");
-            }
-            DatabaseCommands::Stats => {
-                db.print_statistics().await?;
-            }
-            DatabaseCommands::Backup { output } => {
-                db.backup(&output).await?;
-            }
-            DatabaseCommands::Restore { input } => {
-                db.restore(&input).await?;
-            }
-        }
-        
-        Ok(())
     }
 }
 

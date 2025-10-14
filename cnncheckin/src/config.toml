@@ -1,0 +1,30 @@
+[database]
+host = "localhost"
+port = 5432
+database = "cnncheckin"
+username = "postgres"
+password = "postgres"
+max_connections = 10
+
+[camera]
+device_path = "/dev/video0"
+width = 640
+height = 480
+fps = 30
+
+[model]
+input_size = [3, 128, 128]
+batch_size = 32
+epochs = 50
+learning_rate = 0.001
+
+[paths]
+photos_dir = "../../dados/fotos_webcam"
+training_dir = "../../dados/fotos_treino"
+models_dir = "../../dados/modelos"
+temp_dir = "../../dados/temp"
+logs_dir = "../../dados/logs"
+
+[recognition]
+confidence_threshold = 0.7
+similarity_threshold = 0.8
