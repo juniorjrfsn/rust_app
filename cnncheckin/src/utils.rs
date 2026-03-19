@@ -41,7 +41,7 @@ impl WebcamCapture {
     pub fn is_key_down(&self, key: Key) -> bool { self.window.is_key_down(key) }
     pub fn is_key_pressed(&self, key: Key) -> bool { 
         self.window.get_keys_pressed(minifb::KeyRepeat::No)
-            .map_or(false, |keys| keys.iter().any(|&k| k == key)) 
+            .iter().any(|&k| k == key)
     }
     pub fn update_title(&mut self, title: &str) { self.window.set_title(title); }
 

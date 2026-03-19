@@ -3,6 +3,8 @@
 
 
 use smartcore::linalg::basic::matrix::DenseMatrix;
+use smartcore::linalg::basic::arrays::Array;
+use smartcore::metrics::distance::euclidian::Euclidian;
 use smartcore::neighbors::knn_classifier::*;
 use smartcore::model_selection::train_test_split;
 use smartcore::metrics::accuracy;
@@ -89,7 +91,7 @@ impl FaceDataset {
 }
 
 pub struct SimpleFaceRecognizer {
-    model: Option<KNNClassifier<f32, i32, DenseMatrix<f32>, Vec<i32>, Euclidean>>,
+    model: Option<KNNClassifier<f32, i32, DenseMatrix<f32>, Vec<i32>, Euclidian<f32>>>,
     class_names: Vec<String>,
 }
 
@@ -104,7 +106,7 @@ impl SimpleFaceRecognizer {
         let (x_train, x_test, y_train, y_test) = train_test_split(&features, &labels, 0.2, true, Some(42));
         let knn = KNNClassifier::fit(&x_train, &y_train, Default::default())?;
         let predictions = knn.predict(&x_test)?;
-        let accuracy = accuracy(&y_test, &predictions).to_f32().unwrap_or(0.0);
+        let accuracy = accuracy(&y_test, &predictions) as f32;
         self.model = Some(knn);
         self.class_names = dataset.get_class_names();
         Ok(accuracy)
@@ -113,7 +115,7 @@ impl SimpleFaceRecognizer {
     pub fn predict(&self, image: &Array3<f32>) -> Result<(usize, f32), Box<dyn std::error::Error>> {
         let model = self.model.as_ref().ok_or("Modelo não treinado")?;
         let features = self.extract_features(image);
-        let feature_matrix = DenseMatrix::from_2d_vec(&vec![features])?;
+        let feature_matrix = DenseMatrix::from_2d_vec(&vec![features]);
         let prediction = model.predict(&feature_matrix)?;
         Ok((prediction[0] as usize, 0.7 + rand::random::<f32>() * 0.3))
     }
@@ -127,7 +129,7 @@ impl SimpleFaceRecognizer {
             labels_vec.push(image.class_id as i32);
         }
         if features_vec.is_empty() { return Err("Nenhuma feature extraída".into()); }
-        Ok((DenseMatrix::from_2d_vec(&features_vec)?, labels_vec))
+        Ok((DenseMatrix::from_2d_vec(&features_vec), labels_vec))
     }
 
     fn extract_features(&self, image: &Array3<f32>) -> Vec<f32> {

@@ -92,6 +92,11 @@ cargo build --release
 cargo run --release -- --help
 ```
 
+# Executar
+```bash
+cargo run --release -- init
+```
+
 ## 📋 Comandos Disponíveis
 
 ### Configuração Inicial
