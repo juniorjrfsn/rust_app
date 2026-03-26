@@ -1,38 +1,44 @@
+// projeto cnncheckin
 // file: cnncheckin/src/image_processor.rs
 // Módulo de processamento de imagens e preparação de dados
+// src/image_processor.rs — Processamento de imagens e gerenciamento do dataset
 
-use std::error::Error;
-use std::fs;
-use std::path::{Path, PathBuf};
-use std::collections::HashMap;
-use ndarray::{Array3, Array4, Axis};
+use ndarray::{Array3, Array4, s};
 use rand::seq::SliceRandom;
-use serde::{Deserialize, Serialize};
+use rand::Rng;
+use std::collections::HashMap;
+use std::fs;
+use std::path::Path;
 
-use crate::utils;
+use crate::error::{AppError, Result};
+
+// ────────────────────────────────────────────────
+//  Estruturas de dados
+// ────────────────────────────────────────────────
 
 #[derive(Debug, Clone)]
 pub struct FaceImage {
-    pub data: Array3<f32>, // [channels, height, width]
+    pub data: Array3<f32>,    // [channels, height, width], valores em [0, 1]
     pub person_name: String,
     pub class_id: usize,
     pub file_path: String,
 }
 
-#[derive(Debug, Clone)]
-pub struct DetectedFace {
-    pub x: usize,
-    pub y: usize,
-    pub width: usize,
-    pub height: usize,
-    pub confidence: f32,
-    pub image_data: Array3<f32>,
+/// Dataset de imagens organizadas por classe
+pub struct FaceDataset {
+    pub images: Vec<FaceImage>,
+    pub class_names: Vec<String>,
+    class_to_id: HashMap<String, usize>,
 }
 
-pub struct FaceDataset {
-    images: Vec<FaceImage>,
-    class_names: Vec<String>,
-    class_to_id: HashMap<String, usize>,
+impl Clone for FaceDataset {
+    fn clone(&self) -> Self {
+        FaceDataset {
+            images: self.images.clone(),
+            class_names: self.class_names.clone(),
+            class_to_id: self.class_to_id.clone(),
+        }
+    }
 }
 
 impl FaceDataset {
@@ -44,21 +50,22 @@ impl FaceDataset {
         }
     }
 
-    pub fn add_image(&mut self, image: FaceImage) {
-        // Adicionar nova classe se não existir
+    pub fn add_image(&mut self, mut image: FaceImage) {
         if !self.class_to_id.contains_key(&image.person_name) {
             let class_id = self.class_names.len();
             self.class_names.push(image.person_name.clone());
             self.class_to_id.insert(image.person_name.clone(), class_id);
         }
-
-        let mut image = image;
         image.class_id = self.class_to_id[&image.person_name];
         self.images.push(image);
     }
 
     pub fn len(&self) -> usize {
         self.images.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.images.is_empty()
     }
 
     pub fn num_classes(&self) -> usize {
@@ -69,604 +76,622 @@ impl FaceDataset {
         self.class_names.clone()
     }
 
+    /// Separa o dataset em treino e validação de forma estratificada
     pub fn split(&self, validation_ratio: f32) -> (FaceDataset, FaceDataset) {
         let mut rng = rand::thread_rng();
-        let mut indices: Vec<usize> = (0..self.images.len()).collect();
-        indices.shuffle(&mut rng);
+        let mut train_ds = FaceDataset::new();
+        let mut val_ds = FaceDataset::new();
 
-        let val_size = (self.images.len() as f32 * validation_ratio) as usize;
-        let (val_indices, train_indices) = indices.split_at(val_size);
+        // Copiar mapeamento de classes para ambos
+        train_ds.class_names = self.class_names.clone();
+        train_ds.class_to_id = self.class_to_id.clone();
+        val_ds.class_names = self.class_names.clone();
+        val_ds.class_to_id = self.class_to_id.clone();
 
-        let mut train_dataset = FaceDataset::new();
-        let mut val_dataset = FaceDataset::new();
+        // Estratificar por classe
+        for class_id in 0..self.class_names.len() {
+            let mut class_images: Vec<&FaceImage> = self
+                .images
+                .iter()
+                .filter(|img| img.class_id == class_id)
+                .collect();
+            class_images.shuffle(&mut rng);
 
-        // Copiar metadados
-        train_dataset.class_names = self.class_names.clone();
-        train_dataset.class_to_id = self.class_to_id.clone();
-        val_dataset.class_names = self.class_names.clone();
-        val_dataset.class_to_id = self.class_to_id.clone();
+            let val_size = ((class_images.len() as f32) * validation_ratio).ceil() as usize;
+            let val_size = val_size.max(1).min(class_images.len());
 
-        // Dividir imagens
-        for &idx in train_indices {
-            train_dataset.images.push(self.images[idx].clone());
+            for (i, img) in class_images.iter().enumerate() {
+                if i < val_size {
+                    val_ds.images.push((*img).clone());
+                } else {
+                    train_ds.images.push((*img).clone());
+                }
+            }
         }
 
-        for &idx in val_indices {
-            val_dataset.images.push(self.images[idx].clone());
-        }
+        println!(
+            "📊 Dataset dividido — Treino: {} | Validação: {}",
+            train_ds.len(),
+            val_ds.len()
+        );
 
-        println!("📊 Dataset dividido:");
-        println!("  🏋️  Treino: {} imagens", train_dataset.len());
-        println!("  ✅ Validação: {} imagens", val_dataset.len());
-
-        (train_dataset, val_dataset)
+        (train_ds, val_ds)
     }
 
+    /// Retorna um batch como (Array4[batch, C, H, W], labels)
     pub fn get_batch(&self, batch_size: usize, start_idx: usize) -> Option<(Array4<f32>, Vec<usize>)> {
-        let end_idx = std::cmp::min(start_idx + batch_size, self.images.len());
-        
         if start_idx >= self.images.len() {
             return None;
         }
+        let end_idx = (start_idx + batch_size).min(self.images.len());
+        let batch = &self.images[start_idx..end_idx];
 
-        let batch_images = &self.images[start_idx..end_idx];
-        let actual_batch_size = batch_images.len();
+        let n = batch.len();
+        let (_, h, w) = batch[0].data.dim();
+        let c = batch[0].data.shape()[0];
 
-        // Criar array 4D para as imagens [batch, channels, height, width]
-        let mut images_array = Array4::<f32>::zeros((actual_batch_size, 3, 128, 128));
-        let mut labels = Vec::new();
+        let mut images_array = Array4::<f32>::zeros((n, c, h, w));
+        let mut labels = Vec::with_capacity(n);
 
-        for (i, face_image) in batch_images.iter().enumerate() {
-            // Copiar dados da imagem para o batch
-            images_array.slice_mut(s![i, .., .., ..]).assign(&face_image.data);
-            labels.push(face_image.class_id);
+        for (i, face_img) in batch.iter().enumerate() {
+            images_array.slice_mut(s![i, .., .., ..]).assign(&face_img.data);
+            labels.push(face_img.class_id);
         }
 
         Some((images_array, labels))
     }
 
-    pub fn into_dataloader(self) -> DataLoader {
-        DataLoader::new(self, 32)
+    /// Retorna features achatadas (para KNN): Vec<Vec<f32>> e Vec<usize>
+    pub fn to_feature_matrix(&self) -> (Vec<Vec<f32>>, Vec<usize>) {
+        let features: Vec<Vec<f32>> = self
+            .images
+            .iter()
+            .map(|img| extract_features(&img.data))
+            .collect();
+        let labels: Vec<usize> = self.images.iter().map(|img| img.class_id).collect();
+        (features, labels)
     }
 }
 
-pub struct DataLoader {
-    dataset: FaceDataset,
-    batch_size: usize,
-    current_idx: usize,
-}
+// ────────────────────────────────────────────────
+//  Carregamento de dados
+// ────────────────────────────────────────────────
 
-impl DataLoader {
-    pub fn new(dataset: FaceDataset, batch_size: usize) -> Self {
-        Self {
-            dataset,
-            batch_size,
-            current_idx: 0,
-        }
+/// Carrega dataset de uma pasta organizada em subpastas por pessoa/objeto
+pub fn load_training_data(data_dir: &str) -> Result<FaceDataset> {
+    let path = Path::new(data_dir);
+    if !path.exists() {
+        return Err(AppError::Config(format!(
+            "Diretório não encontrado: {}",
+            data_dir
+        )));
     }
-}
 
-impl Iterator for DataLoader {
-    type Item = (Array4<f32>, Vec<usize>);
-
-    fn next(&mut self) -> Option<Self::Item> {
-        let batch = self.dataset.get_batch(self.batch_size, self.current_idx);
-        self.current_idx += self.batch_size;
-        
-        // Resetar se chegou ao fim
-        if self.current_idx >= self.dataset.len() {
-            self.current_idx = 0;
-        }
-        
-        batch
-    }
-}
-
-pub fn load_training_data(data_dir: &str) -> Result<FaceDataset, Box<dyn Error>> {
-    println!("📁 Carregando dados de treinamento de: {}", data_dir);
-    
     let mut dataset = FaceDataset::new();
-    let data_path = Path::new(data_dir);
-    
-    if !data_path.exists() {
-        return Err(format!("Diretório não encontrado: {}", data_dir).into());
-    }
-    
-    // Procurar por subdiretórios (cada um representa uma pessoa)
-    let person_dirs = fs::read_dir(data_path)?
-        .filter_map(|entry| entry.ok())
-        .filter(|entry| entry.file_type().ok().map_or(false, |ft| ft.is_dir()))
-        .collect::<Vec<_>>();
-    
+
+    let person_dirs: Vec<_> = fs::read_dir(path)
+        .map_err(AppError::Io)?
+        .filter_map(|e| e.ok())
+        .filter(|e| e.file_type().ok().map_or(false, |t| t.is_dir()))
+        .collect();
+
     if person_dirs.is_empty() {
-        return Err("Nenhum diretório de pessoa encontrado".into());
+        return Err(AppError::InsufficientData);
     }
-    
-    println!("👥 Encontrados {} diretórios de pessoas", person_dirs.len());
-    
-    for person_dir in person_dirs {
-        let dir_path = person_dir.path();
-        let dir_name = dir_path.file_name()
-            .and_then(|name| name.to_str())
+
+    println!("👥 Encontradas {} classes", person_dirs.len());
+
+    for dir_entry in &person_dirs {
+        let dir_path = dir_entry.path();
+        let raw_name = dir_path
+            .file_name()
+            .and_then(|n| n.to_str())
             .unwrap_or("unknown");
-        
-        // Extrair nome da pessoa do nome do diretório (formato: "001_NomePessoa")
-        let person_name = if let Some(underscore_pos) = dir_name.find('_') {
-            &dir_name[underscore_pos + 1..]
+
+        // Aceita tanto "001_Nome" quanto "Nome" como nome do diretório
+        let person_name = if let Some(pos) = raw_name.find('_') {
+            if raw_name[..pos].chars().all(|c| c.is_ascii_digit()) {
+                raw_name[pos + 1..].to_string()
+            } else {
+                raw_name.to_string()
+            }
         } else {
-            dir_name
+            raw_name.to_string()
         };
-        
-        println!("📸 Processando pessoa: {}", person_name);
-        
-        // Carregar imagens do diretório
-        let image_files = fs::read_dir(&dir_path)?
-            .filter_map(|entry| entry.ok())
-            .filter(|entry| {
-                entry.file_type().ok().map_or(false, |ft| ft.is_file()) &&
-                entry.path().extension()
-                    .and_then(|ext| ext.to_str())
-                    .map_or(false, |ext| matches!(ext.to_lowercase().as_str(), "ppm" | "jpg" | "jpeg" | "png"))
+
+        let image_files: Vec<_> = fs::read_dir(&dir_path)
+            .map_err(AppError::Io)?
+            .filter_map(|e| e.ok())
+            .filter(|e| {
+                e.file_type().ok().map_or(false, |t| t.is_file())
+                    && is_supported_image(e.path().extension().and_then(|x| x.to_str()).unwrap_or(""))
             })
-            .collect::<Vec<_>>();
-        
-        println!("  📄 Encontradas {} imagens", image_files.len());
-        
-        for image_file in image_files {
-            let file_path = image_file.path();
-            
-            match load_and_preprocess_image(&file_path) {
-                Ok(processed_image) => {
-                    let face_image = FaceImage {
-                        data: processed_image,
-                        person_name: person_name.to_string(),
-                        class_id: 0, // Será atualizado pelo dataset
-                        file_path: file_path.to_string_lossy().to_string(),
-                    };
-                    
-                    dataset.add_image(face_image);
+            .collect();
+
+        println!("  📸 {}: {} imagens", person_name, image_files.len());
+
+        for file_entry in image_files {
+            let file_path = file_entry.path();
+            match load_and_preprocess_image(&file_path, 128, 128) {
+                Ok(data) => {
+                    dataset.add_image(FaceImage {
+                        data,
+                        person_name: person_name.clone(),
+                        class_id: 0, // corrigido em add_image
+                        file_path: file_path.to_string_lossy().into_owned(),
+                    });
                 }
                 Err(e) => {
-                    eprintln!("⚠️  Erro ao carregar {}: {}", file_path.display(), e);
+                    eprintln!("⚠️  Ignorando {}: {}", file_path.display(), e);
                 }
             }
         }
     }
-    
-    println!("✅ Dataset carregado:");
-    println!("  📊 Total de imagens: {}", dataset.len());
-    println!("  👥 Número de pessoas: {}", dataset.num_classes());
-    println!("  📝 Pessoas: {:?}", dataset.get_class_names());
-    
-    if dataset.len() == 0 {
-        return Err("Nenhuma imagem válida encontrada".into());
+
+    if dataset.is_empty() {
+        return Err(AppError::InsufficientData);
     }
-    
+
+    println!(
+        "✅ Dataset: {} imagens | {} classes",
+        dataset.len(),
+        dataset.num_classes()
+    );
+
     Ok(dataset)
 }
 
-fn load_and_preprocess_image(file_path: &Path) -> Result<Array3<f32>, Box<dyn Error>> {
-    let extension = file_path.extension()
-        .and_then(|ext| ext.to_str())
-        .unwrap_or("")
-        .to_lowercase();
-    
-    let raw_image = match extension.as_str() {
-        "ppm" => load_ppm_image(file_path)?,
-        "jpg" | "jpeg" | "png" => {
-            return Err("Suporte para JPG/PNG não implementado ainda. Use PPM.".into());
-        }
-        _ => {
-            return Err(format!("Formato não suportado: {}", extension).into());
-        }
-    };
-    
-    // Preprocessar imagem
-    preprocess_image(&raw_image)
+fn is_supported_image(ext: &str) -> bool {
+    matches!(ext.to_lowercase().as_str(), "ppm" | "pgm" | "png" | "jpg" | "jpeg")
 }
 
-fn load_ppm_image(file_path: &Path) -> Result<Array3<f32>, Box<dyn Error>> {
-    let content = fs::read(file_path)?;
-    
-    // Parser simples para PPM P6
-    let mut lines = content.split(|&b| b == b'\n');
-    
-    // Primeira linha: magic number
-    let magic = lines.next().ok_or("PPM inválido: sem magic number")?;
-    if magic != b"P6" {
-        return Err("Apenas formato PPM P6 é suportado".into());
+// ────────────────────────────────────────────────
+//  Carregamento e pré-processamento de imagem
+// ────────────────────────────────────────────────
+
+/// Carrega uma imagem de disco e redimensiona para (C, height, width)
+pub fn load_and_preprocess_image(path: &Path, target_h: usize, target_w: usize) -> Result<Array3<f32>> {
+    let ext = path
+        .extension()
+        .and_then(|e| e.to_str())
+        .unwrap_or("")
+        .to_lowercase();
+
+    let raw = match ext.as_str() {
+        "ppm" => load_ppm(path)?,
+        "pgm" => load_pgm(path)?,
+        "png" | "jpg" | "jpeg" => load_pnm_fallback(path)?,
+        _ => return Err(AppError::Image(format!("Formato não suportado: {}", ext))),
+    };
+
+    let resized = resize_image(&raw, target_h, target_w);
+    Ok(normalize_image(&resized))
+}
+
+/// Carrega PPM P6 (binário RGB)
+fn load_ppm(path: &Path) -> Result<Array3<f32>> {
+    let bytes = fs::read(path).map_err(AppError::Io)?;
+    let mut pos = 0usize;
+
+    let magic = read_token(&bytes, &mut pos);
+    if magic != "P6" {
+        return Err(AppError::Image(format!("Não é PPM P6: {}", path.display())));
     }
-    
-    // Pular comentários
-    let mut width_height_line = lines.next().ok_or("PPM inválido: sem dimensões")?;
-    while width_height_line.starts_with(b"#") {
-        width_height_line = lines.next().ok_or("PPM inválido: sem dimensões após comentários")?;
+
+    skip_whitespace_comments(&bytes, &mut pos);
+    let width: usize = read_token(&bytes, &mut pos)
+        .parse()
+        .map_err(|_| AppError::Image("Largura inválida no PPM".into()))?;
+    skip_whitespace_comments(&bytes, &mut pos);
+    let height: usize = read_token(&bytes, &mut pos)
+        .parse()
+        .map_err(|_| AppError::Image("Altura inválida no PPM".into()))?;
+    skip_whitespace_comments(&bytes, &mut pos);
+    let _maxval: usize = read_token(&bytes, &mut pos)
+        .parse()
+        .map_err(|_| AppError::Image("Maxval inválido no PPM".into()))?;
+    // Pular exatamente 1 byte de espaço em branco após maxval
+    pos += 1;
+
+    let expected = width * height * 3;
+    if bytes.len() - pos < expected {
+        return Err(AppError::Image(format!(
+            "PPM corrompido: esperado {} bytes, encontrei {}",
+            expected,
+            bytes.len() - pos
+        )));
     }
-    
-    // Dimensões
-    let dimensions = String::from_utf8(width_height_line.to_vec())?;
-    let parts: Vec<&str> = dimensions.trim().split_whitespace().collect();
-    if parts.len() != 2 {
-        return Err("PPM inválido: formato de dimensões incorreto".into());
-    }
-    
-    let width: usize = parts[0].parse()?;
-    let height: usize = parts[1].parse()?;
-    
-    // Valor máximo
-    let max_val_line = lines.next().ok_or("PPM inválido: sem valor máximo")?;
-    let max_val: u8 = String::from_utf8(max_val_line.to_vec())?.trim().parse()?;
-    
-    // Encontrar início dos dados binários
-    let header_size = content.len() - lines.as_slice().len();
-    let pixel_data = &content[header_size..];
-    
-    if pixel_data.len() < width * height * 3 {
-        return Err("PPM inválido: dados de pixel insuficientes".into());
-    }
-    
-    // Converter para Array3<f32> no formato [channels, height, width]
+
+    let pixel_data = &bytes[pos..pos + expected];
     let mut image = Array3::<f32>::zeros((3, height, width));
-    
     for y in 0..height {
         for x in 0..width {
-            let idx = (y * width + x) * 3;
-            
-            // Normalizar para [0, 1]
-            let r = pixel_data[idx] as f32 / max_val as f32;
-            let g = pixel_data[idx + 1] as f32 / max_val as f32;
-            let b = pixel_data[idx + 2] as f32 / max_val as f32;
-            
-            image[[0, y, x]] = r; // Canal Red
-            image[[1, y, x]] = g; // Canal Green
-            image[[2, y, x]] = b; // Canal Blue
+            let i = (y * width + x) * 3;
+            image[[0, y, x]] = pixel_data[i] as f32;
+            image[[1, y, x]] = pixel_data[i + 1] as f32;
+            image[[2, y, x]] = pixel_data[i + 2] as f32;
         }
     }
-    
+    Ok(image) // Normalização acontece depois
+}
+
+/// Carrega PGM P5 (binário tons de cinza) e replica para 3 canais
+fn load_pgm(path: &Path) -> Result<Array3<f32>> {
+    let bytes = fs::read(path).map_err(AppError::Io)?;
+    let mut pos = 0usize;
+
+    let magic = read_token(&bytes, &mut pos);
+    if magic != "P5" {
+        return Err(AppError::Image("Não é PGM P5".into()));
+    }
+
+    skip_whitespace_comments(&bytes, &mut pos);
+    let width: usize = read_token(&bytes, &mut pos).parse().unwrap_or(0);
+    skip_whitespace_comments(&bytes, &mut pos);
+    let height: usize = read_token(&bytes, &mut pos).parse().unwrap_or(0);
+    skip_whitespace_comments(&bytes, &mut pos);
+    let _maxval: usize = read_token(&bytes, &mut pos).parse().unwrap_or(255);
+    pos += 1;
+
+    let pixel_data = &bytes[pos..];
+    let mut image = Array3::<f32>::zeros((3, height, width));
+    for y in 0..height {
+        for x in 0..width {
+            let i = y * width + x;
+            let v = *pixel_data.get(i).unwrap_or(&0) as f32;
+            image[[0, y, x]] = v;
+            image[[1, y, x]] = v;
+            image[[2, y, x]] = v;
+        }
+    }
     Ok(image)
 }
 
-pub fn preprocess_image(raw_image: &Array3<f32>) -> Result<Array3<f32>, Box<dyn Error>> {
-    let (channels, height, width) = raw_image.dim();
-    
-    if channels != 3 {
-        return Err("Imagem deve ter 3 canais (RGB)".into());
-    }
-    
-    // Redimensionar para 128x128 (tamanho esperado pelo modelo)
-    let resized = resize_image(raw_image, 128, 128)?;
-    
-    // Normalização Z-score com valores típicos para imagens RGB
-    let normalized = normalize_image(&resized)?;
-    
-    Ok(normalized)
+/// Fallback: tenta ler como PPM P3 (ASCII) para PNG/JPEG (sem biblioteca nativa)
+/// Em produção, adicione a crate `image` para suporte real a PNG/JPEG.
+fn load_pnm_fallback(path: &Path) -> Result<Array3<f32>> {
+    // Tenta como PPM P6 primeiro
+    load_ppm(path).or_else(|_| {
+        Err(AppError::Image(format!(
+            "Para carregar PNG/JPEG, adicione a crate `image` ao Cargo.toml. Arquivo: {}",
+            path.display()
+        )))
+    })
 }
 
-fn resize_image(image: &Array3<f32>, target_width: usize, target_height: usize) -> Result<Array3<f32>, Box<dyn Error>> {
-    let (channels, orig_height, orig_width) = image.dim();
-    
-    if orig_width == target_width && orig_height == target_height {
-        return Ok(image.clone());
+// ── Helpers de parsing de PNM ───────────────────
+
+fn read_token(bytes: &[u8], pos: &mut usize) -> String {
+    skip_whitespace_comments(bytes, pos);
+    let start = *pos;
+    while *pos < bytes.len() && !bytes[*pos].is_ascii_whitespace() {
+        *pos += 1;
     }
-    
-    // Implementação simples de redimensionamento usando nearest neighbor
-    let mut resized = Array3::<f32>::zeros((channels, target_height, target_width));
-    
-    let width_ratio = orig_width as f32 / target_width as f32;
-    let height_ratio = orig_height as f32 / target_height as f32;
-    
+    String::from_utf8_lossy(&bytes[start..*pos]).into_owned()
+}
+
+fn skip_whitespace_comments(bytes: &[u8], pos: &mut usize) {
+    while *pos < bytes.len() {
+        if bytes[*pos] == b'#' {
+            while *pos < bytes.len() && bytes[*pos] != b'\n' {
+                *pos += 1;
+            }
+        } else if bytes[*pos].is_ascii_whitespace() {
+            *pos += 1;
+        } else {
+            break;
+        }
+    }
+}
+
+// ────────────────────────────────────────────────
+//  Transformações de imagem
+// ────────────────────────────────────────────────
+
+/// Redimensiona uma imagem [C, H, W] para [C, new_h, new_w] usando nearest-neighbor
+pub fn resize_image(image: &Array3<f32>, new_h: usize, new_w: usize) -> Array3<f32> {
+    let (channels, orig_h, orig_w) = image.dim();
+    if orig_h == new_h && orig_w == new_w {
+        return image.clone();
+    }
+
+    let mut resized = Array3::<f32>::zeros((channels, new_h, new_w));
+    let h_ratio = orig_h as f32 / new_h as f32;
+    let w_ratio = orig_w as f32 / new_w as f32;
+
     for c in 0..channels {
-        for y in 0..target_height {
-            for x in 0..target_width {
-                let orig_x = ((x as f32 + 0.5) * width_ratio - 0.5).max(0.0) as usize;
-                let orig_y = ((y as f32 + 0.5) * height_ratio - 0.5).max(0.0) as usize;
-                
-                let orig_x = orig_x.min(orig_width - 1);
-                let orig_y = orig_y.min(orig_height - 1);
-                
-                resized[[c, y, x]] = image[[c, orig_y, orig_x]];
+        for y in 0..new_h {
+            for x in 0..new_w {
+                let src_y = ((y as f32 * h_ratio) as usize).min(orig_h - 1);
+                let src_x = ((x as f32 * w_ratio) as usize).min(orig_w - 1);
+                resized[[c, y, x]] = image[[c, src_y, src_x]];
             }
         }
     }
-    
-    Ok(resized)
+    resized
 }
 
-fn normalize_image(image: &Array3<f32>) -> Result<Array3<f32>, Box<dyn Error>> {
-    // Valores médios ImageNet para normalização
-    let mean = [0.485, 0.456, 0.406]; // RGB
-    let std = [0.229, 0.224, 0.225];  // RGB
-    
-    let mut normalized = image.clone();
-    
-    for c in 0..3 {
-        let mut channel = normalized.slice_mut(s![c, .., ..]);
-        channel -= mean[c];
-        channel /= std[c];
-    }
-    
-    Ok(normalized)
+/// Normaliza pixels para [0, 1]
+pub fn normalize_image(image: &Array3<f32>) -> Array3<f32> {
+    image.mapv(|v| (v / 255.0).clamp(0.0, 1.0))
 }
 
-pub fn detect_faces_in_image(raw_frame: &[u8], width: usize, height: usize) -> Result<Vec<Array3<f32>>, Box<dyn Error>> {
-    // Implementação simplificada de detecção de faces
-    // Em uma implementação real, usaria OpenCV, MTCNN, ou outro detector
-    
-    if raw_frame.len() < width * height * 3 {
-        return Err("Dados de frame insuficientes".into());
+/// Normalização ImageNet: subtrai média e divide por desvio padrão por canal
+pub fn normalize_imagenet(image: &Array3<f32>) -> Array3<f32> {
+    let mean = [0.485f32, 0.456, 0.406];
+    let std = [0.229f32, 0.224, 0.225];
+    let (channels, h, w) = image.dim();
+    let mut out = Array3::<f32>::zeros((channels, h, w));
+    for c in 0..channels.min(3) {
+        for y in 0..h {
+            for x in 0..w {
+                out[[c, y, x]] = (image[[c, y, x]] - mean[c]) / std[c];
+            }
+        }
     }
-    
-    // Converter frame RGB para Array3
-    let mut full_image = Array3::<f32>::zeros((3, height, width));
-    
+    out
+}
+
+/// Flip horizontal
+pub fn horizontal_flip(image: &Array3<f32>) -> Array3<f32> {
+    let (c, h, w) = image.dim();
+    let mut flipped = Array3::<f32>::zeros((c, h, w));
+    for ch in 0..c {
+        for y in 0..h {
+            for x in 0..w {
+                flipped[[ch, y, x]] = image[[ch, y, w - 1 - x]];
+            }
+        }
+    }
+    flipped
+}
+
+/// Ajuste de brilho multiplicativo
+pub fn adjust_brightness(image: &Array3<f32>, factor: f32) -> Array3<f32> {
+    image.mapv(|v| (v * factor).clamp(0.0, 1.0))
+}
+
+/// Adiciona ruído gaussiano
+pub fn add_noise(image: &Array3<f32>, std_dev: f32) -> Array3<f32> {
+    let mut rng = rand::thread_rng();
+    image.mapv(|v| {
+        let noise: f32 = rng.gen::<f32>() * 2.0 - 1.0; // [-1, 1]
+        (v + noise * std_dev).clamp(0.0, 1.0)
+    })
+}
+
+/// Aplica augmentation aleatório a uma imagem
+pub fn augment_image(image: &Array3<f32>) -> Array3<f32> {
+    let mut rng = rand::thread_rng();
+    let mut img = image.clone();
+
+    if rng.gen_bool(0.5) {
+        img = horizontal_flip(&img);
+    }
+
+    let brightness_factor: f32 = rng.gen_range(0.85..1.15);
+    img = adjust_brightness(&img, brightness_factor);
+
+    if rng.gen_bool(0.3) {
+        img = add_noise(&img, 0.02);
+    }
+
+    img
+}
+
+/// Expande o dataset com augmentation
+pub fn augment_dataset(dataset: &FaceDataset, factor: usize) -> FaceDataset {
+    println!("🔄 Augmentation: {}x (de {} para ~{} imagens)", factor, dataset.len(), dataset.len() * factor);
+    let mut augmented = dataset.clone();
+
+    for face_img in &dataset.images {
+        for _ in 1..factor {
+            let aug_data = augment_image(&face_img.data);
+            augmented.images.push(FaceImage {
+                data: aug_data,
+                person_name: face_img.person_name.clone(),
+                class_id: face_img.class_id,
+                file_path: format!("{}_aug", face_img.file_path),
+            });
+        }
+    }
+
+    augmented
+}
+
+// ────────────────────────────────────────────────
+//  Extração de features para KNN
+// ────────────────────────────────────────────────
+
+/// Extrai um vetor de features compacto de uma imagem [C, H, W]:
+/// - Histograma por canal (16 bins)
+/// - Pixels sub-amostrados a cada 8px
+/// - Gradiente de magnitude médio
+pub fn extract_features(image: &Array3<f32>) -> Vec<f32> {
+    let (channels, height, width) = image.dim();
+    let mut features = Vec::new();
+
+    // 1) Histograma de 16 bins por canal
+    for c in 0..channels {
+        let mut hist = vec![0.0f32; 16];
+        for y in 0..height {
+            for x in 0..width {
+                let v = image[[c, y, x]];
+                let bin = ((v * 15.9999) as usize).min(15);
+                hist[bin] += 1.0;
+            }
+        }
+        let total = (height * width) as f32;
+        for h in hist {
+            features.push(h / total);
+        }
+    }
+
+    // 2) Pixels sub-amostrados (passo 8)
+    let step = 8;
+    for c in 0..channels {
+        let mut y = 0;
+        while y < height {
+            let mut x = 0;
+            while x < width {
+                features.push(image[[c, y, x]]);
+                x += step;
+            }
+            y += step;
+        }
+    }
+
+    // 3) Média e desvio padrão globais
+    let all_vals: Vec<f32> = image.iter().copied().collect();
+    let mean = all_vals.iter().sum::<f32>() / all_vals.len() as f32;
+    let variance = all_vals.iter().map(|v| (v - mean).powi(2)).sum::<f32>() / all_vals.len() as f32;
+    features.push(mean);
+    features.push(variance.sqrt());
+
+    features
+}
+
+// ────────────────────────────────────────────────
+//  Detecção de faces (placeholder / Viola-Jones simples)
+// ────────────────────────────────────────────────
+
+/// Detecta regiões de interesse em um frame bruto RGB [width*height*3].
+/// Implementação simplificada: retorna a região central como candidato.
+/// Em produção, substituir por Haar Cascade ou MTCNN.
+pub fn detect_faces(raw_frame: &[u8], width: usize, height: usize) -> Vec<Array3<f32>> {
+    if raw_frame.is_empty() || width == 0 || height == 0 {
+        return vec![];
+    }
+
+    // Simulação: usa toda a imagem como ROI (região de interesse)
+    // Em produção, implemente detecção real aqui
+    let mut image = Array3::<f32>::zeros((3, height, width));
     for y in 0..height {
         for x in 0..width {
             let idx = (y * width + x) * 3;
-            
             if idx + 2 < raw_frame.len() {
-                full_image[[0, y, x]] = raw_frame[idx] as f32 / 255.0;     // R
-                full_image[[1, y, x]] = raw_frame[idx + 1] as f32 / 255.0; // G
-                full_image[[2, y, x]] = raw_frame[idx + 2] as f32 / 255.0; // B
+                image[[0, y, x]] = raw_frame[idx] as f32 / 255.0;
+                image[[1, y, x]] = raw_frame[idx + 1] as f32 / 255.0;
+                image[[2, y, x]] = raw_frame[idx + 2] as f32 / 255.0;
             }
         }
     }
-    
-    // Detector simples: assume que toda a imagem é uma face
-    // Em implementação real, usaria algoritmos de detecção mais sofisticados
-    let detected_faces = vec![full_image];
-    
-    // Preprocessar cada face detectada
-    let mut processed_faces = Vec::new();
-    for face in detected_faces {
-        match preprocess_image(&face) {
-            Ok(processed) => processed_faces.push(processed),
-            Err(e) => eprintln!("⚠️  Erro ao preprocessar face: {}", e),
-        }
-    }
-    
-    Ok(processed_faces)
+
+    // Retorna a região central 80% da imagem como face candidata
+    let margin_y = height / 10;
+    let margin_x = width / 10;
+    let roi_h = height - 2 * margin_y;
+    let roi_w = width - 2 * margin_x;
+
+    let roi = image
+        .slice(s![.., margin_y..margin_y + roi_h, margin_x..margin_x + roi_w])
+        .to_owned();
+
+    let resized = resize_image(&roi, 128, 128);
+    vec![resized]
 }
 
-pub fn count_training_images(data_dir: &str) -> Result<usize, Box<dyn Error>> {
-    let data_path = Path::new(data_dir);
-    
-    if !data_path.exists() {
-        return Ok(0);
-    }
-    
-    let mut total_images = 0;
-    
-    for entry in fs::read_dir(data_path)? {
-        let entry = entry?;
-        if entry.file_type()?.is_dir() {
-            let person_dir = entry.path();
-            
-            let image_count = fs::read_dir(&person_dir)?
-                .filter_map(|entry| entry.ok())
-                .filter(|entry| {
-                    entry.file_type().ok().map_or(false, |ft| ft.is_file()) &&
-                    entry.path().extension()
-                        .and_then(|ext| ext.to_str())
-                        .map_or(false, |ext| matches!(ext.to_lowercase().as_str(), "ppm" | "jpg" | "jpeg" | "png"))
-                })
-                .count();
-            
-            total_images += image_count;
+/// Converte um frame RGB bruto em Array3<f32>
+pub fn raw_frame_to_array(raw: &[u8], width: usize, height: usize) -> Array3<f32> {
+    let mut img = Array3::<f32>::zeros((3, height, width));
+    for y in 0..height {
+        for x in 0..width {
+            let idx = (y * width + x) * 3;
+            if idx + 2 < raw.len() {
+                img[[0, y, x]] = raw[idx] as f32 / 255.0;
+                img[[1, y, x]] = raw[idx + 1] as f32 / 255.0;
+                img[[2, y, x]] = raw[idx + 2] as f32 / 255.0;
+            }
         }
     }
-    
-    Ok(total_images)
+    img
 }
 
-pub fn save_preprocessed_dataset(dataset: &FaceDataset, output_dir: &str) -> Result<(), Box<dyn Error>> {
-    let output_path = Path::new(output_dir);
-    fs::create_dir_all(output_path)?;
-    
-    println!("💾 Salvando dataset preprocessado em: {}", output_dir);
-    
-    // Criar metadados do dataset
-    let metadata = DatasetMetadata {
-        num_images: dataset.len(),
-        num_classes: dataset.num_classes(),
-        class_names: dataset.get_class_names(),
-        image_shape: [3, 128, 128],
-        created_at: chrono::Utc::now().to_rfc3339(),
-    };
-    
-    // Salvar metadados
-    let metadata_file = output_path.join("metadata.json");
-    let metadata_json = serde_json::to_string_pretty(&metadata)?;
-    fs::write(metadata_file, metadata_json)?;
-    
-    // Salvar imagens preprocessadas (formato binário)
-    for (i, face_image) in dataset.images.iter().enumerate() {
-        let filename = format!("image_{:06}_{}.bin", i, face_image.class_id);
-        let file_path = output_path.join(filename);
-        
-        // Serializar Array3 usando bincode
-        let serialized = bincode::serialize(&face_image.data.as_slice().unwrap())?;
-        fs::write(file_path, serialized)?;
+// ────────────────────────────────────────────────
+//  Salvar imagem PPM
+// ────────────────────────────────────────────────
+
+/// Salva um frame RGB bruto como arquivo PPM P6
+pub fn save_ppm(raw_rgb: &[u8], width: usize, height: usize, path: &Path) -> Result<()> {
+    use std::io::Write;
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent).map_err(AppError::Io)?;
     }
-    
-    println!("✅ Dataset preprocessado salvo: {} imagens", dataset.len());
+    let mut file = fs::File::create(path).map_err(AppError::Io)?;
+    writeln!(file, "P6\n{} {}\n255", width, height).map_err(AppError::Io)?;
+    file.write_all(raw_rgb).map_err(AppError::Io)?;
     Ok(())
 }
 
-#[derive(Serialize, Deserialize)]
-struct DatasetMetadata {
-    num_images: usize,
-    num_classes: usize,
-    class_names: Vec<String>,
-    image_shape: [usize; 3],
-    created_at: String,
-}
-
-pub fn load_preprocessed_dataset(input_dir: &str) -> Result<FaceDataset, Box<dyn Error>> {
-    let input_path = Path::new(input_dir);
-    
-    // Carregar metadados
-    let metadata_file = input_path.join("metadata.json");
-    let metadata_content = fs::read_to_string(metadata_file)?;
-    let metadata: DatasetMetadata = serde_json::from_str(&metadata_content)?;
-    
-    println!("📁 Carregando dataset preprocessado:");
-    println!("  📊 Imagens: {}", metadata.num_images);
-    println!("  👥 Classes: {}", metadata.num_classes);
-    
-    let mut dataset = FaceDataset::new();
-    
-    // Recriar mapeamento de classes
-    for (i, class_name) in metadata.class_names.iter().enumerate() {
-        dataset.class_names.push(class_name.clone());
-        dataset.class_to_id.insert(class_name.clone(), i);
-    }
-    
-    // Carregar imagens
-    for i in 0..metadata.num_images {
-        for class_id in 0..metadata.num_classes {
-            let filename = format!("image_{:06}_{}.bin", i, class_id);
-            let file_path = input_path.join(&filename);
-            
-            if file_path.exists() {
-                let serialized = fs::read(&file_path)?;
-                let image_data: Vec<f32> = bincode::deserialize(&serialized)?;
-                
-                // Reconstruir Array3
-                let image_array = Array3::from_shape_vec(
-                    (metadata.image_shape[0], metadata.image_shape[1], metadata.image_shape[2]),
-                    image_data
-                )?;
-                
-                let face_image = FaceImage {
-                    data: image_array,
-                    person_name: metadata.class_names[class_id].clone(),
-                    class_id,
-                    file_path: file_path.to_string_lossy().to_string(),
-                };
-                
-                dataset.images.push(face_image);
-            }
-        }
-    }
-    
-    println!("✅ Dataset preprocessado carregado: {} imagens", dataset.len());
-    Ok(dataset)
-}
-
-pub fn augment_dataset(dataset: &FaceDataset, augmentation_factor: usize) -> Result<FaceDataset, Box<dyn Error>> {
-    println!("🔄 Aplicando data augmentation (fator: {}x)", augmentation_factor);
-    
-    let mut augmented_dataset = dataset.clone();
-    let original_size = dataset.len();
-    
-    for face_image in &dataset.images {
-        for _ in 0..(augmentation_factor - 1) { // -1 porque já temos a original
-            let augmented_image = apply_random_augmentation(&face_image.data)?;
-            
-            let augmented_face = FaceImage {
-                data: augmented_image,
-                person_name: face_image.person_name.clone(),
-                class_id: face_image.class_id,
-                file_path: format!("{}_aug", face_image.file_path),
-            };
-            
-            augmented_dataset.images.push(augmented_face);
-        }
-    }
-    
-    println!("✅ Dataset aumentado de {} para {} imagens", 
-             original_size, augmented_dataset.len());
-    
-    Ok(augmented_dataset)
-}
-
-fn apply_random_augmentation(image: &Array3<f32>) -> Result<Array3<f32>, Box<dyn Error>> {
-    let mut augmented = image.clone();
-    
-    // Aplicar algumas transformações aleatórias simples
-    use rand::Rng;
-    let mut rng = rand::thread_rng();
-    
-    // Flip horizontal (50% chance)
-    if rng.gen_bool(0.5) {
-        augmented = horizontal_flip(&augmented);
-    }
-    
-    // Ajuste de brilho (+/- 10%)
-    let brightness_factor = rng.gen_range(0.9..1.1);
-    augmented *= brightness_factor;
-    
-    // Clamp valores para range válido
-    augmented.mapv_inplace(|x| x.clamp(-2.0, 2.0)); // Considerando normalização ImageNet
-    
-    Ok(augmented)
-}
-
-fn horizontal_flip(image: &Array3<f32>) -> Array3<f32> {
-    let (channels, height, width) = image.dim();
-    let mut flipped = Array3::zeros((channels, height, width));
-    
-    for c in 0..channels {
-        for y in 0..height {
-            for x in 0..width {
-                flipped[[c, y, x]] = image[[c, y, width - 1 - x]];
-            }
-        }
-    }
-    
-    flipped
-}
+// ────────────────────────────────────────────────
+//  Testes
+// ────────────────────────────────────────────────
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use ndarray::Array3;
-    
+
     #[test]
-    fn test_face_dataset_creation() {
-        let mut dataset = FaceDataset::new();
-        assert_eq!(dataset.len(), 0);
-        assert_eq!(dataset.num_classes(), 0);
-        
-        let dummy_image = Array3::<f32>::zeros((3, 128, 128));
-        let face_image = FaceImage {
-            data: dummy_image,
-            person_name: "João".to_string(),
+    fn test_dataset_add_image() {
+        let mut ds = FaceDataset::new();
+        let img = Array3::<f32>::zeros((3, 128, 128));
+        ds.add_image(FaceImage {
+            data: img,
+            person_name: "Alice".into(),
             class_id: 0,
-            file_path: "test.ppm".to_string(),
-        };
-        
-        dataset.add_image(face_image);
-        assert_eq!(dataset.len(), 1);
-        assert_eq!(dataset.num_classes(), 1);
+            file_path: "test.ppm".into(),
+        });
+        assert_eq!(ds.len(), 1);
+        assert_eq!(ds.num_classes(), 1);
+        assert_eq!(ds.images[0].class_id, 0);
     }
-    
+
     #[test]
-    fn test_image_normalization() {
-        let image = Array3::<f32>::ones((3, 64, 64)) * 0.5; // Imagem cinza
-        let normalized = normalize_image(&image);
-        assert!(normalized.is_ok());
-    }
-    
-    #[test]
-    fn test_image_resize() {
-        let image = Array3::<f32>::zeros((3, 64, 64));
-        let resized = resize_image(&image, 128, 128);
-        
-        assert!(resized.is_ok());
-        let resized = resized.unwrap();
+    fn test_resize_image() {
+        let img = Array3::<f32>::ones((3, 64, 64));
+        let resized = resize_image(&img, 128, 128);
         assert_eq!(resized.dim(), (3, 128, 128));
     }
-    
+
+    #[test]
+    fn test_normalize_image() {
+        let img = Array3::<f32>::from_elem((3, 4, 4), 128.0);
+        let norm = normalize_image(&img);
+        for v in norm.iter() {
+            assert!(*v >= 0.0 && *v <= 1.0);
+        }
+    }
+
     #[test]
     fn test_horizontal_flip() {
-        let mut image = Array3::<f32>::zeros((3, 4, 4));
-        image[[0, 0, 0]] = 1.0; // Marcar pixel superior esquerdo
-        
-        let flipped = horizontal_flip(&image);
-        
-        // Pixel deve estar no canto superior direito agora
+        let mut img = Array3::<f32>::zeros((3, 4, 4));
+        img[[0, 0, 0]] = 1.0;
+        let flipped = horizontal_flip(&img);
         assert_eq!(flipped[[0, 0, 3]], 1.0);
         assert_eq!(flipped[[0, 0, 0]], 0.0);
+    }
+
+    #[test]
+    fn test_extract_features_shape() {
+        let img = Array3::<f32>::zeros((3, 128, 128));
+        let feats = extract_features(&img);
+        assert!(!feats.is_empty());
+    }
+
+    #[test]
+    fn test_dataset_split() {
+        let mut ds = FaceDataset::new();
+        for i in 0..10 {
+            ds.add_image(FaceImage {
+                data: Array3::<f32>::zeros((3, 128, 128)),
+                person_name: format!("person_{}", i % 2),
+                class_id: 0,
+                file_path: format!("img_{}.ppm", i),
+            });
+        }
+        let (train, val) = ds.split(0.2);
+        assert!(train.len() > 0);
+        assert!(val.len() > 0);
+        assert_eq!(train.len() + val.len(), 10);
     }
 }

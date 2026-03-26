@@ -1,5 +1,7 @@
+// projeto cnncheckin
 // file: cnncheckin/src/config.rs
 // Módulo de configuração do sistema
+// src/config.rs — Configuração do sistema
 
 use serde::{Deserialize, Serialize};
 use std::fs;
@@ -16,17 +18,18 @@ pub struct Config {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct DatabaseConfig {
-    pub host: String,
-    pub port: u16,
-    pub database: String,
-    pub username: String,
-    pub password: String,
-    pub max_connections: u32,
+    pub host: Option<String>,
+    pub port: Option<u16>,
+    pub database: Option<String>,
+    pub username: Option<String>,
+    pub password: Option<String>,
+    pub max_connections: Option<u32>,
+    pub path: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CameraConfig {
-    pub device_path: String,
+    pub device_index: u32,
     pub width: usize,
     pub height: usize,
     pub fps: u32,
@@ -34,10 +37,13 @@ pub struct CameraConfig {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ModelConfig {
-    pub input_size: [usize; 3],
+    pub input_height: usize,
+    pub input_width: usize,
+    pub input_channels: usize,
     pub batch_size: usize,
     pub epochs: usize,
     pub learning_rate: f64,
+    pub k_neighbors: usize,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -59,35 +65,39 @@ impl Default for Config {
     fn default() -> Self {
         Self {
             database: DatabaseConfig {
-                host: "localhost".to_string(),
-                port: 5432,
-                database: "cnncheckin".to_string(),
-                username: "postgres".to_string(),
-                password: "postgres".to_string(),
-                max_connections: 10,
+                host: Some("localhost".to_string()),
+                port: Some(5432),
+                database: Some("cnncheckin".to_string()),
+                username: Some("postgres".to_string()),
+                password: Some("postgres".to_string()),
+                max_connections: Some(10),
+                path: Some("cnncheckin.db".to_string()),
             },
             camera: CameraConfig {
-                device_path: "/dev/video0".to_string(),
+                device_index: 0,
                 width: 640,
                 height: 480,
                 fps: 30,
             },
             model: ModelConfig {
-                input_size: [3, 128, 128],
+                input_height: 128,
+                input_width: 128,
+                input_channels: 3,
                 batch_size: 32,
                 epochs: 50,
                 learning_rate: 0.001,
+                k_neighbors: 5,
             },
             paths: PathsConfig {
-                photos_dir: "../../dados/fotos_webcam".to_string(),
-                training_dir: "../../dados/fotos_treino".to_string(),
-                models_dir: "../../dados/modelos".to_string(),
-                temp_dir: "../../dados/temp".to_string(),
-                logs_dir: "../../dados/logs".to_string(),
+                photos_dir: "dados/fotos_webcam".to_string(),
+                training_dir: "dados/fotos_treino".to_string(),
+                models_dir: "dados/modelos".to_string(),
+                temp_dir: "dados/temp".to_string(),
+                logs_dir: "dados/logs".to_string(),
             },
             recognition: RecognitionConfig {
-                confidence_threshold: 0.7,
-                similarity_threshold: 0.8,
+                confidence_threshold: 0.70,
+                similarity_threshold: 0.80,
             },
         }
     }
@@ -102,6 +112,7 @@ impl Config {
         } else {
             let config = Self::default();
             config.save()?;
+            println!("📝 Arquivo config.toml criado com valores padrão.");
             Ok(config)
         }
     }
@@ -112,33 +123,40 @@ impl Config {
     }
 
     pub fn validate(&self) -> Result<(), Box<dyn std::error::Error>> {
-        if self.database.host.is_empty() || self.database.port == 0 {
-            return Err("Configuração de banco de dados inválida".into());
+        if self.database.path.is_none() && self.database.host.is_none() {
+            return Err("Caminho ou host do banco de dados não pode ser vazio.".into());
         }
         if self.camera.width == 0 || self.camera.height == 0 {
-            return Err("Dimensões da câmera inválidas".into());
+            return Err("Dimensões da câmera inválidas.".into());
         }
         if self.model.batch_size == 0 || self.model.epochs == 0 {
-            return Err("Configuração do modelo inválida".into());
+            return Err("Configuração do modelo inválida.".into());
         }
         Ok(())
     }
 
-    pub fn get_database_url(&self) -> String {
-        format!(
-            "postgresql://{}:{}@{}:{}/{}",
-            self.database.username, self.database.password, self.database.host,
-            self.database.port, self.database.database
-        )
-    }
-
     pub fn ensure_directories(&self) -> Result<(), Box<dyn std::error::Error>> {
-        for dir in [&self.paths.photos_dir, &self.paths.training_dir, &self.paths.models_dir, &self.paths.temp_dir, &self.paths.logs_dir] {
+        for dir in [
+            &self.paths.photos_dir,
+            &self.paths.training_dir,
+            &self.paths.models_dir,
+            &self.paths.temp_dir,
+            &self.paths.logs_dir,
+        ] {
             if !Path::new(dir).exists() {
                 fs::create_dir_all(dir)?;
             }
         }
         Ok(())
+    }
+
+    /// Retorna as dimensões de entrada do modelo como (channels, height, width)
+    pub fn input_shape(&self) -> (usize, usize, usize) {
+        (
+            self.model.input_channels,
+            self.model.input_height,
+            self.model.input_width,
+        )
     }
 }
 
@@ -147,10 +165,24 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_config_load_save() {
+    fn test_default_config() {
         let config = Config::default();
-        config.save().unwrap();
-        let loaded = Config::load().unwrap();
-        assert_eq!(loaded.database.host, "localhost");
+        assert_eq!(config.camera.width, 640);
+        assert_eq!(config.camera.height, 480);
+        assert_eq!(config.model.epochs, 50);
+    }
+
+    #[test]
+    fn test_config_serialization() {
+        let config = Config::default();
+        let serialized = toml::to_string_pretty(&config).unwrap();
+        let deserialized: Config = toml::from_str(&serialized).unwrap();
+        assert_eq!(deserialized.database.path, config.database.path);
+    }
+
+    #[test]
+    fn test_config_validation() {
+        let config = Config::default();
+        assert!(config.validate().is_ok());
     }
 }

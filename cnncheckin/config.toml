@@ -5,26 +5,59 @@ database = "cnncheckin"
 username = "postgres"
 password = "postgres"
 max_connections = 10
+path = "cnncheckin.db"
 
 [camera]
+device_index = 0
+width = 640
+height = 480
+fps = 30
+
+
+[model]
+input_height = 128
+input_width = 128
+input_channels = 3
+batch_size = 32
+epochs = 50
+learning_rate = 0.001
+k_neighbors = 5
+
+
+[paths]
+
+photos_dir = "dados/fotos_webcam"
+training_dir = "dados/fotos_treino"
+models_dir = "dados/modelos"
+temp_dir = "dados/temp"
+logs_dir = "dados/logs"
+
+
+[recognition]
+confidence_threshold = 0.7
+similarity_threshold = 0.8
+
+
+[camera2]
 device_path = "/dev/video0"
 width = 640
 height = 480
 fps = 30
 
-[model]
+[model2]
 input_size = [3, 128, 128]
 batch_size = 32
 epochs = 50
 learning_rate = 0.001
 
-[paths]
+
+[paths2]
 photos_dir = "../../dados/fotos_webcam"
 training_dir = "../../dados/fotos_treino"
 models_dir = "../../dados/modelos"
 temp_dir = "../../dados/temp"
 logs_dir = "../../dados/logs"
 
-[recognition]
-confidence_threshold = 0.7
-similarity_threshold = 0.8
+[recognition2]
+confidence_threshold = 0.70
+similarity_threshold = 0.80

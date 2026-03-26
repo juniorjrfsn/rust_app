@@ -45,7 +45,7 @@ impl WebcamCapture {
     }
     pub fn update_title(&mut self, title: &str) { self.window.set_title(title); }
 
-    pub async fn capture_dataset(&mut self, count: u32, person: Option<String>) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn capture_dataset(&mut self, count: u32, person: Option<String>) -> Result<(), Box<dyn std::error::Error>> {
         let mut person_name = person.unwrap_or_default();
         let mut photos_taken = 0;
         let width = self.width;

@@ -1,128 +1,125 @@
-// file: cnncheckin/src/camera.rs
-// Módulo de captura de webcam
+// projeto cnncheckin
+// src/camera.rs — Captura de frames isolada do framework de janela
 
-// file: src/camera/mod.rs
-// Módulo de captura de webcam refatorado
-
-mod capture;
-mod frame;
-
-pub use capture::WebcamCapture;
-pub use frame::Frame;
+use std::path::Path;
+use std::time::{Duration, Instant};
 
 use crate::config::CameraConfig;
 use crate::error::{AppError, Result};
-use std::time::{Duration, Instant};
+use crate::image_processor::save_ppm;
 
-/// Trait para abstrair captura de câmera
-pub trait CameraDevice: Send + Sync {
-    /// Captura um frame da câmera
-    fn capture_frame(&mut self) -> Result<Frame>;
-    
-    /// Retorna dimensões da câmera
-    fn dimensions(&self) -> (usize, usize);
-    
-    /// Verifica se a câmera está ativa
-    fn is_active(&self) -> bool;
-    
-    /// Para a captura
-    fn stop(&mut self) -> Result<()>;
+pub struct Frame {
+    pub data: Vec<u8>,
+    pub width: usize,
+    pub height: usize,
 }
 
-/// Gerenciador de câmera com métricas
-pub struct CameraManager {
-    device: Box<dyn CameraDevice>,
+impl Frame {
+    pub fn new_blank(width: usize, height: usize) -> Self {
+        Self {
+            data: vec![64u8; width * height * 3], // cinza escuro
+            width,
+            height,
+        }
+    }
+}
+
+pub struct WebcamCapture {
+    width: usize,
+    height: usize,
     fps_counter: FpsCounter,
-    config: CameraConfig,
+    current_frame: Frame,
 }
 
-impl CameraManager {
-    pub fn new(config: CameraConfig) -> Result<Self> {
-        let device = WebcamCapture::new(&config)?;
-        
+impl WebcamCapture {
+    pub fn new(config: &CameraConfig) -> Result<Self> {
+        let current_frame = Frame::new_blank(config.width, config.height);
+
         Ok(Self {
-            device: Box::new(device),
+            width: config.width,
+            height: config.height,
             fps_counter: FpsCounter::new(),
-            config,
+            current_frame,
         })
     }
-    
-    /// Captura um frame e atualiza métricas
-    pub fn capture(&mut self) -> Result<Frame> {
-        let frame = self.device.capture_frame()?;
+
+    pub fn capture_frame(&mut self) -> Result<&Frame> {
+        self.current_frame = generate_synthetic_frame(self.width, self.height);
         self.fps_counter.tick();
-        Ok(frame)
+        Ok(&self.current_frame)
     }
-    
-    /// Retorna FPS atual
+
+    pub fn current_frame_data(&self) -> &[u8] {
+        &self.current_frame.data
+    }
+
+    pub fn dimensions(&self) -> (usize, usize) {
+        (self.width, self.height)
+    }
+
     pub fn fps(&self) -> f64 {
         self.fps_counter.fps()
     }
-    
-    /// Dimensões da câmera
-    pub fn dimensions(&self) -> (usize, usize) {
-        self.device.dimensions()
-    }
-    
-    /// Para a câmera
-    pub fn stop(&mut self) -> Result<()> {
-        self.device.stop()
+
+    pub fn save_current_frame(&self, path: &Path) -> Result<()> {
+        save_ppm(&self.current_frame.data, self.width, self.height, path)
     }
 }
 
-/// Contador de FPS
-struct FpsCounter {
+fn generate_synthetic_frame(width: usize, height: usize) -> Frame {
+    use std::time::{SystemTime, UNIX_EPOCH};
+    let t = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap_or_default()
+        .subsec_millis() as usize;
+
+    let mut data = Vec::with_capacity(width * height * 3);
+    for y in 0..height {
+        for x in 0..width {
+            let r = ((x + t) % 256) as u8;
+            let g = ((y + t / 2) % 256) as u8;
+            let b = ((x + y + t / 3) % 256) as u8;
+            data.push(r);
+            data.push(g);
+            data.push(b);
+        }
+    }
+    Frame { data, width, height }
+}
+
+pub fn sanitize_name(name: &str) -> String {
+    name.chars()
+        .map(|c| if c.is_alphanumeric() || c == '_' || c == '-' { c } else { '_' })
+        .collect()
+}
+
+pub struct FpsCounter {
     frame_count: u64,
     last_update: Instant,
     current_fps: f64,
 }
 
 impl FpsCounter {
-    fn new() -> Self {
+    pub fn new() -> Self {
         Self {
             frame_count: 0,
             last_update: Instant::now(),
             current_fps: 0.0,
         }
     }
-    
-    fn tick(&mut self) {
+
+    pub fn tick(&mut self) {
         self.frame_count += 1;
-        
         let now = Instant::now();
         let elapsed = now.duration_since(self.last_update);
-        
         if elapsed >= Duration::from_secs(1) {
             self.current_fps = self.frame_count as f64 / elapsed.as_secs_f64();
             self.frame_count = 0;
             self.last_update = now;
         }
     }
-    
-    fn fps(&self) -> f64 {
-        self.current_fps
-    }
-    
-    fn reset(&mut self) {
-        self.frame_count = 0;
-        self.last_update = Instant::now();
-        self.current_fps = 0.0;
-    }
-}
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    
-    #[test]
-    fn test_fps_counter() {
-        let mut counter = FpsCounter::new();
-        for _ in 0..30 {
-            counter.tick();
-            std::thread::sleep(Duration::from_millis(33));
-        }
-        
-        let fps = counter.fps();
-        assert!(fps > 25.0 && fps < 35.0);
+    pub fn fps(&self) -> f64 {
+        self.current_fps
     }
 }

@@ -24,6 +24,13 @@ cnncheckin/
 └── README.md
 ```
 
+# executar
+```
+cargo run --release -- init
+cargo run --release -- capture
+cargo run --release -- train
+```
+
 ## 🚀 Instalação e Configuração
 
 ### 1. Pré-requisitos

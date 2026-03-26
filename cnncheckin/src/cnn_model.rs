@@ -1,453 +1,394 @@
+// projeto cnncheckin
 // file: cnncheckin/src/cnn_model.rs
 // Módulo de rede neural convolucional usando Burn framework
+// src/cnn_model.rs — Modelo de reconhecimento usando KNN com features CNN-like
 
-
-use smartcore::linalg::basic::matrix::DenseMatrix;
-use smartcore::linalg::basic::arrays::Array;
-use smartcore::metrics::distance::euclidian::Euclidian;
-use smartcore::neighbors::knn_classifier::*;
-use smartcore::model_selection::train_test_split;
-use smartcore::metrics::accuracy;
+use ndarray::Array3;
+use rand::seq::SliceRandom;
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::Path;
-use std::time::{Duration, Instant};
-use minifb::Key;
-use ndarray::{Array3, Array4, s};
-use std::io;
 
-use crate::database::{Database, Person};
-use crate::utils::{WebcamCapture, save_photo};
+use crate::error::{AppError, Result};
+use crate::image_processor::{extract_features, FaceDataset, load_training_data, augment_dataset};
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
+// ────────────────────────────────────────────────
+//  Metadados e modelo serializado
+// ────────────────────────────────────────────────
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ModelMetadata {
     pub id: Option<i32>,
+    pub name: String,
     pub created_at: String,
     pub accuracy: f32,
     pub num_classes: usize,
-    pub num_parameters: usize,
     pub training_epochs: usize,
     pub class_names: Vec<String>,
+    pub k_neighbors: usize,
 }
 
+/// Modelo treinado pronto para serialização / armazenamento
 #[derive(Serialize, Deserialize)]
 pub struct TrainedModel {
     pub metadata: ModelMetadata,
-    pub weights: Vec<u8>,
+    /// Protótipos de treino: (features, class_id)
+    pub prototypes: Vec<(Vec<f32>, usize)>,
 }
 
 impl TrainedModel {
-    pub fn save_to_file(&self, filename: &str) -> Result<(), Box<dyn std::error::Error>> {
-        fs::write(filename, serde_json::to_string_pretty(self)?)?;
+    pub fn save_to_file(&self, path: &str) -> Result<()> {
+        let json = serde_json::to_string_pretty(self)
+            .map_err(|e| AppError::Generic(e.to_string()))?;
+        fs::write(path, json).map_err(AppError::Io)?;
         Ok(())
     }
-}
 
-#[derive(Debug, Clone)]
-pub struct FaceImage {
-    pub data: Array3<f32>,
-    pub person_name: String,
-    pub class_id: usize,
-}
-
-pub struct FaceDataset {
-    images: Vec<FaceImage>,
-    class_names: Vec<String>,
-    class_to_id: std::collections::HashMap<String, usize>,
-}
-
-impl FaceDataset {
-    pub fn new() -> Self {
-        Self { images: Vec::new(), class_names: Vec::new(), class_to_id: Default::default() }
+    pub fn load_from_file(path: &str) -> Result<Self> {
+        let json = fs::read_to_string(path).map_err(AppError::Io)?;
+        serde_json::from_str(&json).map_err(|e| AppError::Generic(e.to_string()))
     }
+}
 
-    pub fn add_image(&mut self, image: FaceImage) {
-        if !self.class_to_id.contains_key(&image.person_name) {
-            let class_id = self.class_names.len();
-            self.class_names.push(image.person_name.clone());
-            self.class_to_id.insert(image.person_name.clone(), class_id);
+// ────────────────────────────────────────────────
+//  Classificador KNN
+// ────────────────────────────────────────────────
+
+/// Classificador KNN em memória pura (sem dependências externas de ML)
+pub struct KnnClassifier {
+    /// (features_vetor, class_id)
+    prototypes: Vec<(Vec<f32>, usize)>,
+    pub class_names: Vec<String>,
+    k: usize,
+}
+
+impl KnnClassifier {
+    pub fn new(k: usize) -> Self {
+        Self {
+            prototypes: Vec::new(),
+            class_names: Vec::new(),
+            k,
         }
-        let mut image = image;
-        image.class_id = self.class_to_id[&image.person_name];
-        self.images.push(image);
     }
 
-    pub fn len(&self) -> usize { self.images.len() }
-    pub fn num_classes(&self) -> usize { self.class_names.len() }
-    pub fn get_class_names(&self) -> Vec<String> { self.class_names.clone() }
-
-    pub fn get_batch(&self, batch_size: usize, start_idx: usize) -> Option<(Array4<f32>, Vec<usize>)> {
-        let end_idx = std::cmp::min(start_idx + batch_size, self.images.len());
-        if start_idx >= self.images.len() { return None; }
-        let batch_images = &self.images[start_idx..end_idx];
-        let mut images_array = Array4::<f32>::zeros((batch_images.len(), 3, 128, 128));
-        let mut labels = Vec::new();
-        for (i, face_image) in batch_images.iter().enumerate() {
-            images_array.slice_mut(s![i, .., .., ..]).assign(&face_image.data);
-            labels.push(face_image.class_id);
+    /// Treina o classificador com o dataset inteiro
+    pub fn fit(&mut self, dataset: &FaceDataset) -> Result<f32> {
+        if dataset.len() < 2 {
+            return Err(AppError::InsufficientData);
         }
-        Some((images_array, labels))
-    }
-}
 
-pub struct SimpleFaceRecognizer {
-    model: Option<KNNClassifier<f32, i32, DenseMatrix<f32>, Vec<i32>, Euclidian<f32>>>,
-    class_names: Vec<String>,
-}
-
-impl SimpleFaceRecognizer {
-    pub fn new() -> Self {
-        Self { model: None, class_names: Vec::new() }
-    }
-
-    pub fn train(&mut self, dataset: &FaceDataset) -> Result<f32, Box<dyn std::error::Error>> {
-        let (features, labels) = self.dataset_to_matrix(dataset)?;
-        if features.shape().0 < 2 { return Err("Dataset muito pequeno".into()); }
-        let (x_train, x_test, y_train, y_test) = train_test_split(&features, &labels, 0.2, true, Some(42));
-        let knn = KNNClassifier::fit(&x_train, &y_train, Default::default())?;
-        let predictions = knn.predict(&x_test)?;
-        let accuracy = accuracy(&y_test, &predictions) as f32;
-        self.model = Some(knn);
         self.class_names = dataset.get_class_names();
+        self.prototypes.clear();
+
+        let (features, labels) = dataset.to_feature_matrix();
+        for (feat, label) in features.iter().zip(labels.iter()) {
+            self.prototypes.push((feat.clone(), *label));
+        }
+
+        // Avalia com leave-one-out (rápido para datasets pequenos)
+        let accuracy = self.evaluate_loo()?;
         Ok(accuracy)
     }
 
-    pub fn predict(&self, image: &Array3<f32>) -> Result<(usize, f32), Box<dyn std::error::Error>> {
-        let model = self.model.as_ref().ok_or("Modelo não treinado")?;
-        let features = self.extract_features(image);
-        let feature_matrix = DenseMatrix::from_2d_vec(&vec![features]);
-        let prediction = model.predict(&feature_matrix)?;
-        Ok((prediction[0] as usize, 0.7 + rand::random::<f32>() * 0.3))
-    }
-
-    fn dataset_to_matrix(&self, dataset: &FaceDataset) -> Result<(DenseMatrix<f32>, Vec<i32>), Box<dyn std::error::Error>> {
-        let mut features_vec = Vec::new();
-        let mut labels_vec = Vec::new();
-        for image in &dataset.images {
-            let features = self.extract_features(&image.data);
-            features_vec.push(features);
-            labels_vec.push(image.class_id as i32);
+    /// Leave-one-out cross-validation
+    fn evaluate_loo(&self) -> Result<f32> {
+        if self.prototypes.len() < 2 {
+            return Ok(0.0);
         }
-        if features_vec.is_empty() { return Err("Nenhuma feature extraída".into()); }
-        Ok((DenseMatrix::from_2d_vec(&features_vec), labels_vec))
-    }
 
-    fn extract_features(&self, image: &Array3<f32>) -> Vec<f32> {
-        let (channels, height, width) = image.dim();
-        let mut features = Vec::new();
-        let step = 8;
-        for c in 0..channels {
-            for y in (0..height).step_by(step) {
-                for x in (0..width).step_by(step) {
-                    if y < height && x < width { features.push(image[[c, y, x]]); }
-                }
+        let mut correct = 0usize;
+        let total = self.prototypes.len();
+
+        for i in 0..total {
+            let (test_feat, true_label) = &self.prototypes[i];
+
+            // KNN excluindo o próprio ponto
+            let mut distances: Vec<(f32, usize)> = self
+                .prototypes
+                .iter()
+                .enumerate()
+                .filter(|(j, _)| *j != i)
+                .map(|(_, (feat, label))| (euclidean_distance(test_feat, feat), *label))
+                .collect();
+
+            distances.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap());
+
+            let k = self.k.min(distances.len());
+            let predicted = majority_vote(&distances[..k]);
+
+            if predicted == *true_label {
+                correct += 1;
             }
         }
-        if !features.is_empty() {
-            let mean = features.iter().sum::<f32>() / features.len() as f32;
-            let variance = features.iter().map(|x| (x - mean).powi(2)).sum::<f32>() / features.len() as f32;
-            features.push(mean);
-            features.push(variance);
+
+        Ok(correct as f32 / total as f32)
+    }
+
+    /// Prediz a classe de uma imagem e retorna (class_id, confidence)
+    pub fn predict(&self, image: &Array3<f32>) -> Result<(usize, f32)> {
+        if self.prototypes.is_empty() {
+            return Err(AppError::ModelNotTrained);
         }
-        features
+
+        let features = extract_features(image);
+        let mut distances: Vec<(f32, usize)> = self
+            .prototypes
+            .iter()
+            .map(|(feat, label)| (euclidean_distance(&features, feat), *label))
+            .collect();
+
+        distances.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap());
+
+        let k = self.k.min(distances.len());
+        let neighbors = &distances[..k];
+
+        let predicted_class = majority_vote(neighbors);
+
+        // Confiança = fração dos k vizinhos que pertencem à classe predita
+        let votes_for_class = neighbors
+            .iter()
+            .filter(|(_, label)| *label == predicted_class)
+            .count();
+        let confidence = votes_for_class as f32 / k as f32;
+
+        Ok((predicted_class, confidence))
+    }
+
+    /// Retorna o embedding (features) de uma imagem
+    pub fn embed(&self, image: &Array3<f32>) -> Vec<f32> {
+        extract_features(image)
+    }
+
+    /// Exporta os protótipos para serialização
+    pub fn export_prototypes(&self) -> Vec<(Vec<f32>, usize)> {
+        self.prototypes.clone()
+    }
+
+    /// Importa protótipos de um modelo salvo
+    pub fn import_prototypes(&mut self, prototypes: Vec<(Vec<f32>, usize)>, class_names: Vec<String>, k: usize) {
+        self.prototypes = prototypes;
+        self.class_names = class_names;
+        self.k = k;
+    }
+
+    pub fn num_classes(&self) -> usize {
+        self.class_names.len()
+    }
+
+    pub fn is_trained(&self) -> bool {
+        !self.prototypes.is_empty()
     }
 }
 
-pub async fn train_model(data_dir: &str, epochs: usize) -> Result<TrainedModel, Box<dyn std::error::Error>> {
-    let dataset = load_training_data(data_dir)?;
-    let num_classes = dataset.num_classes();
-    let class_names = dataset.get_class_names();
-    if num_classes < 1 { return Err("Dataset deve ter pelo menos 1 classe".into()); }
-    let mut recognizer = SimpleFaceRecognizer::new();
-    let accuracy = recognizer.train(&dataset)?;
-    let model_data = bincode::encode_to_vec(&"placeholder_model_data", bincode::config::standard())?;
+// ────────────────────────────────────────────────
+//  Funções auxiliares de distância
+// ────────────────────────────────────────────────
+
+fn euclidean_distance(a: &[f32], b: &[f32]) -> f32 {
+    a.iter()
+        .zip(b.iter())
+        .map(|(x, y)| (x - y).powi(2))
+        .sum::<f32>()
+        .sqrt()
+}
+
+pub fn cosine_similarity(a: &[f32], b: &[f32]) -> f32 {
+    if a.len() != b.len() {
+        return 0.0;
+    }
+    let dot: f32 = a.iter().zip(b.iter()).map(|(x, y)| x * y).sum();
+    let na: f32 = a.iter().map(|x| x * x).sum::<f32>().sqrt();
+    let nb: f32 = b.iter().map(|x| x * x).sum::<f32>().sqrt();
+    if na == 0.0 || nb == 0.0 {
+        0.0
+    } else {
+        dot / (na * nb)
+    }
+}
+
+fn majority_vote(neighbors: &[(f32, usize)]) -> usize {
+    let mut votes: std::collections::HashMap<usize, usize> = std::collections::HashMap::new();
+    for (_, label) in neighbors {
+        *votes.entry(*label).or_insert(0) += 1;
+    }
+    *votes.iter().max_by_key(|(_, &v)| v).map(|(k, _)| k).unwrap_or(&0)
+}
+
+// ────────────────────────────────────────────────
+//  Pipeline de treinamento
+// ────────────────────────────────────────────────
+
+pub struct TrainingConfig {
+    pub data_dir: String,
+    pub epochs: usize,
+    pub k_neighbors: usize,
+    pub augmentation_factor: usize,
+    pub validation_split: f32,
+}
+
+impl Default for TrainingConfig {
+    fn default() -> Self {
+        Self {
+            data_dir: "dados/fotos_treino".into(),
+            epochs: 1, // KNN não tem epochs reais; usado para augmentation loops
+            k_neighbors: 5,
+            augmentation_factor: 3,
+            validation_split: 0.2,
+        }
+    }
+}
+
+/// Treina o modelo completo e retorna um TrainedModel
+pub fn train_model(cfg: &TrainingConfig) -> Result<TrainedModel> {
+    println!("🚀 Iniciando treinamento...");
+
+    // 1) Carregar dados
+    let dataset = load_training_data(&cfg.data_dir)?;
+
+    if dataset.num_classes() < 1 {
+        return Err(AppError::InsufficientData);
+    }
+
+    println!(
+        "📊 Dataset: {} imagens / {} classes",
+        dataset.len(),
+        dataset.num_classes()
+    );
+
+    // 2) Augmentation
+    let augmented = if cfg.augmentation_factor > 1 {
+        augment_dataset(&dataset, cfg.augmentation_factor)
+    } else {
+        dataset.clone()
+    };
+
+    // 3) Split treino / validação
+    let (train_ds, val_ds) = augmented.split(cfg.validation_split);
+
+    // 4) Treinar KNN
+    let mut classifier = KnnClassifier::new(cfg.k_neighbors);
+    println!("🧠 Treinando KNN (k={})...", cfg.k_neighbors);
+    let train_accuracy = classifier.fit(&train_ds)?;
+    println!("  ✅ Acurácia treino (LOO): {:.1}%", train_accuracy * 100.0);
+
+    // 5) Avaliar no conjunto de validação
+    let val_accuracy = evaluate(&classifier, &val_ds);
+    println!("  ✅ Acurácia validação: {:.1}%", val_accuracy * 100.0);
+
+    // 6) Montar modelo treinado
+    let metadata = ModelMetadata {
+        id: None,
+        name: format!("model_{}", chrono::Utc::now().timestamp()),
+        created_at: chrono::Utc::now().to_rfc3339(),
+        accuracy: val_accuracy,
+        num_classes: classifier.num_classes(),
+        training_epochs: cfg.epochs,
+        class_names: classifier.class_names.clone(),
+        k_neighbors: cfg.k_neighbors,
+    };
+
     Ok(TrainedModel {
-        metadata: ModelMetadata {
-            id: None,
-            created_at: chrono::Utc::now().format("%Y-%m-%d %H:%M:%S UTC").to_string(),
-            accuracy,
-            num_classes,
-            num_parameters: 1000,
-            training_epochs: epochs,
-            class_names,
-        },
-        weights: model_data,
+        metadata,
+        prototypes: classifier.export_prototypes(),
     })
 }
 
-pub async fn load_model_for_inference(_weights: &[u8], metadata: &ModelMetadata) -> Result<SimpleFaceRecognizer, Box<dyn std::error::Error>> {
-    let mut recognizer = SimpleFaceRecognizer::new();
-    recognizer.class_names = metadata.class_names.clone();
-    Ok(recognizer)
-}
-
-pub fn create_face_embedding(model: &SimpleFaceRecognizer, image: &Array3<f32>) -> Result<Vec<f32>, Box<dyn std::error::Error>> {
-    Ok(model.extract_features(image))
-}
-
-pub struct FaceDetector {
-    model: Option<SimpleFaceRecognizer>,
-    database: Database,
-    confidence_threshold: f32,
-    similarity_threshold: f32,
-}
-
-impl FaceDetector {
-    pub async fn new() -> Result<Self, Box<dyn std::error::Error>> {
-        Ok(Self {
-            model: None,
-            database: Database::new().await?,
-            confidence_threshold: 0.7,
-            similarity_threshold: 0.8,
-        })
+/// Avalia o classificador em um dataset de validação
+pub fn evaluate(classifier: &KnnClassifier, dataset: &FaceDataset) -> f32 {
+    if dataset.is_empty() {
+        return 0.0;
     }
 
-    pub async fn load_model(&mut self, trained_model: TrainedModel) -> Result<(), Box<dyn std::error::Error>> {
-        self.model = Some(load_model_for_inference(&trained_model.weights, &trained_model.metadata).await?);
-        Ok(())
-    }
-
-    pub async fn recognize_face(&self, image: &Array3<f32>) -> Result<RecognitionResult, Box<dyn std::error::Error>> {
-        let model = self.model.as_ref().ok_or("Modelo não carregado")?;
-        let (_class_id, confidence) = model.predict(image)?;
-        if confidence < self.confidence_threshold {
-            return Ok(RecognitionResult::Unknown(confidence));
-        }
-        let embedding = create_face_embedding(model, image)?;
-        let similar_person = self.database.find_similar_person(&embedding, self.similarity_threshold).await?;
-        match similar_person {
-            Some(person) => {
-                let checkin_id = self.database.record_checkin(person.id, confidence).await?;
-                Ok(RecognitionResult::Recognized { person_name: person.name, confidence, person_id: person.id, checkin_id })
-            }
-            None => Ok(RecognitionResult::Unknown(confidence)),
-        }
-    }
-
-    pub async fn learn_face(&self, image: &Array3<f32>, person_name: &str) -> Result<i32, Box<dyn std::error::Error>> {
-        let model = self.model.as_ref().ok_or("Modelo não carregado")?;
-        let embedding = create_face_embedding(model, image)?;
-        let person_id = self.database.save_person(person_name, &embedding).await?;
-        self.database.record_checkin(person_id, 1.0).await?;
-        Ok(person_id)
-    }
-}
-
-#[derive(Debug)]
-pub enum RecognitionResult {
-    Recognized { person_name: String, confidence: f32, person_id: i32, checkin_id: i32 },
-    Unknown(f32),
-}
-
-pub async fn recognition_mode(trained_model: TrainedModel, realtime: bool, config: &crate::config::Config) -> Result<(), Box<dyn std::error::Error>> {
-    let mut detector = FaceDetector::new().await?;
-    detector.load_model(trained_model).await?;
-    if realtime {
-        recognition_mode_realtime(&detector, config).await
-    } else {
-        recognition_mode_single_shot(&detector, config).await
-    }
-}
-
-pub async fn learning_mode(trained_model: TrainedModel, realtime: bool, config: &crate::config::Config) -> Result<(), Box<dyn std::error::Error>> {
-    let mut detector = FaceDetector::new().await?;
-    detector.load_model(trained_model).await?;
-    if realtime {
-        learning_mode_realtime(&detector, config).await
-    } else {
-        learning_mode_single_shot(&detector, config).await
-    }
-}
-
-async fn recognition_mode_realtime(detector: &FaceDetector, config: &crate::config::Config) -> Result<(), Box<dyn std::error::Error>> {
-    let mut capture = WebcamCapture::new(&config.camera)?;
-    let mut frame_count = 0u64;
-    let mut last_fps_update = Instant::now();
-    let mut recognitions = 0;
-
-    while capture.is_window_open() && !capture.is_key_down(Key::Escape) {
-        let frame_start = Instant::now();
-        let raw_frame = capture.capture_frame()?;
-        let faces = detect_faces(&raw_frame, config.camera.width, config.camera.height)?;
-        
-        if capture.is_key_pressed(Key::Space) {
-            for face in faces {
-                let face_image = preprocess_image(&face)?;
-                match detector.recognize_face(&face_image).await {
-                    Ok(RecognitionResult::Recognized { person_name, confidence, person_id, checkin_id }) => {
-                        recognitions += 1;
-                        println!("✅ Reconhecido: {} (Confiança: {:.2}%, ID: {}, Check-in: {})", 
-                                 person_name, confidence * 100.0, person_id, checkin_id);
-                    }
-                    Ok(RecognitionResult::Unknown(confidence)) => {
-                        println!("❓ Desconhecido (Confiança: {:.2}%)", confidence * 100.0);
-                    }
-                    Err(e) => eprintln!("❌ Erro: {}", e),
-                }
-            }
-        }
-
-        if capture.is_key_pressed(Key::R) {
-            frame_count = 0;
-            last_fps_update = Instant::now();
-        }
-
-        frame_count += 1;
-        if Instant::now().duration_since(last_fps_update) >= Duration::from_secs(1) {
-            let fps = frame_count as f64 / Instant::now().duration_since(last_fps_update).as_secs_f64();
-            frame_count = 0;
-            last_fps_update = Instant::now();
-            capture.update_title(&format!("CNN CheckIn - {:.1} FPS - {} reconhecimentos", fps, recognitions));
-        }
-
-        let frame_time = frame_start.elapsed();
-        if frame_time < Duration::from_millis(33) {
-            std::thread::sleep(Duration::from_millis(33) - frame_time);
-        }
-    }
-    Ok(())
-}
-
-async fn recognition_mode_single_shot(detector: &FaceDetector, config: &crate::config::Config) -> Result<(), Box<dyn std::error::Error>> {
-    println!("Pressione ENTER para capturar...");
-    io::stdin().read_line(&mut String::new())?;
-    let raw_frame = capture_single_frame(config).await?;
-    let faces = detect_faces(&raw_frame, config.camera.width, config.camera.height)?;
-    for (i, face) in faces.iter().enumerate() {
-        let face_image = preprocess_image(face)?;
-        match detector.recognize_face(&face_image).await {
-            Ok(RecognitionResult::Recognized { person_name, confidence, .. }) => {
-                println!("✅ Face {}: {} (Confiança: {:.2}%)", i + 1, person_name, confidence * 100.0);
-            }
-            Ok(RecognitionResult::Unknown(confidence)) => {
-                println!("❓ Face {}: Desconhecido (Confiança: {:.2}%)", i + 1, confidence * 100.0);
-            }
-            Err(e) => eprintln!("❌ Erro na face {}: {}", i + 1, e),
-        }
-    }
-    Ok(())
-}
-
-async fn learning_mode_realtime(detector: &FaceDetector, config: &crate::config::Config) -> Result<(), Box<dyn std::error::Error>> {
-    let mut capture = WebcamCapture::new(&config.camera)?;
-    let mut person_name = String::new();
-    let mut _photo_count = 0;
-
-    while capture.is_window_open() && !capture.is_key_down(Key::Escape) {
-        let raw_frame = capture.capture_frame()?;
-        let faces = detect_faces(&raw_frame, config.camera.width, config.camera.height)?;
-        
-        if capture.is_key_pressed(Key::Space) && !faces.is_empty() {
-            if person_name.is_empty() {
-                println!("Digite o nome da pessoa: ");
-                io::stdin().read_line(&mut person_name)?;
-                person_name = person_name.trim().to_string();
-            }
-            let face_image = preprocess_image(&faces[0])?;
-            let person_id = detector.learn_face(&face_image, &person_name).await?;
-            _photo_count += 1;
-            println!("📚 Face aprendida: {} (ID: {})", person_name, person_id);
-        }
-
-        if capture.is_key_pressed(Key::N) {
-            person_name.clear();
-            _photo_count = 0;
-        }
-    }
-    Ok(())
-}
-
-async fn learning_mode_single_shot(detector: &FaceDetector, config: &crate::config::Config) -> Result<(), Box<dyn std::error::Error>> {
-    println!("Digite o nome da pessoa: ");
-    let mut person_name = String::new();
-    io::stdin().read_line(&mut person_name)?;
-    let person_name = person_name.trim();
-    println!("Pressione ENTER para capturar...");
-    io::stdin().read_line(&mut String::new())?;
-    let raw_frame = capture_single_frame(config).await?;
-    let faces = detect_faces(&raw_frame, config.camera.width, config.camera.height)?;
-    if let Some(face) = faces.first() {
-        let face_image = preprocess_image(face)?;
-        let person_id = detector.learn_face(&face_image, person_name).await?;
-        println!("📚 Face aprendida: {} (ID: {})", person_name, person_id);
-    }
-    Ok(())
-}
-
-pub fn load_training_data(data_dir: &str) -> Result<FaceDataset, Box<dyn std::error::Error>> {
-    let mut dataset = FaceDataset::new();
-    let path = Path::new(data_dir);
-    for entry in fs::read_dir(path)? {
-        let entry = entry?;
-        if entry.path().is_dir() {
-            let person_name = entry.file_name().to_string_lossy().to_string();
-            for file in fs::read_dir(entry.path())? {
-                let file = file?;
-                if file.path().extension().map_or(false, |ext| ext == "ppm") {
-                    let image = load_ppm_image(&file.path())?;
-                    dataset.add_image(FaceImage {
-                        data: image,
-                        person_name: person_name.clone(),
-                        class_id: 0, // Will be set in add_image
-                    });
-                }
+    let mut correct = 0usize;
+    for face_img in &dataset.images {
+        if let Ok((predicted, _)) = classifier.predict(&face_img.data) {
+            if predicted == face_img.class_id {
+                correct += 1;
             }
         }
     }
-    Ok(dataset)
+
+    correct as f32 / dataset.len() as f32
 }
 
-fn load_ppm_image(path: &Path) -> Result<Array3<f32>, Box<dyn std::error::Error>> {
-    let content = fs::read_to_string(path)?;
-    let lines: Vec<&str> = content.lines().collect();
-    if lines[0] != "P6" { return Err("Formato PPM inválido".into()); }
-    let dimensions: Vec<usize> = lines[2].split_whitespace().map(|s| s.parse().unwrap()).collect();
-    let width = dimensions[0];
-    let height = dimensions[1];
-    let data = fs::read(path)?;
-    let pixel_data = &data[lines[0..4].join("\n").len() + 1..];
-    let mut image = Array3::<f32>::zeros((3, height, width));
-    for y in 0..height {
-        for x in 0..width {
-            let idx = (y * width + x) * 3;
-            image[[0, y, x]] = pixel_data[idx] as f32 / 255.0;
-            image[[1, y, x]] = pixel_data[idx + 1] as f32 / 255.0;
-            image[[2, y, x]] = pixel_data[idx + 2] as f32 / 255.0;
-        }
-    }
-    Ok(image)
+/// Carrega um modelo salvo e reconstrói o KnnClassifier
+pub fn load_model_for_inference(model: &TrainedModel) -> KnnClassifier {
+    let mut classifier = KnnClassifier::new(model.metadata.k_neighbors);
+    classifier.import_prototypes(
+        model.prototypes.clone(),
+        model.metadata.class_names.clone(),
+        model.metadata.k_neighbors,
+    );
+    classifier
 }
 
-fn detect_faces(_frame: &[u8], _width: usize, _height: usize) -> Result<Vec<Array3<f32>>, Box<dyn std::error::Error>> {
-    // Placeholder: retorna uma imagem simulada
-    Ok(vec![Array3::zeros((3, 128, 128))])
-}
-
-fn preprocess_image(image: &Array3<f32>) -> Result<Array3<f32>, Box<dyn std::error::Error>> {
-    let mut processed = image.clone();
-    processed.mapv_inplace(|x| x.clamp(0.0, 1.0));
-    Ok(processed)
-}
-
-async fn capture_single_frame(config: &crate::config::Config) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
-    let mut capture = WebcamCapture::new(&config.camera)?;
-    let frame = capture.capture_frame()?;
-    Ok(frame)
-}
+// ────────────────────────────────────────────────
+//  Testes
+// ────────────────────────────────────────────────
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::image_processor::FaceImage;
+    use ndarray::Array3;
 
-    #[test]
-    fn test_recognizer_creation() {
-        let recognizer = SimpleFaceRecognizer::new();
-        assert!(recognizer.model.is_none());
+    fn make_dataset(n_per_class: usize) -> FaceDataset {
+        let mut ds = FaceDataset::new();
+        for class in ["Alice", "Bob"] {
+            for i in 0..n_per_class {
+                let mut img = Array3::<f32>::zeros((3, 128, 128));
+                // Imagens da classe têm um padrão distinto
+                if class == "Alice" {
+                    img[[0, 0, 0]] = 1.0;
+                } else {
+                    img[[2, 0, 0]] = 1.0;
+                }
+                ds.add_image(FaceImage {
+                    data: img,
+                    person_name: class.into(),
+                    class_id: 0,
+                    file_path: format!("{}_{}.ppm", class, i),
+                });
+            }
+        }
+        ds
     }
 
-    #[tokio::test]
-    async fn test_face_detector_creation() {
-        let detector = FaceDetector::new().await;
-        assert!(detector.is_ok());
+    #[test]
+    fn test_knn_fit_predict() {
+        let ds = make_dataset(5);
+        let mut knn = KnnClassifier::new(3);
+        let acc = knn.fit(&ds).unwrap();
+        assert!(acc > 0.0);
+
+        let test_img = Array3::<f32>::zeros((3, 128, 128));
+        let (class_id, confidence) = knn.predict(&test_img).unwrap();
+        assert!(class_id < 2);
+        assert!(confidence >= 0.0 && confidence <= 1.0);
+    }
+
+    #[test]
+    fn test_cosine_similarity() {
+        let a = vec![1.0, 0.0, 0.0];
+        let b = vec![1.0, 0.0, 0.0];
+        assert!((cosine_similarity(&a, &b) - 1.0).abs() < 1e-5);
+
+        let c = vec![0.0, 1.0, 0.0];
+        assert!(cosine_similarity(&a, &c).abs() < 1e-5);
+    }
+
+    #[test]
+    fn test_euclidean_distance() {
+        let a = vec![0.0, 0.0];
+        let b = vec![3.0, 4.0];
+        assert!((euclidean_distance(&a, &b) - 5.0).abs() < 1e-5);
+    }
+
+    #[test]
+    fn test_knn_untrained_error() {
+        let knn = KnnClassifier::new(3);
+        let img = Array3::<f32>::zeros((3, 128, 128));
+        let result = knn.predict(&img);
+        assert!(matches!(result, Err(AppError::ModelNotTrained)));
     }
 }
