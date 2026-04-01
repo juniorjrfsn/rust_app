@@ -103,6 +103,31 @@ impl Database {
                 is_active   INTEGER NOT NULL DEFAULT 1
             );
 
+            ALTER TABLE models ADD COLUMN IF NOT EXISTS epochs INTEGER NOT NULL DEFAULT 0;
+            ALTER TABLE models ADD COLUMN IF NOT EXISTS k_neighbors INTEGER NOT NULL DEFAULT 5;
+            ALTER TABLE models ADD COLUMN IF NOT EXISTS class_names TEXT NOT NULL DEFAULT '[]';
+            ALTER TABLE models ADD COLUMN IF NOT EXISTS prototypes TEXT NOT NULL DEFAULT '[]';
+            ALTER TABLE models ADD COLUMN IF NOT EXISTS num_parameters BIGINT NOT NULL DEFAULT 0;
+            ALTER TABLE models ALTER COLUMN num_parameters SET DEFAULT 0;
+            ALTER TABLE models ALTER COLUMN num_parameters TYPE BIGINT USING num_parameters::bigint;
+            UPDATE models SET num_parameters = 0 WHERE num_parameters IS NULL;
+
+            ALTER TABLE models ADD COLUMN IF NOT EXISTS training_epochs BIGINT NOT NULL DEFAULT 0;
+            ALTER TABLE models ALTER COLUMN training_epochs SET DEFAULT 0;
+            ALTER TABLE models ALTER COLUMN training_epochs TYPE BIGINT USING training_epochs::bigint;
+            UPDATE models SET training_epochs = epochs WHERE training_epochs IS NULL;
+
+            ALTER TABLE models ADD COLUMN IF NOT EXISTS model_data BYTEA NOT NULL DEFAULT ''::bytea;
+            ALTER TABLE models ALTER COLUMN model_data SET DEFAULT ''::bytea;
+            ALTER TABLE models ALTER COLUMN model_data TYPE BYTEA USING model_data::bytea;
+            UPDATE models SET model_data = ''::bytea WHERE model_data IS NULL;
+
+            -- Força conversão de tipos antigos (ex: text[] mantenho compatibilidade)
+            ALTER TABLE models ALTER COLUMN class_names TYPE TEXT USING class_names::text;
+            ALTER TABLE models ALTER COLUMN prototypes TYPE TEXT USING prototypes::text;
+
+            ALTER TABLE persons ADD COLUMN IF NOT EXISTS is_active INTEGER NOT NULL DEFAULT 1;
+
             CREATE TABLE IF NOT EXISTS checkins (
                 id          SERIAL PRIMARY KEY,
                 person_id   INTEGER REFERENCES persons(id),
@@ -130,24 +155,30 @@ impl Database {
 
         let mut conn = self.pool.get()?;
         let row = conn.query_one(
-            "INSERT INTO models (name, accuracy, num_classes, epochs, k_neighbors, class_names, prototypes)
-             VALUES ($1, $2, $3, $4, $5, $6, $7)
+            "INSERT INTO models (name, accuracy, num_classes, epochs, training_epochs, k_neighbors, class_names, prototypes, num_parameters, model_data)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
              ON CONFLICT (name) DO UPDATE SET
                accuracy = EXCLUDED.accuracy,
                num_classes = EXCLUDED.num_classes,
                epochs = EXCLUDED.epochs,
+               training_epochs = EXCLUDED.training_epochs,
                k_neighbors = EXCLUDED.k_neighbors,
                class_names = EXCLUDED.class_names,
-               prototypes = EXCLUDED.prototypes
+               prototypes = EXCLUDED.prototypes,
+               num_parameters = EXCLUDED.num_parameters,
+               model_data = EXCLUDED.model_data
              RETURNING id",
             &[
                 &model.metadata.name,
                 &model.metadata.accuracy,
                 &(model.metadata.num_classes as i32),
                 &(model.metadata.training_epochs as i32),
+                &(model.metadata.training_epochs as i64),
                 &(model.metadata.k_neighbors as i32),
                 &class_names_json,
                 &prototypes_json,
+                &0i64,
+                &Vec::<u8>::new(),
             ],
         )?;
 
@@ -158,7 +189,7 @@ impl Database {
     pub fn load_model(&self, model_id: i32) -> Result<TrainedModel> {
         let mut conn = self.pool.get()?;
         let row = conn.query_opt(
-            "SELECT id, name, created_at, accuracy, num_classes, epochs, k_neighbors, class_names, prototypes
+            "SELECT id, name, created_at, accuracy, num_classes, epochs, training_epochs, k_neighbors, class_names, prototypes
              FROM models WHERE id = $1",
             &[&model_id],
         )?;
@@ -167,13 +198,14 @@ impl Database {
 
         let id: i32 = row.get(0);
         let name: String = row.get(1);
-        let created_at: chrono::NaiveDateTime = row.get(2);
+        let created_at: chrono::DateTime<chrono::Utc> = row.get(2);
         let accuracy: f32 = row.get(3);
         let num_classes: i32 = row.get(4);
-        let epochs: i32 = row.get(5);
-        let k: i32 = row.get(6);
-        let class_names_json: String = row.get(7);
-        let proto_json: String = row.get(8);
+        let _epochs: i32 = row.get(5);
+        let training_epochs: i64 = row.get(6);
+        let k: i32 = row.get(7);
+        let class_names_json: String = row.get(8);
+        let proto_json: String = row.get(9);
 
         let class_names: Vec<String> = serde_json::from_str(&class_names_json)
             .map_err(|e| AppError::Generic(e.to_string()))?;
@@ -184,10 +216,10 @@ impl Database {
             metadata: ModelMetadata {
                 id: Some(id),
                 name,
-                created_at: created_at.to_string(),
+                created_at: created_at.naive_utc().to_string(),
                 accuracy,
                 num_classes: num_classes as usize,
-                training_epochs: epochs as usize,
+                training_epochs: training_epochs as usize,
                 class_names,
                 k_neighbors: k as usize,
             },
@@ -206,7 +238,7 @@ impl Database {
     pub fn list_models(&self) -> Result<Vec<ModelMetadata>> {
         let mut conn = self.pool.get()?;
         let rows = conn.query(
-            "SELECT id, name, created_at, accuracy, num_classes, epochs, k_neighbors, class_names
+            "SELECT id, name, created_at, accuracy, num_classes, epochs, training_epochs, k_neighbors, class_names
              FROM models ORDER BY id DESC",
             &[],
         )?;
@@ -218,9 +250,10 @@ impl Database {
             let created_at: chrono::NaiveDateTime = row.get(2);
             let accuracy: f32 = row.get(3);
             let num_classes: i32 = row.get(4);
-            let epochs: i32 = row.get(5);
-            let k: i32 = row.get(6);
-            let class_names_json: String = row.get(7);
+            let _epochs: i32 = row.get(5);
+            let training_epochs: i64 = row.get(6);
+            let k: i32 = row.get(7);
+            let class_names_json: String = row.get(8);
 
             let class_names: Vec<String> = serde_json::from_str(&class_names_json).unwrap_or_default();
             result.push(ModelMetadata {
@@ -229,7 +262,7 @@ impl Database {
                 created_at: created_at.to_string(),
                 accuracy,
                 num_classes: num_classes as usize,
-                training_epochs: epochs as usize,
+                training_epochs: training_epochs as usize,
                 class_names,
                 k_neighbors: k as usize,
             });
@@ -271,7 +304,7 @@ impl Database {
             let id: i32 = row.get(0);
             let name: String = row.get(1);
             let emb_json: String = row.get(2);
-            let created_at: chrono::NaiveDateTime = row.get(3);
+            let created_at: chrono::DateTime<chrono::Utc> = row.get(3);
             let photo_count: i32 = row.get(4);
 
             if let Ok(emb) = serde_json::from_str::<Vec<f32>>(&emb_json) {
@@ -282,7 +315,7 @@ impl Database {
                             id,
                             name,
                             embedding: emb,
-                            created_at: created_at.to_string(),
+                            created_at: created_at.naive_utc().to_string(),
                             photo_count,
                         }));
                     }
@@ -305,7 +338,7 @@ impl Database {
             let id: i32 = row.get(0);
             let name: String = row.get(1);
             let emb_json: String = row.get(2);
-            let created_at: chrono::NaiveDateTime = row.get(3);
+            let created_at: chrono::DateTime<chrono::Utc> = row.get(3);
             let photo_count: i32 = row.get(4);
 
             if let Ok(embedding) = serde_json::from_str::<Vec<f32>>(&emb_json) {
@@ -313,7 +346,7 @@ impl Database {
                     id,
                     name,
                     embedding,
-                    created_at: created_at.to_string(),
+                    created_at: created_at.naive_utc().to_string(),
                     photo_count,
                 });
             }
@@ -353,7 +386,7 @@ impl Database {
             let id: i32 = row.get(0);
             let person_id: i32 = row.get(1);
             let person_name: String = row.get(2);
-            let timestamp: chrono::NaiveDateTime = row.get(3);
+            let timestamp: chrono::DateTime<chrono::Utc> = row.get(3);
             let confidence: f32 = row.get(4);
             let method: String = row.get(5);
 
@@ -361,7 +394,7 @@ impl Database {
                 id,
                 person_id,
                 person_name,
-                timestamp: timestamp.to_string(),
+                timestamp: timestamp.naive_utc().to_string(),
                 confidence,
                 method,
             });
@@ -390,5 +423,22 @@ impl Database {
             total_persons,
             checkins_today,
         })
+    }
+
+    pub fn describe_models_table(&self) -> Result<Vec<(String, String, String)>> {
+        let mut conn = self.pool.get()?;
+        let rows = conn.query(
+            "SELECT column_name, data_type, udt_name FROM information_schema.columns WHERE table_name = 'models' ORDER BY ordinal_position",
+            &[],
+        )?;
+
+        let mut columns = Vec::new();
+        for row in rows {
+            let name: String = row.get(0);
+            let data_type: String = row.get(1);
+            let udt_name: String = row.get(2);
+            columns.push((name, data_type, udt_name));
+        }
+        Ok(columns)
     }
 }

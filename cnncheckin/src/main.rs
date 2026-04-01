@@ -92,6 +92,10 @@ enum DbCommands {
         #[arg(short, long, default_value = "20")]
         limit: usize,
     },
+
+    /// Exibe esquema de colunas da tabela models (debug)
+    Schema,
+
 }
 
 // ────────────────────────────────────────────────
@@ -263,9 +267,33 @@ fn run(cmd: Commands) -> Result<(), Box<dyn std::error::Error>> {
                         }
                     }
                 }
+
+                DbCommands::Schema => {
+                    let cols = db.describe_models_table()?;
+                    println!("Tabela models (column_name, data_type, udt_name)");
+                    for (name, data_type, udt_name) in cols {
+                        println!("{:<20} {:<15} {}", name, data_type, udt_name);
+                    }
+                }
             }
         }
     }
 
     Ok(())
 }
+
+
+
+// cargo test -- --nocapture
+// cargo run --release -- train
+// cargo run --release -- init
+
+// cargo run --release -- train --data-dir ".\dataset" --k 5 --augmentation 3 --export
+// cargo run --release -- database setup
+// cargo run --release -- database models
+// cargo run --release -- database stats
+// cargo run --release -- database export --model-id 1 --output "model_1.json"
+// cargo run --release -- database checkins --limit 20
+
+// cargo run --release -- init
+// cargo run --release -- database setup

@@ -1,0 +1,11 @@
+d:\projetos\rust_app\lstm_rnn_trainer\target\debug\deps\libloading-8126f67f7f983458.d: C:\Users\njunior\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\libloading-0.8.8\src\lib.rs C:\Users\njunior\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\libloading-0.8.8\src\changelog.rs C:\Users\njunior\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\libloading-0.8.8\src\os\mod.rs C:\Users\njunior\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\libloading-0.8.8\src\os\windows\mod.rs C:\Users\njunior\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\libloading-0.8.8\src\util.rs C:\Users\njunior\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\libloading-0.8.8\src\error.rs C:\Users\njunior\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\libloading-0.8.8\src\safe.rs
+
+d:\projetos\rust_app\lstm_rnn_trainer\target\debug\deps\liblibloading-8126f67f7f983458.rmeta: C:\Users\njunior\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\libloading-0.8.8\src\lib.rs C:\Users\njunior\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\libloading-0.8.8\src\changelog.rs C:\Users\njunior\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\libloading-0.8.8\src\os\mod.rs C:\Users\njunior\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\libloading-0.8.8\src\os\windows\mod.rs C:\Users\njunior\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\libloading-0.8.8\src\util.rs C:\Users\njunior\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\libloading-0.8.8\src\error.rs C:\Users\njunior\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\libloading-0.8.8\src\safe.rs
+
+C:\Users\njunior\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\libloading-0.8.8\src\lib.rs:
+C:\Users\njunior\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\libloading-0.8.8\src\changelog.rs:
+C:\Users\njunior\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\libloading-0.8.8\src\os\mod.rs:
+C:\Users\njunior\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\libloading-0.8.8\src\os\windows\mod.rs:
+C:\Users\njunior\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\libloading-0.8.8\src\util.rs:
+C:\Users\njunior\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\libloading-0.8.8\src\error.rs:
+C:\Users\njunior\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\libloading-0.8.8\src\safe.rs:
