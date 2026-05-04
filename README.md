@@ -31,15 +31,13 @@ font : Consolas, 'Courier New', monospace
     cargo new lstmfiletrain --bin
     cargo new lstmfilepredict --bin
     cargo new lstmrnntrain --bin
-    cargo new lstm_rnn_trainer --bin 
-    cargo new lstm_cnn_train --bin 
-    cargo new lstm_cnn_predictor --bin 
-    cargo new rust_cuda_example --bin 
-    cargo new cnncheckin --bin 
+    cargo new lstm_rnn_trainer --bin
+    cargo new lstm_cnn_train --bin
+    cargo new lstm_cnn_predictor --bin
+    cargo new rust_cuda_example --bin
+    cargo new cnncheckin --bin
+    cargo new futuro --bin
 
-    
-    
- 
 ```
 
 ### **Acessar a pasta da aplicação**
@@ -75,6 +73,7 @@ font : Consolas, 'Courier New', monospace
     cd lstm_cnn_predictor
     cd rust_cuda_example
     cd cnncheckin
+    cd futuro
 
 ```
 

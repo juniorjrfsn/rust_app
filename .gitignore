@@ -40,6 +40,7 @@ lstm_cnn_train/target/
 lstm_cnn_predictor/target/
 rust_cuda_example/target/
 cnncheckin/target/
+futuro/target/
 
 
 outros/chatbot/target/
